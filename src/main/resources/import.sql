@@ -1,2 +1,2 @@
-INSERT INTO tb_loja (razao_Social, nome_Fantasia, cnpj, email, telefone) VALUES ('PROJETO EXE LTDA', 'PROJETO EXE', '00.000.000/0001-00', 'projeto.exe123@gmail.com', '(16)99723-4150');
-INSERT INTO tb_loja (razao_Social, nome_Fantasia, cnpj, email, telefone) VALUES ('PROJETO EXE LTDA', 'PROJETO EXE', '00.000.000/0001-00', 'projeto.exe123@gmail.com', '(16)99723-4150');
+INSERT INTO tb_loja (razao_Social, nome_Fantasia, cnpj, inscricao_Estadual, email, telefone, cep, endereco, numero, bairro, cidade, estado, pais) VALUES ('PROJETO EXE LTDA', 'PROJETO EXE', '20214754000151', '529971505286', 'projeto.exe123@gmail.com', '16 99723-4150', '14804-072','Rua Benedito Barbosa', '101', 'Vale do Sol', 'Araraquara', 'São Paulo', 'Brasil');
+INSERT INTO tb_loja (razao_Social, nome_Fantasia, cnpj, email, telefone) VALUES ('PROJETO EXE LTDA', 'PROJETO EXE', '00000000000100', 'projeto.exe123@gmail.com', '16 99723-4150');

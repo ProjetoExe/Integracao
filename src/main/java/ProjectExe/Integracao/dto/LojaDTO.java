@@ -1,27 +1,30 @@
-package ProjectExe.Integracao.entidades;
+package ProjectExe.Integracao.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
+import ProjectExe.Integracao.entidades.Loja;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.*;
+import org.hibernate.validator.constraints.br.CNPJ;
+import org.springframework.beans.BeanUtils;
 
-import java.io.Serializable;
-import java.util.Objects;
+public class LojaDTO {
 
-@Entity
-@Table(name = "tb_loja")
-public class Loja implements Serializable {
-    private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Razão Social não pode ser nulo ou vazio")
     private String razaoSocial;
+    @NotBlank(message = "Nome Fantasia não pode ser nulo ou vazio")
     private String nomeFantasia;
+    @CNPJ(message = "CNPJ inválido")
     private String cnpj;
+    @Nullable
+    @NotEmpty(message = "Campo pode ser nulo mas não pode conter valor vazio")
     private String inscricaoEstadual;
+    @Email(message = "E-mail inválido")
     private String email;
+    @Pattern(regexp = "\\d{2}\\s\\d{4,5}-\\d{4}", message = "Número de celular inválido")
     private String telefone;
+    @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP inválido")
     private String cep;
+    @NotBlank(message = "Endereço não pode ser nulo ou vazio")
     private String endereco;
     private String numero;
     private String bairro;
@@ -29,25 +32,11 @@ public class Loja implements Serializable {
     private String estado;
     private String pais;
 
-    public Loja() {
+    public LojaDTO() {
     }
 
-    public Loja(Long id, String razaoSocial, String nomeFantasia, String cnpj, String inscricaoEstadual, String email, String telefone,
-                String cep, String endereco, String numero, String bairro, String cidade, String estado, String pais) {
-        this.id = id;
-        this.razaoSocial = razaoSocial;
-        this.nomeFantasia = nomeFantasia;
-        this.cnpj = cnpj;
-        this.inscricaoEstadual = inscricaoEstadual;
-        this.email = email;
-        this.telefone = telefone;
-        this.cep = cep;
-        this.endereco = endereco;
-        this.numero = numero;
-        this.bairro = bairro;
-        this.cidade = cidade;
-        this.estado = estado;
-        this.pais = pais;
+    public LojaDTO(Loja entity) {
+        BeanUtils.copyProperties(entity, this);
     }
 
     public Long getId() {
@@ -160,18 +149,5 @@ public class Loja implements Serializable {
 
     public void setPais(String pais) {
         this.pais = pais;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Loja loja = (Loja) o;
-        return Objects.equals(id, loja.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
     }
 }
