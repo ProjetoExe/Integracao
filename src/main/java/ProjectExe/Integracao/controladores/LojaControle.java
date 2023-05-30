@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.controladores;
 
+import ProjectExe.Integracao.dto.ClienteDTO;
 import ProjectExe.Integracao.dto.LojaDTO;
 import ProjectExe.Integracao.servicos.LojaServico;
 import jakarta.validation.Valid;
@@ -20,22 +21,43 @@ public class LojaControle {
 
     //busca por ID
     @GetMapping(value = "/{id}")
-    public ResponseEntity<LojaDTO> findById(@PathVariable Long id){
-        LojaDTO result = lojaServico.findById(id);
-        return ResponseEntity.ok().body(result);
+    public ResponseEntity<LojaDTO> buscarPorId(@PathVariable Long id){
+        LojaDTO resultado = lojaServico.buscarPorId(id);
+        return ResponseEntity.ok().body(resultado);
     }
 
     //busca todas os registros
     @GetMapping
-    public ResponseEntity<List<LojaDTO>> findAll() {
-        List<LojaDTO> result = lojaServico.findAll();
-        return ResponseEntity.ok().body(result);
+    public ResponseEntity<List<LojaDTO>> buscarTodos() {
+        List<LojaDTO> resultado= lojaServico.buscarTodos();
+        return ResponseEntity.ok().body(resultado);
+    }
+
+    //busca registros por Razão Social
+    @GetMapping(value = "/razaoSocial/{razaoSocial}")
+    public ResponseEntity<List<LojaDTO>> buscarPorNome(@PathVariable String razaoSocial) {
+        List<LojaDTO> resultado = lojaServico.buscarPorRazaoSocial(razaoSocial);
+        return ResponseEntity.ok().body(resultado);
+    }
+
+    //busca registros por CNPJ
+    @GetMapping(value = "/cnpj/{cnpj}")
+    public ResponseEntity<List<LojaDTO>> buscarPorCpf(@PathVariable String cnpj) {
+        List<LojaDTO> resultado = lojaServico.buscarPorCNPJ(cnpj);
+        return ResponseEntity.ok().body(resultado);
+    }
+
+    //atualiza dados
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<LojaDTO> atualizar(@PathVariable Long id, @RequestBody LojaDTO dto){
+        LojaDTO entidade = lojaServico.atualizar(id, dto);
+        return ResponseEntity.ok().body(entidade);
     }
 
     //insere novo registro
     @PostMapping
-    public ResponseEntity<LojaDTO> insert(@Valid @RequestBody LojaDTO obj){
-        LojaDTO newDto = lojaServico.insert(obj);
+    public ResponseEntity<LojaDTO> inserir(@Valid @RequestBody LojaDTO obj){
+        LojaDTO newDto = lojaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(newDto.getId()).toUri();
         return ResponseEntity.created(uri).body(newDto);
@@ -43,8 +65,8 @@ public class LojaControle {
 
     //exclui registro por ID
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
-        lojaServico.delete(id);
+    public ResponseEntity<Void> deletar(@PathVariable Long id){
+        lojaServico.deletar(id);
         return ResponseEntity.noContent().build();
     }
 }

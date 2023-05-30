@@ -45,6 +45,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.microsoft.sqlserver</groupId>
+			<artifactId>mssql-jdbc</artifactId>
+			<version>9.5.0.jre17-preview</version>
+		</dependency>
 	</dependencies>
 
 	<build>

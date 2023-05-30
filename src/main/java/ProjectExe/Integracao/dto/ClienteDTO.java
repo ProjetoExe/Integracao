@@ -1,33 +1,29 @@
 package ProjectExe.Integracao.dto;
 
-import ProjectExe.Integracao.entidades.Loja;
+import ProjectExe.Integracao.entidades.Cliente;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import org.hibernate.validator.constraints.br.CNPJ;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.BeanUtils;
 
-public class LojaDTO {
+public class ClienteDTO {
 
     private Long id;
-    @NotBlank(message = "Razão Social não pode ser nulo ou vazio")
-    private String razaoSocial;
-    @NotBlank(message = "Nome Fantasia não pode ser nulo ou vazio")
-    private String nomeFantasia;
-    @CNPJ
-    private String cnpj;
-    @NotEmpty(message = "Campo pode ser nulo mas não pode conter valor vazio")
-    private String inscricaoEstadual;
-    @Email(message = "E-mail inválido")
-    private String email;
+    @NotBlank(message = "Nome não pode ser nulo ou vazio")
+    private String nome;
+    @CPF(message = "CPF inválido")
+    private String cpf;
+    @Pattern(regexp = "\\d{2}\\.\\d{3}\\.\\d{3}-[0-9Xx]")
+    private String rg;
     @Pattern(regexp = "\\d{2}\\s\\d{4,5}-\\d{4}", message = "Número de celular inválido")
     private String celular;
     @Pattern(regexp = "\\d{2}\\s\\d{4}-\\d{4}", message = "Número de telefone inválido")
     private String telefone;
+    @Email(message = "Email inválido")
+    private String email;
     @Pattern(regexp = "\\d{5}-\\d{3}", message = "CEP inválido")
     private String cep;
-    @NotBlank(message = "Endereço não pode ser nulo ou vazio")
     private String endereco;
     private String numero;
     private String bairro;
@@ -36,13 +32,11 @@ public class LojaDTO {
     private String estado;
     private String pais;
 
-    public LojaDTO() {
+    public ClienteDTO() {
     }
 
-    //Construtor com parâmetro da classe Loja para LojaDTO
-    public LojaDTO(Loja entitdade) {
-        BeanUtils.copyProperties(entitdade, this);
-    }
+    //Construtor com parâmetro da classe Cliente para ClienteDTO
+    public ClienteDTO(Cliente entidade){ BeanUtils.copyProperties(entidade, this); }
 
     public Long getId() {
         return id;
@@ -52,36 +46,44 @@ public class LojaDTO {
         this.id = id;
     }
 
-    public String getRazaoSocial() {
-        return razaoSocial;
+    public String getNome() {
+        return nome;
     }
 
-    public void setRazaoSocial(String razaoSocial) {
-        this.razaoSocial = razaoSocial;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getNomeFantasia() {
-        return nomeFantasia;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setNomeFantasia(String nomeFantasia) {
-        this.nomeFantasia = nomeFantasia;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
-    public String getCnpj() {
-        return cnpj;
+    public String getRg() {
+        return rg;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
+    public void setRg(String rg) {
+        this.rg = rg;
     }
 
-    public String getInscricaoEstadual() {
-        return inscricaoEstadual;
+    public String getCelular() {
+        return celular;
     }
 
-    public void setInscricaoEstadual(String inscricaoEstadual) {
-        this.inscricaoEstadual = inscricaoEstadual;
+    public void setCelular(String celular) {
+        this.celular = celular;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getEmail() {
@@ -90,18 +92,6 @@ public class LojaDTO {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getCelular() { return celular; }
-
-    public void setCelular(String celular) { this.celular = celular; }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
     }
 
     public String getCep() {
@@ -148,7 +138,9 @@ public class LojaDTO {
         return estado;
     }
 
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
     public String getPais() {
         return pais;

@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.util.List;
 
 @Service
@@ -18,44 +17,69 @@ public class LojaServico {
 
     //busca por ID
     @Transactional(readOnly = true)
-    public LojaDTO findById(Long id){
-        Loja result = lojaRepositorio.findById(id).get();
-        return new LojaDTO(result);
+    public LojaDTO buscarPorId(Long id) {
+        Loja resultado = lojaRepositorio.findById(id).get();
+        return new LojaDTO(resultado);
     }
 
     //busca todos os registros
     @Transactional(readOnly = true)
-    public List<LojaDTO> findAll(){
-        List<Loja> result = lojaRepositorio.findAll();
-        return result.stream().map(x -> new LojaDTO(x)).toList();
+    public List<LojaDTO> buscarTodos() {
+        List<Loja> resultado = lojaRepositorio.findAll();
+        return resultado.stream().map(x -> new LojaDTO(x)).toList();
+    }
+
+    //busca registros por Razão Social
+    @Transactional(readOnly = true)
+    public List<LojaDTO> buscarPorRazaoSocial(String razaoSocial) {
+        List<LojaDTO> resultado = lojaRepositorio.buscarPorRazaoSocial(razaoSocial);
+        return resultado;
+    }
+
+    //busca registros por CNPJ
+    @Transactional(readOnly = true)
+    public List<LojaDTO> buscarPorCNPJ(String cnpj) {
+        List<LojaDTO> resultado = lojaRepositorio.buscarPorCnpj(cnpj);
+        return resultado;
+    }
+
+    //atualizar dados
+    @Transactional
+    public LojaDTO atualizar(Long id, LojaDTO obj) {
+        Loja entidade = lojaRepositorio.getReferenceById(id);
+        atualizarDados(entidade, obj);
+        return new LojaDTO(lojaRepositorio.save(entidade));
     }
 
     //insere novo registro
-    public LojaDTO insert(LojaDTO obj){
-        Loja entity = new Loja();
-        copyDtoToEntity(obj, entity);
-        entity = lojaRepositorio.save(entity);
-        return new LojaDTO(entity);
+    @Transactional
+    public LojaDTO inserir(LojaDTO obj) {
+        Loja entidade = new Loja();
+        atualizarDados(entidade, obj);
+        return new LojaDTO(lojaRepositorio.save(entidade));
     }
 
     //exclui registro por ID
-    public void delete(Long id){
+    @Transactional
+    public void deletar(Long id) {
         lojaRepositorio.deleteById(id);
     }
 
-    private void copyDtoToEntity(LojaDTO dto, Loja entity) {
-        entity.setRazaoSocial(dto.getRazaoSocial());
-        entity.setNomeFantasia(dto.getNomeFantasia());
-        entity.setCnpj(dto.getCnpj());
-        entity.setInscricaoEstadual(dto.getInscricaoEstadual());
-        entity.setEmail(dto.getEmail());
-        entity.setTelefone(dto.getTelefone());
-        entity.setCep(dto.getCep());
-        entity.setEndereco(dto.getEndereco());
-        entity.setNumero(dto.getNumero());
-        entity.setBairro(dto.getBairro());
-        entity.setCidade(dto.getCidade());
-        entity.setEstado(dto.getEstado());
-        entity.setPais(dto.getPais());
+    //Método para atualizar dados
+    private void atualizarDados(Loja entidade, LojaDTO dto) {
+        entidade.setRazaoSocial(dto.getRazaoSocial());
+        entidade.setNomeFantasia(dto.getNomeFantasia());
+        entidade.setCnpj(dto.getCnpj());
+        entidade.setInscricaoEstadual(dto.getInscricaoEstadual());
+        entidade.setEmail(dto.getEmail());
+        entidade.setCelular(dto.getCelular());
+        entidade.setTelefone(dto.getTelefone());
+        entidade.setCep(dto.getCep());
+        entidade.setEndereco(dto.getEndereco());
+        entidade.setNumero(dto.getNumero());
+        entidade.setBairro(dto.getBairro());
+        entidade.setCidade(dto.getCidade());
+        entidade.setEstado(dto.getEstado());
+        entidade.setPais(dto.getPais());
     }
 }

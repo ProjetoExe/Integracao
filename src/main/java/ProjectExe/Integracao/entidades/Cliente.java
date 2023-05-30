@@ -1,27 +1,27 @@
 package ProjectExe.Integracao.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "lojas")
-public class Loja implements Serializable {
-    private static final long serialVersionUID = 1L;
+@Table(name = "cliente")
+public class Cliente implements Serializable {
+    private static final long SerialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String razaoSocial;
-    private String nomeFantasia;
-    private String cnpj;
-    private String inscricaoEstadual;
-    private String email;
+    private String nome;
+    private String cpf;
+    private String rg;
     private String celular;
     private String telefone;
+    private String email;
     private String cep;
     private String endereco;
     private String numero;
@@ -30,19 +30,22 @@ public class Loja implements Serializable {
     private String estado;
     private String pais;
 
-    public Loja() {
+    @JsonIgnore
+    @OneToMany(mappedBy = "cliente")
+    private List<Venda> vendas = new ArrayList<>();
+
+    public Cliente(){
     }
 
-    public Loja(Long id, String razaoSocial, String nomeFantasia, String cnpj, String inscricaoEstadual, String email, String celular, String telefone,
-                String cep, String endereco, String numero, String bairro, String cidade, String estado, String pais) {
+    public Cliente(Long id, String nome, String cpf, String rg, String celular, String telefone, String email,
+                   String cep, String endereco, String numero, String bairro, String cidade, String estado, String pais) {
         this.id = id;
-        this.razaoSocial = razaoSocial;
-        this.nomeFantasia = nomeFantasia;
-        this.cnpj = cnpj;
-        this.inscricaoEstadual = inscricaoEstadual;
-        this.email = email;
+        this.nome = nome;
+        this.cpf = cpf;
+        this.rg = rg;
         this.celular = celular;
         this.telefone = telefone;
+        this.email = email;
         this.cep = cep;
         this.endereco = endereco;
         this.numero = numero;
@@ -60,44 +63,28 @@ public class Loja implements Serializable {
         this.id = id;
     }
 
-    public String getRazaoSocial() {
-        return razaoSocial;
+    public String getNome() {
+        return nome;
     }
 
-    public void setRazaoSocial(String razaoSocial) {
-        this.razaoSocial = razaoSocial;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
-    public String getNomeFantasia() {
-        return nomeFantasia;
+    public String getCpf() {
+        return cpf;
     }
 
-    public void setNomeFantasia(String nomeFantasia) {
-        this.nomeFantasia = nomeFantasia;
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
-    public String getCnpj() {
-        return cnpj;
+    public String getRg() {
+        return rg;
     }
 
-    public void setCnpj(String cnpj) {
-        this.cnpj = cnpj;
-    }
-
-    public String getInscricaoEstadual() {
-        return inscricaoEstadual;
-    }
-
-    public void setInscricaoEstadual(String inscricaoEstadual) {
-        this.inscricaoEstadual = inscricaoEstadual;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setRg(String rg) {
+        this.rg = rg;
     }
 
     public String getCelular() {
@@ -114,6 +101,14 @@ public class Loja implements Serializable {
 
     public void setTelefone(String telefone) {
         this.telefone = telefone;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getCep() {
@@ -172,12 +167,16 @@ public class Loja implements Serializable {
         this.pais = pais;
     }
 
+    public List<Venda> getVendas() {
+        return vendas;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Loja loja = (Loja) o;
-        return Objects.equals(id, loja.id);
+        Cliente cliente = (Cliente) o;
+        return Objects.equals(id, cliente.id);
     }
 
     @Override
