@@ -8,7 +8,10 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.br.CNPJ;
 import org.springframework.beans.BeanUtils;
 
-public class LojaDTO {
+import java.io.Serializable;
+
+public class LojaDTO implements Serializable {
+    private static final long SerialVersionUID = 1L;
 
     private Long id;
     @NotBlank(message = "Razão Social não pode ser nulo ou vazio")
@@ -39,7 +42,7 @@ public class LojaDTO {
     public LojaDTO() {
     }
 
-    //Construtor com parâmetro da classe Loja para LojaDTO
+    //Construtor com parâmetro da classe Loja para LojaDTO / BeanUtils necessita de setter além de getter no DTO
     public LojaDTO(Loja entitdade) {
         BeanUtils.copyProperties(entitdade, this);
     }

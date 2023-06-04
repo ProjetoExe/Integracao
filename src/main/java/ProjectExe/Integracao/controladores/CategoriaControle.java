@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.controladores;
 
-import ProjectExe.Integracao.entidades.Categoria;
+import ProjectExe.Integracao.dto.CategoriaDTO;
+import ProjectExe.Integracao.dto.CategoriaProdutoDTO;
 import ProjectExe.Integracao.servicos.CategoriaServico;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +21,22 @@ public class CategoriaControle {
 
     //busca por ID
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Categoria> buscaPorId(@PathVariable Long id){
-        Categoria resultado = categoriaServico.buscarPorId(id);
+    public ResponseEntity<CategoriaDTO> buscaPorId(@PathVariable Long id){
+        CategoriaDTO resultado = categoriaServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
     }
 
     //busca todas os registros
     @GetMapping
-    public ResponseEntity<List<Categoria>> buscaTodos() {
-        List<Categoria> resultado = categoriaServico.buscarTodos();
+    public ResponseEntity<List<CategoriaDTO>> buscaTodos() {
+        List<CategoriaDTO> resultado = categoriaServico.buscarTodos();
+        return ResponseEntity.ok().body(resultado);
+    }
+
+    //busca por ID trazendo os Produtos da Categoria
+    @GetMapping(value = "/{id}/produtos")
+    public ResponseEntity<CategoriaProdutoDTO> buscarCategoriaProdutoPorId(@PathVariable Long id){
+        CategoriaProdutoDTO resultado = categoriaServico.buscarCategoriaProdutoPorId(id);
         return ResponseEntity.ok().body(resultado);
     }
 }

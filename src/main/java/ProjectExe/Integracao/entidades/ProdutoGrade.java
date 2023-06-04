@@ -2,6 +2,7 @@ package ProjectExe.Integracao.entidades;
 
 import ProjectExe.Integracao.entidades.pk.ProdutoGradePK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -10,13 +11,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "produto_grade")
+@JsonPropertyOrder({"tamanho", "referencia", "codigoDeBarra", "precoVista", "precoPrazo"})
 public class ProdutoGrade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private ProdutoGradePK id = new ProdutoGradePK();
-
-    private String tamanho;
     private String referencia;
     private String codigoDeBarra;
     private BigDecimal precoVista;
@@ -27,7 +27,7 @@ public class ProdutoGrade implements Serializable {
 
     public ProdutoGrade(Produto produto, String tamanho, String referencia, String codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo) {
         id.setProduto(produto);
-        this.tamanho = tamanho;
+        id.setTamanho(tamanho);
         this.referencia = referencia;
         this.codigoDeBarra = codigoDeBarra;
         this.precoVista = precoVista;
@@ -39,9 +39,9 @@ public class ProdutoGrade implements Serializable {
 
     public void setProduto(Produto produto) { id.setProduto(produto); }
 
-    public String getTamanho() { return tamanho; }
+    public String getTamanho() { return id.getTamanho(); }
 
-    public void setTamanho(String tamanho) { this.tamanho = tamanho; }
+    public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
 
     public String getReferencia() { return referencia; }
 

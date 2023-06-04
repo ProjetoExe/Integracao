@@ -1,10 +1,10 @@
 package ProjectExe.Integracao.entidades;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.*;
 
 @Entity
@@ -23,10 +23,11 @@ public class Produto implements Serializable {
 
     @ManyToMany
     @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    @JsonIgnoreProperties("id")
     private Set<Categoria> categorias = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto")
-    private List<ProdutoGrade> produtoGrade = new ArrayList<>();
+    private List<ProdutoGrade> grade = new ArrayList<>();
 
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();
@@ -91,7 +92,7 @@ public class Produto implements Serializable {
         return categorias;
     }
 
-    public List<ProdutoGrade> getProdutoGrade() { return produtoGrade; }
+    public List<ProdutoGrade> getGrade() { return grade; }
 
     //Percorre o venda itens e trás as vendas que o produto está relacionado
     @JsonIgnore

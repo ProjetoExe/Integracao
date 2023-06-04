@@ -1,6 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import ProjectExe.Integracao.entidades.enums.VendaStatus;
 
 @Entity
 @Table(name = "venda")
@@ -19,8 +18,6 @@ public class Venda implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant dataVenda;
     private Integer vendaStatus;
 
@@ -36,17 +33,19 @@ public class Venda implements Serializable {
 
     private BigDecimal frete;
     private BigDecimal desconto;
+    private BigDecimal subTotal;
     private BigDecimal total;
 
     public Venda(){
     }
 
-    public Venda(Long id, Instant dataVenda, VendaStatus vendaStatus, BigDecimal frete, BigDecimal desconto, BigDecimal total, Cliente cliente) {
+    public Venda(Long id, Instant dataVenda, VendaStatus vendaStatus, BigDecimal frete, BigDecimal desconto, BigDecimal subTotal, BigDecimal total, Cliente cliente) {
         this.id = id;
         this.dataVenda = dataVenda;
         setVendaStatus(vendaStatus);
         this.frete = frete;
         this.desconto = desconto;
+        this.subTotal = subTotal;
         this.total = total;
         this.cliente = cliente;
     }
@@ -55,17 +54,11 @@ public class Venda implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId(Long id) { this.id = id; }
 
-    public Instant getDataVenda() {
-        return dataVenda;
-    }
+    public Instant getDataVenda() { return dataVenda; }
 
-    public void setDataVenda(Instant dataVenda) {
-        this.dataVenda = dataVenda;
-    }
+    public void setDataVenda(Instant dataVenda) { this.dataVenda = dataVenda; }
 
     public VendaStatus getVendaStatus() {
         return VendaStatus.codigoStatus(vendaStatus);
@@ -111,6 +104,14 @@ public class Venda implements Serializable {
 
     public Set<VendaItens> getItens(){
         return itens;
+    }
+
+    public BigDecimal getSubTotal(){
+        BigDecimal soma = BigDecimal.valueOf(0.00);
+        for(VendaItens x : itens){
+            soma = soma.add(x.getSubTotal());
+        }
+        return soma;
     }
 
     public BigDecimal getTotal(){

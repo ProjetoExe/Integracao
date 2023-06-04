@@ -1,5 +1,7 @@
 package ProjectExe.Integracao.servicos;
 
+import ProjectExe.Integracao.dto.CategoriaDTO;
+import ProjectExe.Integracao.dto.CategoriaProdutoDTO;
 import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,22 @@ public class CategoriaServico {
 
     //busca por ID
     @Transactional(readOnly = true)
-    public Categoria buscarPorId(Long id){
+    public CategoriaDTO buscarPorId(Long id){
         Categoria resultado = categoriaRepositorio.findById(id).get();
-        return resultado;
+        return new CategoriaDTO(resultado);
     }
 
     //busca todos os registros
     @Transactional(readOnly = true)
-    public List<Categoria> buscarTodos(){
+    public List<CategoriaDTO> buscarTodos(){
         List<Categoria> resultado = categoriaRepositorio.findAll();
-        return resultado;
+        return resultado.stream().map(x -> new CategoriaDTO(x)).toList();
+    }
+
+    //busca por ID trazendo os Produtos da Categoria
+    @Transactional(readOnly = true)
+    public CategoriaProdutoDTO buscarCategoriaProdutoPorId(Long id){
+        Categoria resultado = categoriaRepositorio.findById(id).get();
+        return new CategoriaProdutoDTO(resultado);
     }
 }

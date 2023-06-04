@@ -7,7 +7,10 @@ import jakarta.validation.constraints.Pattern;
 import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.beans.BeanUtils;
 
-public class ClienteDTO {
+import java.io.Serializable;
+
+public class ClienteDTO implements Serializable {
+    private static final long SerialVersionUID = 1L;
 
     private Long id;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
@@ -35,7 +38,7 @@ public class ClienteDTO {
     public ClienteDTO() {
     }
 
-    //Construtor com parâmetro da classe Cliente para ClienteDTO
+    //Construtor com parâmetro da classe Cliente para ClienteDTO / BeanUtils necessita de setter além de getter no DTO
     public ClienteDTO(Cliente entidade){ BeanUtils.copyProperties(entidade, this); }
 
     public Long getId() {

@@ -1,17 +1,12 @@
 package ProjectExe.Integracao.controladores;
 
-import ProjectExe.Integracao.dto.LojaDTO;
-import ProjectExe.Integracao.entidades.Venda;
-import ProjectExe.Integracao.servicos.LojaServico;
+import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.servicos.VendaServico;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/vendas")
@@ -22,15 +17,19 @@ public class VendaControle {
 
     //busca por ID
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Venda> buscaPorId(@PathVariable Long id){
-        Venda resultado = vendaServico.buscarPorId(id);
+    public ResponseEntity<VendaDTO> buscarPorId(@PathVariable Long id){
+        VendaDTO resultado = vendaServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
     }
 
     //busca todas os registros
     @GetMapping
-    public ResponseEntity<List<Venda>> buscaTodos() {
-        List<Venda> resultado = vendaServico.buscarTodos();
+    public ResponseEntity<Page<VendaDTO>> buscarTodos(
+            //@PageableDefault(page = 0, size = 1, sort = "dataVenda", direction = Sort.Direction.ASC)
+            @RequestParam(value = "minData", defaultValue = "") String minData,
+            @RequestParam(value = "maxData", defaultValue = "") String maxData,
+            Pageable pageable) {
+        Page<VendaDTO> resultado = vendaServico.buscarVendasPorData(minData, maxData, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 }
