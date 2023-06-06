@@ -1,10 +1,10 @@
 package ProjectExe.Integracao.entidades;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.*;
 
 @Entity
@@ -19,12 +19,17 @@ public class Produto implements Serializable {
     private String descricaoCurta;
     private String descricaoCompleta;
     private String imgUrl;
+    private Instant dataCadastro;
+    private Instant dataAtualizacao;
     private char ativo;
 
     @ManyToMany
     @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-    @JsonIgnoreProperties("id")
     private Set<Categoria> categorias = new HashSet<>();
+
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
+    private Marca marca;
 
     @OneToMany(mappedBy = "id.produto")
     private List<ProdutoGrade> grade = new ArrayList<>();
@@ -35,13 +40,16 @@ public class Produto implements Serializable {
     public Produto(){
     }
 
-    public Produto(Long id, String nome, String descricaoCurta, String descricaoCompleta, String imgUrl, char ativo) {
+    public Produto(Long id, String nome, String descricaoCurta, String descricaoCompleta, String imgUrl, Instant dataCadastro, Instant dataAtualizacao, char ativo, Marca marca) {
         this.id = id;
         this.nome = nome;
         this.descricaoCurta = descricaoCurta;
         this.descricaoCompleta = descricaoCompleta;
         this.imgUrl = imgUrl;
+        this.dataCadastro = dataCadastro;
+        this.dataAtualizacao = dataAtualizacao;
         this.ativo = ativo;
+        this.marca = marca;
     }
 
     public Long getId() {
@@ -88,11 +96,45 @@ public class Produto implements Serializable {
 
     public void setAtivo(char ativo) { this.ativo = ativo; }
 
-    public Set<Categoria> getCategorias() {
-        return categorias;
-    }
+    public Instant getDataCadastro() { return dataCadastro; }
+
+    public void setDataCadastro(Instant dataCadastro) { this.dataCadastro = dataCadastro; }
+
+    public Instant getDataAtualizacao() { return dataAtualizacao; }
+
+    public void setDataAtualizacao(Instant dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
+
+    public Set<Categoria> getCategorias() { return categorias; }
+
+    public Marca getMarca() { return marca; }
+
+    public void setMarca(Marca marca) { this.marca = marca; }
 
     public List<ProdutoGrade> getGrade() { return grade; }
+
+    public void addProdutoGrade(ProdutoGrade produtoGrade) {
+        if (grade == null){
+            grade = new ArrayList<>();
+        }
+        grade.add(produtoGrade);
+        produtoGrade.setProduto(this);
+    }
+
+    public void removeProdutoGrade(String tamanho){
+        if (grade != null){
+            ProdutoGrade produtoGradeARemover = null;
+            for (ProdutoGrade produtoGrade : grade){
+                if (produtoGrade.getTamanho().equals(tamanho)){
+                    produtoGradeARemover = produtoGrade;
+                    break;
+                }
+            }
+            if (produtoGradeARemover != null){
+                grade.remove(produtoGradeARemover);
+                produtoGradeARemover.setProduto(null);
+            }
+        }
+    }
 
     //Percorre o venda itens e trás as vendas que o produto está relacionado
     @JsonIgnore

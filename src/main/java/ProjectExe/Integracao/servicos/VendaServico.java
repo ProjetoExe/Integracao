@@ -24,7 +24,7 @@ public class VendaServico {
         return new VendaDTO(resultado);
     }
 
-    //busca todos os registros
+    //busca Vendas por Data
     @Transactional(readOnly = true)
     public Page<VendaDTO> buscarVendasPorData(String minData, String maxData, Pageable pageable){
 

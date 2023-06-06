@@ -4,10 +4,10 @@ import ProjectExe.Integracao.dto.ClienteDTO;
 import ProjectExe.Integracao.entidades.Cliente;
 import ProjectExe.Integracao.repositorios.ClienteRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 public class ClienteServico {
@@ -24,22 +24,22 @@ public class ClienteServico {
 
     //busca todos os registros
     @Transactional(readOnly = true)
-    public List<ClienteDTO> buscarTodos() {
-        List<Cliente> resultado = clienteRepositorio.findAll();
-        return resultado.stream().map(x -> new ClienteDTO(x)).toList();
+    public Page<ClienteDTO> buscarTodos(Pageable pageable) {
+        Page<ClienteDTO> resultado = clienteRepositorio.buscarTodos(pageable);
+        return resultado;
     }
 
     //busca registros por nome
     @Transactional(readOnly = true)
-    public List<ClienteDTO> buscarPorNome(String name) {
-        List<ClienteDTO> resultado = clienteRepositorio.buscarPorNome(name);
+    public Page<ClienteDTO> buscarPorNome(String nome, Pageable pageable) {
+        Page<ClienteDTO> resultado = clienteRepositorio.buscarPorNome(nome, pageable);
         return resultado;
     }
 
     //busca registros por CPF
     @Transactional(readOnly = true)
-    public List<ClienteDTO> buscarPorCpf(String cpf) {
-        List<ClienteDTO> resultado = clienteRepositorio.buscarPorCpf(cpf);
+    public Page<ClienteDTO> buscarPorCpf(String cpf, Pageable pageable) {
+        Page<ClienteDTO> resultado = clienteRepositorio.buscarPorCpf(cpf, pageable);
         return resultado;
     }
 
@@ -59,7 +59,7 @@ public class ClienteServico {
         return new ClienteDTO(clienteRepositorio.save(entidade));
     }
 
-    //Método para atualizar dados
+    //Método para criar ou atualizar dados
     private void atualizarDados(Cliente entidade, ClienteDTO dto) {
         entidade.setNome(dto.getNome());
         entidade.setCpf(dto.getCpf());

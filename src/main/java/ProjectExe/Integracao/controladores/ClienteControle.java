@@ -4,12 +4,13 @@ import ProjectExe.Integracao.dto.ClienteDTO;
 import ProjectExe.Integracao.servicos.ClienteServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/clientes")
@@ -27,22 +28,22 @@ public class ClienteControle {
 
     //busca todas os registros
     @GetMapping
-    public ResponseEntity<List<ClienteDTO>> buscarTodos() {
-        List<ClienteDTO> resultado = clienteServico.buscarTodos();
+    public ResponseEntity<Page<ClienteDTO>> buscarTodos(Pageable pageable) {
+        Page<ClienteDTO> resultado = clienteServico.buscarTodos(pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
     //busca registros por nome
     @GetMapping(value = "/nome/{nome}")
-    public ResponseEntity<List<ClienteDTO>> buscarPorNome(@PathVariable String nome) {
-        List<ClienteDTO> resultado = clienteServico.buscarPorNome(nome);
+    public ResponseEntity<Page<ClienteDTO>> buscarPorNome(@PathVariable String nome, Pageable pageable) {
+        Page<ClienteDTO> resultado = clienteServico.buscarPorNome(nome, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
     //busca registros por cpf
     @GetMapping(value = "/cpf/{cpf}")
-    public ResponseEntity<List<ClienteDTO>> buscarPorCpf(@PathVariable String cpf) {
-        List<ClienteDTO> resultado = clienteServico.buscarPorCpf(cpf);
+    public ResponseEntity<Page<ClienteDTO>> buscarPorCpf(@PathVariable String cpf, Pageable pageable) {
+        Page<ClienteDTO> resultado = clienteServico.buscarPorCpf(cpf, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

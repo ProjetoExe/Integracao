@@ -17,7 +17,7 @@ public class ClienteDTO implements Serializable {
     private String nome;
     @CPF(message = "CPF inválido")
     private String cpf;
-    @Pattern(regexp = "\\d{2}\\.\\d{3}\\.\\d{3}-[0-9Xx]")
+    @Pattern(regexp = "\\d{1,2}\\.\\d{3}\\.\\d{3}-[0-9Xx]", message = "Formato de RG inválido")
     private String rg;
     @Pattern(regexp = "\\d{2}\\s\\d{4,5}-\\d{4}", message = "Número de celular inválido")
     private String celular;

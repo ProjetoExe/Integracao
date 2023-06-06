@@ -22,7 +22,7 @@ public class VendaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca todas os registros
+    //busca Vendas por data
     @GetMapping
     public ResponseEntity<Page<VendaDTO>> buscarTodos(
             //@PageableDefault(page = 0, size = 1, sort = "dataVenda", direction = Sort.Direction.ASC)

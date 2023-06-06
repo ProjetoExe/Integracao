@@ -5,14 +5,18 @@ INSERT INTO cliente (nome, cpf, rg, celular, telefone, email, cep, endereco, num
 INSERT INTO categoria (nome) VALUES ('Hardware');
 INSERT INTO categoria (nome) VALUES ('Perifericos');
 
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo) VALUES ('Geforce RTX 3060', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '', 'S');
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo) VALUES ('Mouse Logitech G403', 'Mouse', 'Sensor profissional', '', 'S');
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo) VALUES ('Placa Mãe ASUS', 'Placa Mãe', 'TUF GAMING XXX', '', 'S');
+INSERT INTO marca (nome) VALUES ('GALAX');
+INSERT INTO marca (nome) VALUES ('LOGITECH');
+INSERT INTO marca (nome) VALUES ('ASUS');
 
-INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U', 'RTX30', '7897897897899', 2400.00, 2900.00)
-INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U2', 'RTX30', '7897897897999', 2500.00, 3000.00)
-INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (2, 'U', 'G400', '7897897897888', 235.50, 280.00)
-INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (3, 'U', 'GAMING', '7897897897888', 1000.00, 1100.00)
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Geforce RTX 3060', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '', 'S', 1);
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Mouse Logitech G403', 'Mouse', 'Sensor profissional', '', 'S', 2);
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'Placa Mãe', 'TUF GAMING XXX', '', 'S', 3);
+
+INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U', 'RTX30', '7897897897899', 2400.00, 2900.00);
+INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U2', 'RTX30', '7897897897999', 2500.00, 3000.00);
+INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (2, 'U', 'G400', '7897897897888', 235.50, 280.00);
+INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (3, 'U', 'GAMING', '7897897897888', 1000.00, 1100.00);
 
 INSERT INTO produto_categoria (produto_id, categoria_id) values (1,1);
 INSERT INTO produto_categoria (produto_id, categoria_id) values (2,2);

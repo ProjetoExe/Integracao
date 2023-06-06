@@ -1,29 +1,32 @@
 package ProjectExe.Integracao.dto;
 
-import ProjectExe.Integracao.entidades.Categoria;
-import ProjectExe.Integracao.entidades.Produto;
-import ProjectExe.Integracao.entidades.ProdutoGrade;
-import ProjectExe.Integracao.entidades.VendaItens;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import ProjectExe.Integracao.entidades.*;
+import com.fasterxml.jackson.annotation.*;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.*;
 
+@JsonPropertyOrder({"id", "nome", "descricaoCurta", "descricaoLonga", "descricaoCompleta", "ativo", "imgUrl", "dataCadastro", "dataAtualizacao", "marca", "categorias", "grade"})
+//@JsonIgnoreProperties({"dataCadastro", "dataAtualizacao"})
 public class ProdutoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    @JsonProperty("cod_prod")
     private Long id;
     private String nome;
     private String descricaoCurta;
     private String descricaoCompleta;
     private String imgUrl;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    private Instant dataCadastro;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    private Instant dataAtualizacao;
     private char ativo;
     @JsonIgnoreProperties("id")
     private Set<Categoria> categorias = new HashSet<>();
+    @JsonIgnoreProperties("id")
+    private Marca marca;
     private List<ProdutoGrade> grade = new ArrayList<>();
     private Set<VendaItens> itens = new HashSet<>();
 
@@ -54,6 +57,14 @@ public class ProdutoDTO implements Serializable {
 
     public void setImgUrl(String imgUrl) { this.imgUrl = imgUrl; }
 
+    public Instant getDataCadastro() { return dataCadastro; }
+
+    public void setDataCadastro(Instant dataCadastro) { this.dataCadastro = dataCadastro; }
+
+    public Instant getDataAtualizacao() { return dataAtualizacao; }
+
+    public void setDataAtualizacao(Instant dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
+
     public char getAtivo() { return ativo; }
 
     public void setAtivo(char ativo) { this.ativo = ativo; }
@@ -61,6 +72,10 @@ public class ProdutoDTO implements Serializable {
     public Set<Categoria> getCategorias() { return categorias; }
 
     public void setCategorias(Set<Categoria> categorias) { this.categorias = categorias; }
+
+    public Marca getMarca() { return marca; }
+
+    public void setMarca(Marca marca) { this.marca = marca; }
 
     public List<ProdutoGrade> getGrade() { return grade; }
 
