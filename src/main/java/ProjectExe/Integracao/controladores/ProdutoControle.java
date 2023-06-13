@@ -54,6 +54,20 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(entidade);
     }
 
+    //atualizar dados adicionando uma nova categoria
+//    @PutMapping(value = "/adicionarCategoria/{id}")
+//    public ResponseEntity<ProdutoDTO> adicionarCategoria(@PathVariable Long id, @RequestBody ProdutoDTO dto){
+//        ProdutoDTO entidade = produtoServico.adicionarCategoria(id, dto);
+//        return ResponseEntity.ok().body(entidade);
+//    }
+
+    //atualizar dados removendo uma categoria
+//    @PutMapping(value = "/removerCategoria/{id}")
+//    public ResponseEntity<ProdutoDTO> removerCategoria(@PathVariable Long id, @RequestBody ProdutoDTO dto){
+//        ProdutoDTO entidade = produtoServico.removerCategoria(id, dto);
+//        return ResponseEntity.ok().body(entidade);
+//    }
+
     //inserir novo registro
     @PostMapping
     public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO obj){

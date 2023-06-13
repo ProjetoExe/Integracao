@@ -25,7 +25,7 @@ public class Venda implements Serializable {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "id.venda")
+    @OneToMany(mappedBy = "id.venda", cascade = CascadeType.REMOVE)
     private Set<VendaItens> itens = new HashSet<>();
 
     @OneToOne(mappedBy = "venda", cascade = CascadeType.ALL)

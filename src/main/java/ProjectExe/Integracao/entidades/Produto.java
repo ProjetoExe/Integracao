@@ -106,6 +106,20 @@ public class Produto implements Serializable {
 
     public Set<Categoria> getCategorias() { return categorias; }
 
+    public void addCategoria(Categoria categoria){
+        if(categorias == null){
+            categorias = new HashSet<>();
+        }
+        categorias.add(categoria);
+    }
+
+    public void removeCategoria(Categoria categoria){
+        if(categorias != null){
+            categorias.remove(categoria);
+        }
+        else System.out.println("Nenhuma categoria relacionada a esse Produto");
+    }
+
     public Marca getMarca() { return marca; }
 
     public void setMarca(Marca marca) { this.marca = marca; }

@@ -30,6 +30,11 @@ public class Marca implements Serializable {
         this.nome = nome;
     }
 
+    //Utilizado para definir o código da Marca na inserção do Produto
+    public Marca(Long id) {
+        this.id = id;
+    }
+
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
