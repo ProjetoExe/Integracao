@@ -26,6 +26,13 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(resultado);
     }
 
+    //buscar todos os registros
+    @GetMapping
+    public ResponseEntity<Page<ProdutoDTO>> buscarTodos(Pageable pageable) {
+        Page<ProdutoDTO> resultado = produtoServico.buscarTodos(pageable);
+        return ResponseEntity.ok().body(resultado);
+    }
+
     //buscar Produtos por nome
     @GetMapping(value = "/nome/{nome}")
     public ResponseEntity<Page<ProdutoDTO>> buscarProdutoPorNome(@PathVariable String nome, Pageable pageable){
@@ -40,16 +47,9 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //buscar todos os registros
-    @GetMapping
-    public ResponseEntity<Page<ProdutoDTO>> buscarTodos(Pageable pageable) {
-        Page<ProdutoDTO> resultado = produtoServico.buscarTodos(pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
     //atualizar dados
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProdutoDTO> atualizar(@PathVariable Long id, @RequestBody ProdutoDTO dto){
+    public ResponseEntity<ProdutoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
         ProdutoDTO entidade = produtoServico.atualizar(id, dto);
         return ResponseEntity.ok().body(entidade);
     }
@@ -75,5 +75,12 @@ public class ProdutoControle {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
+    }
+
+    //exclui um registro
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id){
+        produtoServico.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

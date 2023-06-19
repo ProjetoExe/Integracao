@@ -6,8 +6,12 @@ import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
+import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,32 +32,45 @@ public class ProdutoServico {
     @Autowired
     CategoriaRepositorio categoriaRepositorio;
 
-    //busca por ID
+    //buscar por ID
     @Transactional(readOnly = true)
     public ProdutoDTO buscarPorId(Long id){
         Optional<Produto> resultado = produtoRepositorio.findById(id);
         return resultado.map(ProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
-    //busca Produtos por Nome
-    @Transactional(readOnly = true)
-    public Page<ProdutoDTO> buscarProdutoPorNome(String nome, Pageable pageable){
-        Page<ProdutoDTO> resultado = produtoRepositorio.buscarProdutoPorNome(nome, pageable);
-        return resultado;
-    }
-
-    //busca Produtos ativos
-    @Transactional(readOnly = true)
-    public Page<ProdutoDTO> buscarProdutosAtivos(Pageable pageable){
-        Page<ProdutoDTO> resultado = produtoRepositorio.buscarProdutosAtivos(pageable);
-        return resultado;
-    }
-
-    //busca todos os registros
+    //buscar todos os registros
     @Transactional(readOnly = true)
     public Page<ProdutoDTO> buscarTodos(Pageable pageable){
-        Page<ProdutoDTO> resultado = produtoRepositorio.buscarTodos(pageable);
-        return resultado;
+        Page<Produto> resultado = produtoRepositorio.buscarTodos(pageable);
+        return resultado.map(ProdutoDTO::new);
+    }
+
+    //buscar Produtos por Nome
+    @Transactional(readOnly = true)
+    public Page<ProdutoDTO> buscarProdutoPorNome(String nome, Pageable pageable){
+        Page<Produto> resultado = produtoRepositorio.buscarProdutoPorNome(nome, pageable);
+        return resultado.map(ProdutoDTO::new);
+    }
+
+    //buscar Produtos ativos
+    @Transactional(readOnly = true)
+    public Page<ProdutoDTO> buscarProdutosAtivos(Pageable pageable){
+        Page<Produto> resultado = produtoRepositorio.buscarProdutosAtivos(pageable);
+        return resultado.map(ProdutoDTO::new);
+    }
+
+    //atualizar registro
+    @Transactional
+    public ProdutoDTO atualizar(Long id, ProdutoDTO obj){
+        try {
+            Produto entidade = produtoRepositorio.getReferenceById(id);
+            atualizarDados(entidade, obj);
+            //atualizarListaCategoria(entidade, obj);
+            return new ProdutoDTO(produtoRepositorio.save(entidade));
+        }catch (EntityNotFoundException e){
+            throw new ExcecaoRecursoNaoEncontrado(id);
+        }
     }
 
     //inserir novo registro
@@ -65,13 +82,16 @@ public class ProdutoServico {
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
-    //atualizar dados
-    @Transactional
-    public ProdutoDTO atualizar(Long id, ProdutoDTO obj){
-        Produto entidade = produtoRepositorio.getReferenceById(id);
-        atualizarDados(entidade, obj);
-        //atualizarListaCategoria(entidade, obj);
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    //excluir um registro
+    //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    public void deletar(Long id) {
+        try {
+            produtoRepositorio.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new ExcecaoRecursoNaoEncontrado(id);
+        }catch (DataIntegrityViolationException e){
+            throw new ExcecaoBancoDeDados(e.getMessage());
+        }
     }
 
     //atualizar dados removendo uma categoria
@@ -103,7 +123,7 @@ public class ProdutoServico {
 //        entidade.getCategorias().addAll(categorias);
 //    }
 
-    //Método para criar ou atualizar dados
+    //Método utilizado no método de inserir e atualizar dados
     private void atualizarDados(Produto entidade, ProdutoDTO dto){
         Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Marca não encontrada"));

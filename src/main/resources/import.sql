@@ -1,13 +1,18 @@
 INSERT INTO lojas (razao_Social, nome_Fantasia, cnpj, inscricao_Estadual, email, celular, telefone, cep, endereco, numero, bairro, cidade, estado, pais) VALUES ('PROJETO EXE LTDA', 'PROJETO EXE', '20214754000151', '529971505286', 'projeto.exe123@gmail.com', '16 99723-4150', '16 9723-4150', '14804-072','Rua Benedito Barbosa', '101', 'Vale do Sol', 'Araraquara', 'SP', 'Brasil');
 
 INSERT INTO cliente (nome, cpf, rg, celular, telefone, email, cep, endereco, numero, bairro, cidade, estado, pais) VALUES ('Gustavo', '483.366.048-20', '55.040.121-0', '16 99723-4150', '16 9723-4150', 'gustavoventura@gmail.com', '14804-072', 'Rua Benedito Barbosa', '101', 'Vale do Sol', 'Araraquara', 'SP', 'Brasil');
+INSERT INTO cliente (nome, cpf, rg, celular, telefone, email, cep, endereco, numero, bairro, cidade, estado, pais) VALUES ('Aparecido', '936.189.728-49', '09.656.718-1', '16 98100-7730', '16 8100-7730', 'aparecido854@gmail.com', '14804-072', 'Rua Benedito Barbosa', '101', 'Vale do Sol', 'Araraquara', 'SP', 'Brasil');
 
 INSERT INTO categoria (nome) VALUES ('Hardware');
 INSERT INTO categoria (nome) VALUES ('Perifericos');
+INSERT INTO categoria (nome) VALUES ('Computadores');
+INSERT INTO categoria (nome) VALUES ('Games');
 
 INSERT INTO marca (nome) VALUES ('GALAX');
 INSERT INTO marca (nome) VALUES ('LOGITECH');
 INSERT INTO marca (nome) VALUES ('ASUS');
+INSERT INTO marca (nome) VALUES ('GIGABYTE');
+INSERT INTO marca (nome) VALUES ('ZOTAC');
 
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Geforce RTX 3060', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '', 'S', 1);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Mouse Logitech G403', 'Mouse', 'Sensor profissional', '', 'S', 2);

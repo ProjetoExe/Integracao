@@ -1,16 +1,16 @@
 package ProjectExe.Integracao.controladores;
 
-import ProjectExe.Integracao.dto.ClienteDTO;
 import ProjectExe.Integracao.dto.LojaDTO;
 import ProjectExe.Integracao.servicos.LojaServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/lojas")
@@ -19,42 +19,42 @@ public class LojaControle {
     @Autowired
     private LojaServico lojaServico;
 
-    //busca por ID
+    //buscar por ID
     @GetMapping(value = "/{id}")
     public ResponseEntity<LojaDTO> buscarPorId(@PathVariable Long id){
         LojaDTO resultado = lojaServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca todas os registros
+    //buscar todas os registros
     @GetMapping
-    public ResponseEntity<List<LojaDTO>> buscarTodos() {
-        List<LojaDTO> resultado= lojaServico.buscarTodos();
+    public ResponseEntity<Page<LojaDTO>> buscarTodos(Pageable pageable) {
+        Page<LojaDTO> resultado= lojaServico.buscarTodos(pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca registros por Razão Social
+    //buscar registros por Razão Social
     @GetMapping(value = "/razaoSocial/{razaoSocial}")
-    public ResponseEntity<List<LojaDTO>> buscarPorNome(@PathVariable String razaoSocial) {
-        List<LojaDTO> resultado = lojaServico.buscarPorRazaoSocial(razaoSocial);
+    public ResponseEntity<Page<LojaDTO>> buscarPorNome(@PathVariable String razaoSocial, Pageable pageable) {
+        Page<LojaDTO> resultado = lojaServico.buscarPorRazaoSocial(razaoSocial, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca registros por CNPJ
+    //buscar registros por CNPJ
     @GetMapping(value = "/cnpj/{cnpj}")
-    public ResponseEntity<List<LojaDTO>> buscarPorCpf(@PathVariable String cnpj) {
-        List<LojaDTO> resultado = lojaServico.buscarPorCNPJ(cnpj);
+    public ResponseEntity<Page<LojaDTO>> buscarPorCpf(@PathVariable String cnpj, Pageable pageable) {
+        Page<LojaDTO> resultado = lojaServico.buscarPorCNPJ(cnpj, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
-    //atualiza dados
+    //atualizar um registro
     @PutMapping(value = "/{id}")
-    public ResponseEntity<LojaDTO> atualizar(@PathVariable Long id, @RequestBody LojaDTO dto){
+    public ResponseEntity<LojaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody LojaDTO dto){
         LojaDTO entidade = lojaServico.atualizar(id, dto);
         return ResponseEntity.ok().body(entidade);
     }
 
-    //insere novo registro
+    //inserir um registro
     @PostMapping
     public ResponseEntity<LojaDTO> inserir(@Valid @RequestBody LojaDTO obj){
         LojaDTO newDto = lojaServico.inserir(obj);
@@ -63,7 +63,7 @@ public class LojaControle {
         return ResponseEntity.created(uri).body(newDto);
     }
 
-    //exclui registro por ID
+    //excluir registro
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         lojaServico.deletar(id);

@@ -3,11 +3,18 @@ package ProjectExe.Integracao.servicos;
 import ProjectExe.Integracao.dto.LojaDTO;
 import ProjectExe.Integracao.entidades.Loja;
 import ProjectExe.Integracao.repositorios.LojaRepositorio;
+import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
+import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LojaServico {
@@ -15,43 +22,35 @@ public class LojaServico {
     @Autowired
     private LojaRepositorio lojaRepositorio;
 
-    //busca por ID
+    //buscar por ID
     @Transactional(readOnly = true)
     public LojaDTO buscarPorId(Long id) {
-        Loja resultado = lojaRepositorio.findById(id).get();
-        return new LojaDTO(resultado);
+        Optional<Loja> resultado = lojaRepositorio.findById(id);
+        return resultado.map(LojaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
-    //busca todos os registros
+    //buscar todos os registros
     @Transactional(readOnly = true)
-    public List<LojaDTO> buscarTodos() {
-        List<Loja> resultado = lojaRepositorio.findAll();
-        return resultado.stream().map(x -> new LojaDTO(x)).toList();
+    public Page<LojaDTO> buscarTodos(Pageable pageable) {
+        Page<Loja> resultado = lojaRepositorio.buscarTodos(pageable);
+        return resultado.map(LojaDTO::new);
     }
 
-    //busca registros por Razão Social
+    //buscar registros por Razão Social
     @Transactional(readOnly = true)
-    public List<LojaDTO> buscarPorRazaoSocial(String razaoSocial) {
-        List<LojaDTO> resultado = lojaRepositorio.buscarPorRazaoSocial(razaoSocial);
-        return resultado;
+    public Page<LojaDTO> buscarPorRazaoSocial(String razaoSocial, Pageable pageable) {
+        Page<Loja> resultado = lojaRepositorio.buscarPorRazaoSocial(razaoSocial, pageable);
+        return resultado.map(LojaDTO::new);
     }
 
-    //busca registros por CNPJ
+    //buscar registros por CNPJ
     @Transactional(readOnly = true)
-    public List<LojaDTO> buscarPorCNPJ(String cnpj) {
-        List<LojaDTO> resultado = lojaRepositorio.buscarPorCnpj(cnpj);
-        return resultado;
+    public Page<LojaDTO> buscarPorCNPJ(String cnpj, Pageable pageable) {
+        Page<Loja> resultado = lojaRepositorio.buscarPorCnpj(cnpj, pageable);
+        return resultado.map(LojaDTO::new);
     }
 
-    //atualizar dados
-    @Transactional
-    public LojaDTO atualizar(Long id, LojaDTO obj) {
-        Loja entidade = lojaRepositorio.getReferenceById(id);
-        atualizarDados(entidade, obj);
-        return new LojaDTO(lojaRepositorio.save(entidade));
-    }
-
-    //insere novo registro
+    //inserir novo registro
     @Transactional
     public LojaDTO inserir(LojaDTO obj) {
         Loja entidade = new Loja();
@@ -59,13 +58,31 @@ public class LojaServico {
         return new LojaDTO(lojaRepositorio.save(entidade));
     }
 
-    //exclui registro por ID
+    //atualizar um registro
     @Transactional
-    public void deletar(Long id) {
-        lojaRepositorio.deleteById(id);
+    public LojaDTO atualizar(Long id, LojaDTO obj) {
+        try {
+            Loja entidade = lojaRepositorio.getReferenceById(id);
+            atualizarDados(entidade, obj);
+            return new LojaDTO(lojaRepositorio.save(entidade));
+        }catch (EntityNotFoundException e){
+            throw new ExcecaoRecursoNaoEncontrado(id);
+        }
     }
 
-    //Método para atualizar dados
+    //excluir registro por ID
+    //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    public void deletar(Long id) {
+        try {
+            lojaRepositorio.deleteById(id);
+        }catch (EmptyResultDataAccessException e){
+            throw new ExcecaoRecursoNaoEncontrado(id);
+        }catch (DataIntegrityViolationException e){
+            throw new ExcecaoBancoDeDados(e.getMessage());
+        }
+    }
+
+    //Método para inserir ou atualizar dados
     private void atualizarDados(Loja entidade, LojaDTO dto) {
         entidade.setRazaoSocial(dto.getRazaoSocial());
         entidade.setNomeFantasia(dto.getNomeFantasia());
