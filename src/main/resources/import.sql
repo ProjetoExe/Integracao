@@ -14,9 +14,9 @@ INSERT INTO marca (nome) VALUES ('ASUS');
 INSERT INTO marca (nome) VALUES ('GIGABYTE');
 INSERT INTO marca (nome) VALUES ('ZOTAC');
 
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Geforce RTX 3060', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '', 'S', 1);
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Mouse Logitech G403', 'Mouse', 'Sensor profissional', '', 'S', 2);
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, img_Url, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'Placa Mãe', 'TUF GAMING XXX', '', 'S', 3);
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, ativo, marca_id) VALUES ('Geforce RTX 3060', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', 'S', 1);
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, ativo, marca_id) VALUES ('Mouse Logitech G403', 'Mouse', 'Sensor profissional', 'S', 2);
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'Placa Mãe', 'TUF GAMING XXX', 'S', 3);
 
 INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U', 'RTX30', '7897897897899', 2400.00, 2900.00);
 INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U2', 'RTX30', '7897897897999', 2500.00, 3000.00);

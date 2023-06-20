@@ -17,12 +17,12 @@ public class ProdutoDTO implements Serializable {
     private String nome;
     private String descricaoCurta;
     private String descricaoCompleta;
-    private String imgUrl;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant dataAtualizacao;
     private char ativo;
+    private List<ProdutoImagem> imagens = new ArrayList<>();
     @JsonIgnoreProperties("id")
     private Set<Categoria> categorias = new HashSet<>();
     @JsonIgnoreProperties("id")
@@ -53,9 +53,13 @@ public class ProdutoDTO implements Serializable {
 
     public void setDescricaoCompleta(String descricaoCompleta) { this.descricaoCompleta = descricaoCompleta; }
 
-    public String getImgUrl() { return imgUrl; }
+    public List<ProdutoImagem> getImagens() { return imagens; }
 
-    public void setImgUrl(String imgUrl) { this.imgUrl = imgUrl; }
+    public void addImagem(ProdutoImagem imagem) { imagens.add(imagem); }
+
+    public void setImagens(List<ProdutoImagem> imagens) { this.imagens = imagens; }
+
+    public void removeImagem(ProdutoImagem imagem) { imagens.remove(imagem); }
 
     public Instant getDataCadastro() { return dataCadastro; }
 

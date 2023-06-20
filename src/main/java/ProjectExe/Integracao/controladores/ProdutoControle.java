@@ -1,7 +1,10 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
+import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
+import ProjectExe.Integracao.servicos.enums.OperacaoImagem;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,19 +57,20 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(entidade);
     }
 
-    //atualizar dados adicionando uma nova categoria
-//    @PutMapping(value = "/adicionarCategoria/{id}")
-//    public ResponseEntity<ProdutoDTO> adicionarCategoria(@PathVariable Long id, @RequestBody ProdutoDTO dto){
-//        ProdutoDTO entidade = produtoServico.adicionarCategoria(id, dto);
-//        return ResponseEntity.ok().body(entidade);
-//    }
-
-    //atualizar dados removendo uma categoria
-//    @PutMapping(value = "/removerCategoria/{id}")
-//    public ResponseEntity<ProdutoDTO> removerCategoria(@PathVariable Long id, @RequestBody ProdutoDTO dto){
-//        ProdutoDTO entidade = produtoServico.removerCategoria(id, dto);
-//        return ResponseEntity.ok().body(entidade);
-//    }
+    //atualizar imagens de um Produto
+    @RequestMapping(value = "/{id}/imagens", method = {RequestMethod.POST, RequestMethod.DELETE})
+    public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody ProdutoImagem produtoImagem, HttpServletRequest request){
+        String metodo = request.getMethod();
+        ProdutoDTO entidade;
+        if (metodo.equals("POST")) {
+            entidade = produtoServico.atualizarImagem(id, produtoImagem, OperacaoImagem.ADICIONAR);
+        }else if (metodo.equals("DELETE")){
+            entidade = produtoServico.atualizarImagem(id, produtoImagem, OperacaoImagem.REMOVER);
+        }else {
+            throw new UnsupportedOperationException("Método HTTP não suportado: " + metodo);
+        }
+        return ResponseEntity.ok().body(entidade);
+    }
 
     //inserir novo registro
     @PostMapping

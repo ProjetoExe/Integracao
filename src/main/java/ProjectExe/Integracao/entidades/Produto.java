@@ -1,6 +1,5 @@
 package ProjectExe.Integracao.entidades;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -18,10 +17,11 @@ public class Produto implements Serializable {
     private String nome;
     private String descricaoCurta;
     private String descricaoCompleta;
-    private String imgUrl;
     private Instant dataCadastro;
     private Instant dataAtualizacao;
     private char ativo;
+    @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdutoImagem> imagens = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
@@ -31,7 +31,7 @@ public class Produto implements Serializable {
     @JoinColumn(name = "marca_id")
     private Marca marca;
 
-    @OneToMany(mappedBy = "id.produto")
+    @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdutoGrade> grade = new ArrayList<>();
 
     @OneToMany(mappedBy = "id.produto")
@@ -40,12 +40,11 @@ public class Produto implements Serializable {
     public Produto(){
     }
 
-    public Produto(Long id, String nome, String descricaoCurta, String descricaoCompleta, String imgUrl, Instant dataCadastro, Instant dataAtualizacao, char ativo, Marca marca) {
+    public Produto(Long id, String nome, String descricaoCurta, String descricaoCompleta, Instant dataCadastro, Instant dataAtualizacao, char ativo, Marca marca) {
         this.id = id;
         this.nome = nome;
         this.descricaoCurta = descricaoCurta;
         this.descricaoCompleta = descricaoCompleta;
-        this.imgUrl = imgUrl;
         this.dataCadastro = dataCadastro;
         this.dataAtualizacao = dataAtualizacao;
         this.ativo = ativo;
@@ -84,14 +83,6 @@ public class Produto implements Serializable {
         this.descricaoCompleta = descricaoCompleta;
     }
 
-    public String getImgUrl() {
-        return imgUrl;
-    }
-
-    public void setImgUrl(String imgUrl) {
-        this.imgUrl = imgUrl;
-    }
-
     public char getAtivo() { return ativo; }
 
     public void setAtivo(char ativo) { this.ativo = ativo; }
@@ -104,6 +95,18 @@ public class Produto implements Serializable {
 
     public void setDataAtualizacao(Instant dataAtualizacao) { this.dataAtualizacao = dataAtualizacao; }
 
+    public List<ProdutoImagem> getImagens() { return imagens; }
+
+    public void addImagem(ProdutoImagem imagem) {
+        imagens.add(imagem);
+        imagem.setProduto(this);
+    }
+
+    public void removeImagem(ProdutoImagem imagem) {
+        imagens.remove(imagem);
+        imagem.setProduto(null);
+    }
+
     public Set<Categoria> getCategorias() { return categorias; }
 
     public void addCategoria(Categoria categoria){
@@ -114,10 +117,7 @@ public class Produto implements Serializable {
     }
 
     public void removeCategoria(Categoria categoria){
-        if(categorias != null){
-            categorias.remove(categoria);
-        }
-        else System.out.println("Nenhuma categoria relacionada a esse Produto");
+        categorias.remove(categoria);
     }
 
     public Marca getMarca() { return marca; }
@@ -135,23 +135,10 @@ public class Produto implements Serializable {
     }
 
     public void removeProdutoGrade(String tamanho){
-        if (grade != null){
-            ProdutoGrade produtoGradeARemover = null;
-            for (ProdutoGrade produtoGrade : grade){
-                if (produtoGrade.getTamanho().equals(tamanho)){
-                    produtoGradeARemover = produtoGrade;
-                    break;
-                }
-            }
-            if (produtoGradeARemover != null){
-                grade.remove(produtoGradeARemover);
-                produtoGradeARemover.setProduto(null);
-            }
-        }
+        grade.removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
     }
 
     //Percorre o venda itens e trás as vendas que o produto está relacionado
-    @JsonIgnore
     public Set<Venda> getVendas(){
         Set<Venda> set = new HashSet<>();
         for (VendaItens x : itens){

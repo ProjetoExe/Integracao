@@ -2,6 +2,7 @@ package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.BeanUtils;
 
 import java.time.Instant;
@@ -9,6 +10,7 @@ import java.time.Instant;
 public class PagamentoDTO {
 
     private Long id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
     private Instant dataPagamento;
     private Venda venda;
 

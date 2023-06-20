@@ -3,9 +3,12 @@ package ProjectExe.Integracao.servicos;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.entidades.Marca;
 import ProjectExe.Integracao.entidades.Produto;
+import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
+import ProjectExe.Integracao.repositorios.ProdutoImagemRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
+import ProjectExe.Integracao.servicos.enums.OperacaoImagem;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
@@ -25,12 +28,12 @@ public class ProdutoServico {
 
     @Autowired
     private ProdutoRepositorio produtoRepositorio;
-
     @Autowired
-    MarcaRepositorio marcaRepositorio;
-
+    private MarcaRepositorio marcaRepositorio;
     @Autowired
-    CategoriaRepositorio categoriaRepositorio;
+    private CategoriaRepositorio categoriaRepositorio;
+    @Autowired
+    private ProdutoImagemRepositorio produtoImagemRepositorio;
 
     //buscar por ID
     @Transactional(readOnly = true)
@@ -65,20 +68,32 @@ public class ProdutoServico {
     public ProdutoDTO atualizar(Long id, ProdutoDTO obj){
         try {
             Produto entidade = produtoRepositorio.getReferenceById(id);
-            atualizarDados(entidade, obj);
-            //atualizarListaCategoria(entidade, obj);
+            atualizarDadosProduto(entidade, obj);
             return new ProdutoDTO(produtoRepositorio.save(entidade));
         }catch (EntityNotFoundException e){
             throw new ExcecaoRecursoNaoEncontrado(id);
         }
     }
 
+    //atualizar imagens de um Produto
+    @Transactional
+    public ProdutoDTO atualizarImagem(Long id, ProdutoImagem produtoImagem, OperacaoImagem operacao) {
+        Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        if (operacao == OperacaoImagem.ADICIONAR) {
+            entidade.addImagem(produtoImagem);
+        } else if (operacao == OperacaoImagem.REMOVER) {
+            entidade.removeImagem(produtoImagem);
+        } else {
+            throw new IllegalArgumentException("Operação inválida.");
+        }
+        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    }
+
     //inserir novo registro
     @Transactional
     public ProdutoDTO inserir(ProdutoDTO obj){
         Produto entidade = new Produto();
-        atualizarDados(entidade, obj);
-        //atualizarListaCategoria(entidade, obj);
+        atualizarDadosProduto(entidade, obj);
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
@@ -94,43 +109,13 @@ public class ProdutoServico {
         }
     }
 
-    //atualizar dados removendo uma categoria
-//    @Transactional
-//    public ProdutoDTO removerCategoria(Long id, ProdutoDTO obj){
-//        Produto entidade = produtoRepositorio.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
-//        atualizarListaCategoria(entidade, obj);
-//        return new ProdutoDTO(produtoRepositorio.save(entidade));
-//    }
-
-    //atualizar dados adicionando uma nova categoria
-//    @Transactional
-//    public ProdutoDTO adicionarCategoria(Long id, ProdutoDTO obj){
-//        Produto entidade = produtoRepositorio.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
-//        atualizarListaCategoria(entidade, obj);
-//        return new ProdutoDTO(produtoRepositorio.save(entidade));
-//    }
-
-//    private void atualizarListaCategoria(Produto entidade ,ProdutoDTO dto) {
-//        Set<Categoria> categorias = new HashSet<>();
-//        for (Categoria categoriaId : dto.getCategorias()) {
-//            Categoria categoria = categoriaRepositorio.findById(categoriaId.getId())
-//                    .orElseThrow(() -> new IllegalArgumentException("Categoria não encontrada"));
-//            categorias.add(categoria);
-//        }
-//        entidade.getCategorias().clear();
-//        entidade.getCategorias().addAll(categorias);
-//    }
-
     //Método utilizado no método de inserir e atualizar dados
-    private void atualizarDados(Produto entidade, ProdutoDTO dto){
+    private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto){
         Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Marca não encontrada"));
         entidade.setNome(dto.getNome());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
-        entidade.setImgUrl(dto.getImgUrl());
         if (entidade.getId() == null){
             entidade.setDataCadastro(Instant.now());
         } else {
