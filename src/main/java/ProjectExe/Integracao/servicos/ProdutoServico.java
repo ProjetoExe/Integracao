@@ -11,6 +11,7 @@ import ProjectExe.Integracao.repositorios.ProdutoImagemRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
+import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoUnico;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -102,7 +103,7 @@ public class ProdutoServico {
 
     //adicionar categoria ao produto (por ID da Categoria)
     @Transactional
-    public ProdutoDTO adicionarCategoria(Long id, Categoria categoria){
+    public ProdutoDTO inserirCategoria(Long id, Categoria categoria){
         Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
         Categoria categoriaExistente = categoriaRepositorio.findById(categoria.getId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
         entidade.addCategoria(categoriaExistente);
@@ -113,6 +114,9 @@ public class ProdutoServico {
     @Transactional
     public ProdutoDTO removerCategoria(Long id, Long idCategoria){
         Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        if (entidade.getCategorias().size() == 1){
+            throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
+        }
         entidade.getCategorias().removeIf(categoria -> categoria.getId().equals(idCategoria));
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
@@ -132,7 +136,8 @@ public class ProdutoServico {
     //Método utilizado no método de inserir e atualizar dados
     //atualiza marca no produto (por ID da Marca)
     private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto){
-        Marca marca = marcaRepositorio.findById(dto.getMarca().getId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId()));
+        Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca" ));
         entidade.setNome(dto.getNome());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());

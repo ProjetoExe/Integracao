@@ -82,7 +82,7 @@ public class ProdutoControle {
     //adicionar categoria ao produto (por ID da Categoria)
     @PostMapping(value = "/{id}/categorias")
     public ResponseEntity<ProdutoDTO> inserirCategoria(@PathVariable Long id, @RequestBody Categoria categoria){
-        ProdutoDTO entidade = produtoServico.adicionarCategoria(id, categoria);
+        ProdutoDTO entidade = produtoServico.inserirCategoria(id, categoria);
         return ResponseEntity.ok().body(entidade);
     }
 
