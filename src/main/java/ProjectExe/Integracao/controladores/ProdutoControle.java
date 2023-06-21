@@ -3,7 +3,6 @@ package ProjectExe.Integracao.controladores;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
-import ProjectExe.Integracao.servicos.enums.OperacaoImagem;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,18 +56,18 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(entidade);
     }
 
-    //atualizar imagens de um Produto
-    @RequestMapping(value = "/{id}/imagens", method = {RequestMethod.POST, RequestMethod.DELETE})
+    //inserir imagem de um Produto
+    @PostMapping(value = "/{id}/imagens")
     public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody ProdutoImagem produtoImagem, HttpServletRequest request){
         String metodo = request.getMethod();
-        ProdutoDTO entidade;
-        if (metodo.equals("POST")) {
-            entidade = produtoServico.atualizarImagem(id, produtoImagem, OperacaoImagem.ADICIONAR);
-        }else if (metodo.equals("DELETE")){
-            entidade = produtoServico.atualizarImagem(id, produtoImagem, OperacaoImagem.REMOVER);
-        }else {
-            throw new UnsupportedOperationException("Método HTTP não suportado: " + metodo);
-        }
+        ProdutoDTO entidade = produtoServico.inserirImagem(id, produtoImagem);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //remover imagem de um produto
+    @DeleteMapping(value = "/{id}/imagens/{imgUrl}")
+    public ResponseEntity<ProdutoDTO> removerImagem(@PathVariable Long id, @PathVariable String imgUrl){
+        ProdutoDTO entidade = produtoServico.removerImagem(id, imgUrl);
         return ResponseEntity.ok().body(entidade);
     }
 

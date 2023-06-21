@@ -8,7 +8,6 @@ import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoImagemRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
-import ProjectExe.Integracao.servicos.enums.OperacaoImagem;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
@@ -75,16 +74,21 @@ public class ProdutoServico {
         }
     }
 
-    //atualizar imagens de um Produto
+    //inserir imagem no Produto
     @Transactional
-    public ProdutoDTO atualizarImagem(Long id, ProdutoImagem produtoImagem, OperacaoImagem operacao) {
+    public ProdutoDTO inserirImagem(Long id, ProdutoImagem produtoImagem) {
         Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        if (operacao == OperacaoImagem.ADICIONAR) {
-            entidade.addImagem(produtoImagem);
-        } else if (operacao == OperacaoImagem.REMOVER) {
-            entidade.removeImagem(produtoImagem);
-        } else {
-            throw new IllegalArgumentException("Operação inválida.");
+        entidade.addImagem(produtoImagem);
+        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    }
+
+    //remover imagem do Produto
+    @Transactional
+    public ProdutoDTO removerImagem(Long id, String imgUrl){
+        Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        boolean imagemRemovida = entidade.getImagens().removeIf(imagem -> imagem.getImgUrl().equals(imgUrl));
+        if (!imagemRemovida) {
+            throw new ExcecaoRecursoNaoEncontrado("Imagem não encontrada: " + imgUrl);
         }
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
@@ -112,7 +116,7 @@ public class ProdutoServico {
     //Método utilizado no método de inserir e atualizar dados
     private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto){
         Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Marca não encontrada"));
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId()));
         entidade.setNome(dto.getNome());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
