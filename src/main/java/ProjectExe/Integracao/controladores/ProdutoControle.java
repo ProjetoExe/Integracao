@@ -1,9 +1,9 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
+import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,21 +56,6 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(entidade);
     }
 
-    //inserir imagem de um Produto
-    @PostMapping(value = "/{id}/imagens")
-    public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody ProdutoImagem produtoImagem, HttpServletRequest request){
-        String metodo = request.getMethod();
-        ProdutoDTO entidade = produtoServico.inserirImagem(id, produtoImagem);
-        return ResponseEntity.ok().body(entidade);
-    }
-
-    //remover imagem de um produto
-    @DeleteMapping(value = "/{id}/imagens/{imgUrl}")
-    public ResponseEntity<ProdutoDTO> removerImagem(@PathVariable Long id, @PathVariable String imgUrl){
-        ProdutoDTO entidade = produtoServico.removerImagem(id, imgUrl);
-        return ResponseEntity.ok().body(entidade);
-    }
-
     //inserir novo registro
     @PostMapping
     public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO obj){
@@ -78,6 +63,34 @@ public class ProdutoControle {
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
+    }
+
+    //inserir imagem ao produto (por String imgUrl)
+    @PostMapping(value = "/{id}/imagens")
+    public ResponseEntity<ProdutoDTO> inserirImagem(@PathVariable Long id, @RequestBody ProdutoImagem produtoImagem){
+        ProdutoDTO entidade = produtoServico.inserirImagem(id, produtoImagem);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //remover imagem do produto (por String imgUrl)
+    @DeleteMapping(value = "/{id}/imagens/{imgUrl}")
+    public ResponseEntity<ProdutoDTO> removerImagem(@PathVariable Long id, @PathVariable String imgUrl){
+        ProdutoDTO entidade = produtoServico.removerImagem(id, imgUrl);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //adicionar categoria ao produto (por ID da Categoria)
+    @PostMapping(value = "/{id}/categorias")
+    public ResponseEntity<ProdutoDTO> inserirCategoria(@PathVariable Long id, @RequestBody Categoria categoria){
+        ProdutoDTO entidade = produtoServico.adicionarCategoria(id, categoria);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //remover categoria do produto (por ID da Categoria)
+    @DeleteMapping(value = "/{id}/categorias/{categoria}")
+    public ResponseEntity<ProdutoDTO> removerCategoria(@PathVariable Long id, @PathVariable Long categoria){
+        ProdutoDTO entidade = produtoServico.removerCategoria(id, categoria);
+        return ResponseEntity.ok().body(entidade);
     }
 
     //exclui um registro

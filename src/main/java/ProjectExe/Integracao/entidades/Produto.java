@@ -104,15 +104,11 @@ public class Produto implements Serializable {
 
     public void removeImagem(ProdutoImagem imagem) {
         imagens.remove(imagem);
-        imagem.setProduto(null);
     }
 
     public Set<Categoria> getCategorias() { return categorias; }
 
     public void addCategoria(Categoria categoria){
-        if(categorias == null){
-            categorias = new HashSet<>();
-        }
         categorias.add(categoria);
     }
 
@@ -127,9 +123,6 @@ public class Produto implements Serializable {
     public List<ProdutoGrade> getGrade() { return grade; }
 
     public void addProdutoGrade(ProdutoGrade produtoGrade) {
-        if (grade == null){
-            grade = new ArrayList<>();
-        }
         grade.add(produtoGrade);
         produtoGrade.setProduto(this);
     }

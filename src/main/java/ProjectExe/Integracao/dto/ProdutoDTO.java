@@ -2,6 +2,7 @@ package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.*;
 import com.fasterxml.jackson.annotation.*;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ public class ProdutoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
     private Long id;
+    @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
     private String descricaoCurta;
     private String descricaoCompleta;
@@ -55,9 +57,9 @@ public class ProdutoDTO implements Serializable {
 
     public List<ProdutoImagem> getImagens() { return imagens; }
 
-    public void addImagem(ProdutoImagem imagem) { imagens.add(imagem); }
-
     public void setImagens(List<ProdutoImagem> imagens) { this.imagens = imagens; }
+
+    public void addImagem(ProdutoImagem imagem) { imagens.add(imagem); }
 
     public void removeImagem(ProdutoImagem imagem) { imagens.remove(imagem); }
 
