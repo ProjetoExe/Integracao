@@ -1,10 +1,7 @@
 package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
-import ProjectExe.Integracao.entidades.Categoria;
-import ProjectExe.Integracao.entidades.Marca;
-import ProjectExe.Integracao.entidades.Produto;
-import ProjectExe.Integracao.entidades.ProdutoImagem;
+import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoImagemRepositorio;
@@ -22,7 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ProdutoServico {
@@ -40,7 +39,8 @@ public class ProdutoServico {
     @Transactional(readOnly = true)
     public ProdutoDTO buscarPorId(Long id){
         Optional<Produto> resultado = produtoRepositorio.findById(id);
-        return resultado.map(ProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        return resultado.map(ProdutoDTO::new)
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
     //buscar todos os registros
@@ -78,51 +78,18 @@ public class ProdutoServico {
 
     //inserir novo registro
     @Transactional
-    public ProdutoDTO inserir(ProdutoDTO obj){
+    public ProdutoDTO inserir(ProdutoDTO obj, Categoria categoria){
         Produto entidade = new Produto();
         atualizarDadosProduto(entidade, obj);
         entidade.setAtivo('N');
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
-    //inserir imagem ao Produto (por String imgUrl)
-    @Transactional
-    public ProdutoDTO inserirImagem(Long id, ProdutoImagem produtoImagem) {
-        Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        entidade.addImagem(produtoImagem);
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
-    //remover imagem do Produto (por String imgUrl)
-    @Transactional
-    public ProdutoDTO removerImagem(Long id, String imgUrl){
-        Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        entidade.getImagens().removeIf(imagem -> imagem.getImgUrl().equals(imgUrl));
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
-    //adicionar categoria ao produto (por ID da Categoria)
-    @Transactional
-    public ProdutoDTO inserirCategoria(Long id, Categoria categoria){
-        Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        Categoria categoriaExistente = categoriaRepositorio.findById(categoria.getId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        Categoria categoriaExistente = categoriaRepositorio.findById(categoria.getId())
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(categoria.getId()));
         entidade.addCategoria(categoriaExistente);
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
-    //remover categoria do produto (por ID da categoria)
-    @Transactional
-    public ProdutoDTO removerCategoria(Long id, Long idCategoria){
-        Produto entidade = produtoRepositorio.findById(id).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        if (entidade.getCategorias().size() == 1){
-            throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
-        }
-        entidade.getCategorias().removeIf(categoria -> categoria.getId().equals(idCategoria));
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
     //excluir um registro
-    //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    //@Transactional retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
     public void deletar(Long id) {
         try {
             produtoRepositorio.deleteById(id);
@@ -133,8 +100,54 @@ public class ProdutoServico {
         }
     }
 
-    //Método utilizado no método de inserir e atualizar dados
-    //atualiza marca no produto (por ID da Marca)
+    //inserir imagem ao Produto (por String imgUrl)
+    @Transactional
+    public ProdutoDTO atualizarImagens(Long id, List<ProdutoImagem> imagens) {
+        Produto entidade = produtoRepositorio.findById(id)
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        List<ProdutoImagem> imagensExistente = entidade.getImagens();
+        imagensExistente.removeIf(imagemExistente -> !imagens.contains(imagemExistente));
+        imagens.stream()
+                .filter(produtoImagem -> !imagensExistente.contains(produtoImagem))
+                .forEach(produtoImagem -> entidade.addImagem(produtoImagem));
+        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    }
+
+    //adicionar ou remover categoria ao produto (por ID da Categoria)
+    @Transactional
+    public ProdutoDTO atualizarCategorias(Long id, List<Categoria> categorias) {
+        Produto entidade = produtoRepositorio.findById(id)
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        Set<Categoria> categoriasExistente = entidade.getCategorias();
+        if (categorias.isEmpty()){
+            throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
+        }
+        categoriasExistente.removeIf(catExistente -> !categorias.contains(catExistente));
+        categorias.stream()
+                .filter(categoria -> !categoriasExistente.contains(categoria))
+                .forEach(categoriaExistente -> entidade.addCategoria(categoriaExistente));
+        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    }
+
+    //adicionar tamanho ao produto
+    @Transactional
+    public ProdutoDTO adicionarGrade(Long id, ProdutoGrade produtoGrade){
+        Produto entidade = produtoRepositorio.findById(id)
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        entidade.addProdutoGrade(produtoGrade);
+        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    }
+
+    //remover tamanho do produto
+    @Transactional
+    public ProdutoDTO removerGrade(Long id, String tamanho){
+        Produto entidade = produtoRepositorio.findById(id)
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+        entidade.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
+        return new ProdutoDTO(produtoRepositorio.save(entidade));
+    }
+
+    //Método utilizado no método de inserir e atualizar dados, incluindo a Marca
     private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto){
         Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca" ));

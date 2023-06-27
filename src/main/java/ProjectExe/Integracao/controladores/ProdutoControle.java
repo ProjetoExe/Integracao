@@ -2,6 +2,7 @@ package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.entidades.Categoria;
+import ProjectExe.Integracao.entidades.ProdutoGrade;
 import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/produtos")
@@ -58,39 +60,11 @@ public class ProdutoControle {
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO obj){
-        ProdutoDTO entidade = produtoServico.inserir(obj);
+    public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO obj, Categoria categoria){
+        ProdutoDTO entidade = produtoServico.inserir(obj, categoria);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
-    }
-
-    //inserir imagem ao produto (por String imgUrl)
-    @PostMapping(value = "/{id}/imagens")
-    public ResponseEntity<ProdutoDTO> inserirImagem(@PathVariable Long id, @RequestBody ProdutoImagem produtoImagem){
-        ProdutoDTO entidade = produtoServico.inserirImagem(id, produtoImagem);
-        return ResponseEntity.ok().body(entidade);
-    }
-
-    //remover imagem do produto (por String imgUrl)
-    @DeleteMapping(value = "/{id}/imagens/{imgUrl}")
-    public ResponseEntity<ProdutoDTO> removerImagem(@PathVariable Long id, @PathVariable String imgUrl){
-        ProdutoDTO entidade = produtoServico.removerImagem(id, imgUrl);
-        return ResponseEntity.ok().body(entidade);
-    }
-
-    //adicionar categoria ao produto (por ID da Categoria)
-    @PostMapping(value = "/{id}/categorias")
-    public ResponseEntity<ProdutoDTO> inserirCategoria(@PathVariable Long id, @RequestBody Categoria categoria){
-        ProdutoDTO entidade = produtoServico.inserirCategoria(id, categoria);
-        return ResponseEntity.ok().body(entidade);
-    }
-
-    //remover categoria do produto (por ID da Categoria)
-    @DeleteMapping(value = "/{id}/categorias/{categoria}")
-    public ResponseEntity<ProdutoDTO> removerCategoria(@PathVariable Long id, @PathVariable Long categoria){
-        ProdutoDTO entidade = produtoServico.removerCategoria(id, categoria);
-        return ResponseEntity.ok().body(entidade);
     }
 
     //exclui um registro
@@ -98,5 +72,33 @@ public class ProdutoControle {
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         produtoServico.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    //inserir imagem ao produto (por String imgUrl)
+    @PostMapping(value = "/{id}/imagens")
+    public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody List<ProdutoImagem> produtoImagem){
+        ProdutoDTO entidade = produtoServico.atualizarImagens(id, produtoImagem);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //adicionar ou remover categoria ao produto (por ID da Categoria)
+    @PostMapping(value = "/{id}/categorias")
+    public ResponseEntity<ProdutoDTO> atualizarCategorias(@PathVariable Long id, @RequestBody List<Categoria> categoria){
+        ProdutoDTO entidade = produtoServico.atualizarCategorias(id, categoria);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //adicionar tamanho ao produto
+    @PostMapping(value = "/{id}/grade")
+    public ResponseEntity<ProdutoDTO> inserirGrade(@PathVariable Long id, @RequestBody ProdutoGrade produtoGrade){
+        ProdutoDTO entidade = produtoServico.adicionarGrade(id, produtoGrade);
+        return ResponseEntity.ok().body(entidade);
+    }
+
+    //remover tamanho de um produto pelo parâmetro tamanho
+    @DeleteMapping(value = "/{id}/grade/{tamanho}")
+    public ResponseEntity<ProdutoDTO> removerGrade(@PathVariable Long id, @PathVariable String tamanho){
+        ProdutoDTO entidade = produtoServico.removerGrade(id, tamanho);
+        return ResponseEntity.ok().body(entidade);
     }
 }
