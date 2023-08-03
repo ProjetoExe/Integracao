@@ -97,39 +97,13 @@ public class Produto implements Serializable {
 
     public List<ProdutoImagem> getImagens() { return imagens; }
 
-    public void addImagem(ProdutoImagem imagem) {
-        imagens.add(imagem);
-        imagem.setProduto(this);
-    }
-
-    public void removeImagem(ProdutoImagem imagem) {
-        imagens.remove(imagem);
-    }
-
     public Set<Categoria> getCategorias() { return categorias; }
-
-    public void addCategoria(Categoria categoria){
-        categorias.add(categoria);
-    }
-
-    public void removeCategoria(Categoria categoria){
-        categorias.remove(categoria);
-    }
 
     public Marca getMarca() { return marca; }
 
     public void setMarca(Marca marca) { this.marca = marca; }
 
     public List<ProdutoGrade> getGrade() { return grade; }
-
-    public void addProdutoGrade(ProdutoGrade produtoGrade) {
-        grade.add(produtoGrade);
-        produtoGrade.setProduto(this);
-    }
-
-    public void removeProdutoGrade(String tamanho){
-        grade.removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
-    }
 
     //Percorre o venda itens e trás as vendas que o produto está relacionado
     public Set<Venda> getVendas(){

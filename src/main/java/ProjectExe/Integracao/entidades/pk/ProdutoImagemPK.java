@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.entidades.pk;
 
 import ProjectExe.Integracao.entidades.Produto;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -17,7 +16,6 @@ public class ProdutoImagemPK implements Serializable {
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
-    @JsonProperty("Imagens")
     private String imgUrl;
 
     public Produto getProduto() { return produto; }

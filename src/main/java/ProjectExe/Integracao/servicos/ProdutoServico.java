@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
+import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
@@ -43,11 +44,11 @@ public class ProdutoServico {
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
-    //buscar todos os registros
+    //buscar todos os produtos resumidos
     @Transactional(readOnly = true)
-    public Page<ProdutoDTO> buscarTodos(Pageable pageable){
-        Page<Produto> resultado = produtoRepositorio.buscarTodos(pageable);
-        return resultado.map(ProdutoDTO::new);
+    public Page<ProdutoResumidoDTO> buscarProdutosResumido(Pageable pageable){
+        Page<ProdutoResumidoDTO> resultado = produtoRepositorio.buscarProdutosResumido(pageable);
+        return resultado;
     }
 
     //buscar Produtos por Nome
@@ -84,7 +85,7 @@ public class ProdutoServico {
         entidade.setAtivo('N');
         Categoria categoriaExistente = categoriaRepositorio.findById(categoria.getId())
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(categoria.getId()));
-        entidade.addCategoria(categoriaExistente);
+        entidade.getCategorias().add(categoriaExistente);
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
@@ -109,7 +110,12 @@ public class ProdutoServico {
         imagensExistente.removeIf(imagemExistente -> !imagens.contains(imagemExistente));
         imagens.stream()
                 .filter(produtoImagem -> !imagensExistente.contains(produtoImagem))
-                .forEach(produtoImagem -> entidade.addImagem(produtoImagem));
+                .forEach(produtoImagem -> {
+                    if(produtoImagem != null && !produtoImagem.getImgUrl().isEmpty()) {
+                        entidade.getImagens().add(produtoImagem);
+                        produtoImagem.setProduto(entidade);
+                    }
+                });
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
@@ -125,7 +131,7 @@ public class ProdutoServico {
         categoriasExistente.removeIf(catExistente -> !categorias.contains(catExistente));
         categorias.stream()
                 .filter(categoria -> !categoriasExistente.contains(categoria))
-                .forEach(categoriaExistente -> entidade.addCategoria(categoriaExistente));
+                .forEach(categoriaExistente -> entidade.getCategorias().add(categoriaExistente));
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
@@ -134,7 +140,8 @@ public class ProdutoServico {
     public ProdutoDTO adicionarGrade(Long id, ProdutoGrade produtoGrade){
         Produto entidade = produtoRepositorio.findById(id)
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        entidade.addProdutoGrade(produtoGrade);
+        entidade.getGrade().add(produtoGrade);
+        produtoGrade.setProduto(entidade);
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 

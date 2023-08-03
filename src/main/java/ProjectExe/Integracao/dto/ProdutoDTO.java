@@ -7,10 +7,12 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @JsonPropertyOrder({"id", "nome", "descricaoCurta", "descricaoLonga", "descricaoCompleta", "ativo", "imgUrl", "dataCadastro", "dataAtualizacao", "marca", "categorias", "grade"})
-//@JsonIgnoreProperties({"dataCadastro", "dataAtualizacao"})
 public class ProdutoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -19,15 +21,16 @@ public class ProdutoDTO implements Serializable {
     private String nome;
     private String descricaoCurta;
     private String descricaoCompleta;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCadastro;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
     private char ativo;
     private List<ProdutoImagem> imagens = new ArrayList<>();
     @JsonIgnoreProperties("id")
     private Set<Categoria> categorias = new HashSet<>();
     @JsonIgnoreProperties("id")
+    @JsonUnwrapped(suffix = "_marca")
     private Marca marca;
     private List<ProdutoGrade> grade = new ArrayList<>();
     private Set<VendaItens> itens = new HashSet<>();

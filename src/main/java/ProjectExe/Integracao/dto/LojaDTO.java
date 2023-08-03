@@ -43,8 +43,8 @@ public class LojaDTO implements Serializable {
     }
 
     //Construtor com parâmetro da classe Loja para LojaDTO / BeanUtils necessita de setter além de getter no DTO
-    public LojaDTO(Loja entitdade) {
-        BeanUtils.copyProperties(entitdade, this);
+    public LojaDTO(Loja entidade) {
+        BeanUtils.copyProperties(entidade, this);
     }
 
     public Long getId() {

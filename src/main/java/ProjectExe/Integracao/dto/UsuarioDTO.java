@@ -1,16 +1,13 @@
-package ProjectExe.Integracao.entidades;
+package ProjectExe.Integracao.dto;
 
-import jakarta.persistence.*;
+import ProjectExe.Integracao.entidades.Usuario;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "usuario")
-public class Usuario implements Serializable {
+public class UsuarioDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
     private String cpf;
@@ -20,19 +17,11 @@ public class Usuario implements Serializable {
     private char opt_admin;
     private char ativo;
 
-    public Usuario(){
+    public UsuarioDTO(){
     }
 
-    public Usuario(Long id, String nome, String cpf, String usuario, String email, String senha, char opt_admin, char ativo) {
-        this.id = id;
-        this.nome = nome;
-        this.cpf = cpf;
-        this.usuario = usuario;
-        this.email = email;
-        this.senha = senha;
-        this.opt_admin = opt_admin;
-        this.ativo = ativo;
-    }
+    //Construtor com parâmetro da classe Usuario para UsuarioDTO / BeanUtils necessita de setter além de getter no DTO
+    public UsuarioDTO(Usuario entidade){ BeanUtils.copyProperties(entidade, this); }
 
     public Long getId() {
         return id;

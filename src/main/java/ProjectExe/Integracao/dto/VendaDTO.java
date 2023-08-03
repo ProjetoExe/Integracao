@@ -22,7 +22,7 @@ public class VendaDTO implements Serializable {
 
     @JsonProperty("cod_Venda")
     private Long id;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "GMT")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
     private Cliente cliente;
     private Set<VendaItens> itens = new HashSet<>();

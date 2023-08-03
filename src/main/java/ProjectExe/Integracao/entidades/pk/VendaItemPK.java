@@ -2,7 +2,6 @@ package ProjectExe.Integracao.entidades.pk;
 
 import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.entidades.Venda;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;

@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
+import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.entidades.ProdutoGrade;
 import ProjectExe.Integracao.entidades.ProdutoImagem;
@@ -23,17 +24,17 @@ public class ProdutoControle {
     @Autowired
     private ProdutoServico produtoServico;
 
+    //buscar todos os produtos resumidos
+    @GetMapping
+    public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodosResumido(Pageable pageable) {
+        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarProdutosResumido(pageable);
+        return ResponseEntity.ok().body(resultado);
+    }
+
     //buscar por ID
     @GetMapping(value = "/{id}")
     public ResponseEntity<ProdutoDTO> buscarPorId(@PathVariable Long id){
         ProdutoDTO resultado = produtoServico.buscarPorId(id);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar todos os registros
-    @GetMapping
-    public ResponseEntity<Page<ProdutoDTO>> buscarTodos(Pageable pageable) {
-        Page<ProdutoDTO> resultado = produtoServico.buscarTodos(pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
