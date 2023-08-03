@@ -114,6 +114,8 @@ public class Venda implements Serializable {
         return soma;
     }
 
+    public void setSubTotal(BigDecimal subTotal) { this.subTotal = subTotal; }
+
     public BigDecimal getTotal(){
         BigDecimal soma = BigDecimal.valueOf(0.00);
         for(VendaItens x : itens){
@@ -122,6 +124,8 @@ public class Venda implements Serializable {
         BigDecimal total = soma.add(frete).subtract(desconto);
         return total;
     }
+
+    public void setTotal(BigDecimal total) { this.total = total; }
 
     @Override
     public boolean equals(Object o) {
