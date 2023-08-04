@@ -3,7 +3,6 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.Cliente;
 import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
-import ProjectExe.Integracao.entidades.VendaItens;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,8 +14,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"id", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "pagamento", "cliente"})
+@JsonPropertyOrder({"id", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "pagamento", "cliente",})
 public class VendaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -25,7 +25,7 @@ public class VendaDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
     private Cliente cliente;
-    private Set<VendaItens> itens = new HashSet<>();
+    private Set<VendaItensResumidoDTO> itens = new HashSet<>();
     private Pagamento pagamento;
     private Integer vendaStatus;
     private BigDecimal frete;
@@ -37,14 +37,17 @@ public class VendaDTO implements Serializable {
     }
 
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO
-    public VendaDTO(Venda entidade) { BeanUtils.copyProperties(entidade, this); }
+    public VendaDTO(Venda entidade) { BeanUtils.copyProperties(entidade, this);
+        this.itens = entidade.getItens().stream()
+                .map(VendaItensResumidoDTO::new)
+                .collect(Collectors.toSet());
+    }
 
     public Long getId() { return id; }
 
     public void setId(Long id) { this.id = id; }
 
-    public Instant getDataVenda() { return dataVenda;
-    }
+    public Instant getDataVenda() { return dataVenda; }
 
     public void setDataVenda(Instant dataVenda) {
         this.dataVenda = dataVenda;
@@ -92,9 +95,9 @@ public class VendaDTO implements Serializable {
         this.pagamento = pagamento;
     }
 
-    public Set<VendaItens> getItens() { return itens; }
+    public Set<VendaItensResumidoDTO> getItens() { return itens; }
 
-    public void setItens(Set<VendaItens> itens) { this.itens = itens; }
+    public void setItens(Set<VendaItensResumidoDTO> itens) { this.itens = itens; }
 
     public BigDecimal getTotal() { return total; }
 

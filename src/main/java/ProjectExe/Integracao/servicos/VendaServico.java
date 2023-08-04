@@ -15,10 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.Optional;
 
 @Service
@@ -34,22 +32,20 @@ public class VendaServico {
         return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
+    @Transactional
+    public Page<VendaDTO> buscarTodasVendas(Pageable pageable){
+        Page<Venda> resultado = vendaRepositorio.buscarTodasVendas(pageable);
+        return resultado.map(VendaDTO::new);
+    }
+
     //busca todos os registros - Vendas por Data
     @Transactional(readOnly = true)
     public Page<VendaDTO> buscarTodos_VendasPorData(String minData, String maxData, Pageable pageable){
 
-        LocalDate hoje = LocalDate.now();
+        Instant dataInicial = minData.equals("") ? Instant.now().minus(Duration.ofDays(365)) : Instant.parse(minData);
+        Instant dataFinal = maxData.equals("") ? Instant.now() : Instant.parse(maxData);
 
-        LocalDate min = minData.equals("") ? hoje.minusDays(365) : LocalDate.parse(minData);
-        LocalDate max = maxData.equals("") ? hoje : LocalDate.parse(maxData);
-
-        //Converte o horário para Instant para compatibilidade com o tipo da classe Venda
-        Instant instantMin = min.atStartOfDay().toInstant(ZoneOffset.UTC);
-
-        //Atribui o para o horário máximo do dia para trazer todas as vendas até o final do dia independente do fuso horário
-        Instant instantMax = max.atTime(LocalTime.MAX).atZone(ZoneOffset.UTC).toInstant();
-
-        Page<Venda> resultado = vendaRepositorio.buscarVendasPorData(instantMin, instantMax, pageable);
+        Page<Venda> resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
         return resultado.map(VendaDTO::new);
     }
 

@@ -27,9 +27,15 @@ public class VendaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //buscar Vendas por data
     @GetMapping
-    public ResponseEntity<Page<VendaDTO>> buscarTodos(
+    public ResponseEntity<Page<VendaDTO>> buscarTodasVendas(Pageable pageable){
+        Page<VendaDTO> resultado = vendaServico.buscarTodasVendas(pageable);
+        return ResponseEntity.ok().body(resultado);
+    }
+
+    //buscar Vendas por data
+    @GetMapping(path = "/")
+    public ResponseEntity<Page<VendaDTO>> buscarTodos_VendasPorData(
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
             Pageable pageable) {

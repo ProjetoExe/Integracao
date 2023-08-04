@@ -90,7 +90,6 @@ public class ProdutoDTO implements Serializable {
 
     public void setGrade(List<ProdutoGrade> grade) { this.grade = grade; }
 
-    @JsonIgnore
     public Set<VendaItens> getItens() { return itens; }
 
     public void setItens(Set<VendaItens> itens) { this.itens = itens; }

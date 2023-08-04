@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.entidades;
 
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -102,6 +103,7 @@ public class Venda implements Serializable {
         this.pagamento = pagamento;
     }
 
+    @JsonIgnore
     public Set<VendaItens> getItens(){
         return itens;
     }

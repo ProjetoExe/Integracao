@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -106,6 +107,7 @@ public class Produto implements Serializable {
     public List<ProdutoGrade> getGrade() { return grade; }
 
     //Percorre o venda itens e trás as vendas que o produto está relacionado
+    @JsonIgnore
     public Set<Venda> getVendas(){
         Set<Venda> set = new HashSet<>();
         for (VendaItens x : itens){

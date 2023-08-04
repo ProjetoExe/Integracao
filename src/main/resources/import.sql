@@ -41,6 +41,7 @@ INSERT INTO venda (data_Venda, venda_Status, cliente_id, frete, desconto, sub_to
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, sub_total, total) VALUES (1, 1, 1, 2400.00, 0.00, 2400.00, 2400.00);
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, sub_total, total) VALUES (1, 2, 1, 235.50, 10.00, 225.50, 235.50);
 
-INSERT INTO venda (data_Venda, venda_Status, cliente_id, frete, desconto, sub_total, total) VALUES ('2023-06-03T15:01:15-03:00', 2, 1, 0.00, 50.00, 1000.00, 950.00);
+INSERT INTO venda (data_Venda, venda_Status, cliente_id, frete, desconto, sub_total, total) VALUES ('2023-06-03T15:01:15-03:00', 2, 2, 0.00, 50.00, 1000.00, 950.00);
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, sub_total, total) VALUES (2, 3, 1, 1000.00, 0.00, 1000.00, 1000.00);
 
+INSERT INTO pagamento (venda_id, data_Pagamento) VALUES (2, '2023-06-03T15:01:27Z')
