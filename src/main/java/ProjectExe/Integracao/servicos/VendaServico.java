@@ -2,6 +2,7 @@ package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.VendaClienteDTO;
 import ProjectExe.Integracao.dto.VendaDTO;
+import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.repositorios.VendaRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
@@ -15,8 +16,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -32,21 +35,20 @@ public class VendaServico {
         return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
-    @Transactional
-    public Page<VendaDTO> buscarTodasVendas(Pageable pageable){
-        Page<Venda> resultado = vendaRepositorio.buscarTodasVendas(pageable);
-        return resultado.map(VendaDTO::new);
-    }
-
     //busca todos os registros - Vendas por Data
     @Transactional(readOnly = true)
-    public Page<VendaDTO> buscarTodos_VendasPorData(String minData, String maxData, Pageable pageable){
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorData(String minData, String maxData, Pageable pageable){
 
-        Instant dataInicial = minData.equals("") ? Instant.now().minus(Duration.ofDays(365)) : Instant.parse(minData);
-        Instant dataFinal = maxData.equals("") ? Instant.now() : Instant.parse(maxData);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+
+        LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(365) : LocalDate.parse(minData, formatter);
+        LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
+
+        Instant dataInicial = localDateMin.atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant dataFinal = localDateMax.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
 
         Page<Venda> resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
-        return resultado.map(VendaDTO::new);
+        return resultado.map(VendaResumidaDTO::new);
     }
 
     //buscar registros por Cliente

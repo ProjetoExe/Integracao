@@ -2,6 +2,7 @@ package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.VendaClienteDTO;
 import ProjectExe.Integracao.dto.VendaDTO;
+import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.servicos.VendaServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,19 +28,13 @@ public class VendaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<VendaDTO>> buscarTodasVendas(Pageable pageable){
-        Page<VendaDTO> resultado = vendaServico.buscarTodasVendas(pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
     //buscar Vendas por data
-    @GetMapping(path = "/")
-    public ResponseEntity<Page<VendaDTO>> buscarTodos_VendasPorData(
+    @GetMapping
+    public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos_VendasPorData(
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
             Pageable pageable) {
-        Page<VendaDTO> resultado = vendaServico.buscarTodos_VendasPorData(minData, maxData, pageable);
+        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorData(minData, maxData, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
