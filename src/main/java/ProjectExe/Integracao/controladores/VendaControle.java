@@ -1,6 +1,5 @@
 package ProjectExe.Integracao.controladores;
 
-import ProjectExe.Integracao.dto.VendaClienteDTO;
 import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.servicos.VendaServico;
@@ -28,20 +27,14 @@ public class VendaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //buscar Vendas por data
+    //busca todos os registros - vendas por cliente e data
     @GetMapping
     public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos_VendasPorData(
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
+            @RequestParam(value = "cliente_id", defaultValue = "") Long cliente_id,
             Pageable pageable) {
-        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorData(minData, maxData, pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar registros por Cliente
-    @GetMapping(value = "/cliente/{cliente_id}")
-    public ResponseEntity<Page<VendaClienteDTO>> buscarVendasPorCliente(@PathVariable Long cliente_id, Pageable pageable){
-        Page<VendaClienteDTO> resultado = vendaServico.buscarVendasPorCliente(cliente_id, pageable);
+        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorData(cliente_id, minData, maxData, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

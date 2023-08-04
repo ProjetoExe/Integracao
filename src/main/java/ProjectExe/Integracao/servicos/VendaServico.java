@@ -1,6 +1,5 @@
 package ProjectExe.Integracao.servicos;
 
-import ProjectExe.Integracao.dto.VendaClienteDTO;
 import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.entidades.Venda;
@@ -35,9 +34,9 @@ public class VendaServico {
         return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
-    //busca todos os registros - Vendas por Data
+    //busca todos os registros - vendas por cliente e data
     @Transactional(readOnly = true)
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorData(String minData, String maxData, Pageable pageable){
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorData(Long cliente_id ,String minData, String maxData, Pageable pageable){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
@@ -47,15 +46,13 @@ public class VendaServico {
         Instant dataInicial = localDateMin.atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant dataFinal = localDateMax.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
 
-        Page<Venda> resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
+        Page<Venda> resultado;
+        if (cliente_id != null) {
+            resultado = vendaRepositorio.buscarVendasPorClienteEData(cliente_id, dataInicial, dataFinal, pageable);
+        } else {
+            resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
+        }
         return resultado.map(VendaResumidaDTO::new);
-    }
-
-    //buscar registros por Cliente
-    @Transactional(readOnly = true)
-    public Page<VendaClienteDTO> buscarVendasPorCliente(Long cliente_id, Pageable pageable){
-        Page<Venda> resultado = vendaRepositorio.buscarVendasPorCliente(cliente_id, pageable);
-        return resultado.map(VendaClienteDTO::new);
     }
 
     //atualizar um registro - no caso apenas o status da venda atualmente
