@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 
 public class VendaItensResumidoDTO {
 
+    private Long cod_prod;
     private Integer quantidade;
     private BigDecimal preco;
     private BigDecimal desconto;
@@ -14,7 +15,13 @@ public class VendaItensResumidoDTO {
     private BigDecimal total;
 
     //Construtor com parâmetro da classe VendaItens para VendaItensResumidoDTO / BeanUtils necessita de setter além de getter no DTO
-    public VendaItensResumidoDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this); }
+    public VendaItensResumidoDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this);
+        cod_prod = entidade.getProduto().getId();
+    }
+
+    public Long getCod_prod() { return cod_prod; }
+
+    public void setCod_prod(Long cod_prod) { this.cod_prod = cod_prod; }
 
     public Integer getQuantidade() { return quantidade; }
 
