@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -27,27 +29,24 @@ public class VendaServico {
     @Autowired
     private VendaRepositorio vendaRepositorio;
 
-    //busca por ID
+    //busca todos os registros - vendas por id, cliente e data
     @Transactional(readOnly = true)
-    public VendaDTO buscarPorId(Long id){
-        Optional<Venda> resultado = vendaRepositorio.findById(id);
-        return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-    }
-
-    //busca todos os registros - vendas por cliente e data
-    @Transactional(readOnly = true)
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorData(Long cliente_id ,String minData, String maxData, Pageable pageable){
-
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorData(Long id, Long cliente_id ,String minData, String maxData, Pageable pageable){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-
         LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(365) : LocalDate.parse(minData, formatter);
         LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
-
         Instant dataInicial = localDateMin.atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant dataFinal = localDateMax.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
 
-        Page<Venda> resultado;
-        if (cliente_id != null) {
+        Page<Venda> resultado = new PageImpl<>(Collections.emptyList());
+        if(id != null){
+            Optional<Venda> venda = vendaRepositorio.findById(id);
+            if (venda.isPresent()) {
+                resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
+            }else {
+                throw new ExcecaoRecursoNaoEncontrado(id);
+            }
+        } else if (cliente_id != null) {
             resultado = vendaRepositorio.buscarVendasPorClienteEData(cliente_id, dataInicial, dataFinal, pageable);
         } else {
             resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
