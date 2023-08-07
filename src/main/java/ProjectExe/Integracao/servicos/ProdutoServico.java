@@ -15,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -38,48 +40,44 @@ public class ProdutoServico {
 
     //buscar por ID
     @Transactional(readOnly = true)
-    public ProdutoDTO buscarPorId(Long id){
+    public ProdutoDTO buscarPorId(Long id) {
         Optional<Produto> resultado = produtoRepositorio.findById(id);
         return resultado.map(ProdutoDTO::new)
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
     }
 
-    //buscar todos os produtos resumidos
+    //busca produtos por id, nome e ativo
     @Transactional(readOnly = true)
-    public Page<ProdutoResumidoDTO> buscarProdutosResumido(Pageable pageable){
-        Page<ProdutoResumidoDTO> resultado = produtoRepositorio.buscarProdutosResumido(pageable);
-        return resultado;
-    }
-
-    //buscar Produtos por Nome
-    @Transactional(readOnly = true)
-    public Page<ProdutoDTO> buscarProdutoPorNome(String nome, Pageable pageable){
-        Page<Produto> resultado = produtoRepositorio.buscarProdutoPorNome(nome, pageable);
-        return resultado.map(ProdutoDTO::new);
-    }
-
-    //buscar Produtos ativos
-    @Transactional(readOnly = true)
-    public Page<ProdutoDTO> buscarProdutosAtivos(Pageable pageable){
-        Page<Produto> resultado = produtoRepositorio.buscarProdutosAtivos(pageable);
-        return resultado.map(ProdutoDTO::new);
+    public Page<ProdutoResumidoDTO> buscarTodos_ProdutosPorIdENomeEAtivo(Long id, String nome, char ativo, Pageable pageable) {
+        Page<Produto> resultado = new PageImpl<>(Collections.emptyList());
+        if (id != null) {
+            Optional<Produto> produto = produtoRepositorio.findById(id);
+            if (produto.isPresent()) {
+                resultado = new PageImpl<>(Collections.singletonList(produto.get()), pageable, 1);
+            }
+        } else if (!nome.isEmpty()) {
+            resultado = produtoRepositorio.buscarProdutoPorNomeEAtivo(nome, ativo, pageable);
+        } else {
+            resultado = produtoRepositorio.buscarProdutosAtivos(ativo, pageable);
+        }
+        return resultado.map(ProdutoResumidoDTO::new);
     }
 
     //atualizar registro
     @Transactional
-    public ProdutoDTO atualizar(Long id, ProdutoDTO obj){
+    public ProdutoDTO atualizar(Long id, ProdutoDTO obj) {
         try {
             Produto entidade = produtoRepositorio.getReferenceById(id);
             atualizarDadosProduto(entidade, obj);
             return new ProdutoDTO(produtoRepositorio.save(entidade));
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado(id);
         }
     }
 
     //inserir novo registro
     @Transactional
-    public ProdutoDTO inserir(ProdutoDTO obj, Categoria categoria){
+    public ProdutoDTO inserir(ProdutoDTO obj, Categoria categoria) {
         Produto entidade = new Produto();
         atualizarDadosProduto(entidade, obj);
         entidade.setAtivo('N');
@@ -94,9 +92,9 @@ public class ProdutoServico {
     public void deletar(Long id) {
         try {
             produtoRepositorio.deleteById(id);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new ExcecaoRecursoNaoEncontrado(id);
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
     }
@@ -111,7 +109,7 @@ public class ProdutoServico {
         imagens.stream()
                 .filter(produtoImagem -> !imagensExistente.contains(produtoImagem))
                 .forEach(produtoImagem -> {
-                    if(produtoImagem != null && !produtoImagem.getImgUrl().isEmpty()) {
+                    if (produtoImagem != null && !produtoImagem.getImgUrl().isEmpty()) {
                         entidade.getImagens().add(produtoImagem);
                         produtoImagem.setProduto(entidade);
                     }
@@ -125,7 +123,7 @@ public class ProdutoServico {
         Produto entidade = produtoRepositorio.findById(id)
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
         Set<Categoria> categoriasExistente = entidade.getCategorias();
-        if (categorias.isEmpty()){
+        if (categorias.isEmpty()) {
             throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
         }
         categoriasExistente.removeIf(catExistente -> !categorias.contains(catExistente));
@@ -137,7 +135,7 @@ public class ProdutoServico {
 
     //adicionar tamanho ao produto
     @Transactional
-    public ProdutoDTO adicionarGrade(Long id, ProdutoGrade produtoGrade){
+    public ProdutoDTO adicionarGrade(Long id, ProdutoGrade produtoGrade) {
         Produto entidade = produtoRepositorio.findById(id)
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
         entidade.getGrade().add(produtoGrade);
@@ -147,7 +145,7 @@ public class ProdutoServico {
 
     //remover tamanho do produto
     @Transactional
-    public ProdutoDTO removerGrade(Long id, String tamanho){
+    public ProdutoDTO removerGrade(Long id, String tamanho) {
         Produto entidade = produtoRepositorio.findById(id)
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
         entidade.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
@@ -155,15 +153,15 @@ public class ProdutoServico {
     }
 
     //Método utilizado no método de inserir e atualizar dados, incluindo a Marca
-    private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto){
+    private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto) {
         Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca" ));
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca"));
         entidade.setNome(dto.getNome());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
-        if (entidade.getId() == null){
+        if (entidade.getId() == null) {
             entidade.setDataCadastro(Instant.now());
-        }else {
+        } else {
             entidade.setDataAtualizacao(Instant.now());
         }
         entidade.setMarca(marca);

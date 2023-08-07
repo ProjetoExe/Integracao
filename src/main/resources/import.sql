@@ -22,7 +22,7 @@ INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, a
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 'S', 3);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Memória RAM Kingston 16GB', 'Memória RAM', 'C16, 3666MHz', '2023-05-27T20:21:47.741', 'S', 6);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('SDD Kingston 256GB', 'SSD', 'SSD 500MB/s Leitura / 450MB/s Escrita', '2023-05-27T20:21:47.741', 'S', 6);
-INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Monitor ', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 'S', 7);
+INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Monitor ', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 'N', 7);
 
 INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U', 'RTX30', '7897897897899', 2400.00, 2900.00);
 INSERT INTO produto_grade (produto_id, tamanho, referencia, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U2', 'RTX30', '7897897897999', 2500.00, 3000.00);

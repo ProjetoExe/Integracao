@@ -12,9 +12,9 @@ public interface ProdutoRepositorio extends JpaRepository<Produto, Long> {
     @Query(value = "SELECT p FROM Produto p")
     Page<ProdutoResumidoDTO> buscarProdutosResumido(Pageable pageable);
 
-    @Query(value = "SELECT p FROM Produto p WHERE p.nome LIKE %:nome%")
-    Page<Produto> buscarProdutoPorNome(String nome, Pageable pageable);
+    @Query(value = "SELECT p FROM Produto p WHERE p.nome LIKE %:nome% and p.ativo = :ativo")
+    Page<Produto> buscarProdutoPorNomeEAtivo(String nome, char ativo, Pageable pageable);
 
-    @Query(value = "SELECT p FROM Produto p WHERE p.ativo = 'S'")
-    Page<Produto> buscarProdutosAtivos(Pageable pageable);
+    @Query(value = "SELECT p FROM Produto p WHERE p.ativo = :ativo")
+    Page<Produto> buscarProdutosAtivos(char ativo, Pageable pageable);
 }

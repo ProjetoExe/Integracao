@@ -24,13 +24,6 @@ public class ProdutoControle {
     @Autowired
     private ProdutoServico produtoServico;
 
-    //buscar todos os produtos resumidos
-    @GetMapping
-    public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodosResumido(Pageable pageable) {
-        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarProdutosResumido(pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
     //buscar por ID
     @GetMapping(value = "/{id}")
     public ResponseEntity<ProdutoDTO> buscarPorId(@PathVariable Long id){
@@ -38,17 +31,14 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //buscar Produtos por nome
-    @GetMapping(value = "/nome/{nome}")
-    public ResponseEntity<Page<ProdutoDTO>> buscarProdutoPorNome(@PathVariable String nome, Pageable pageable){
-        Page<ProdutoDTO> resultado = produtoServico.buscarProdutoPorNome(nome, pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //busca produtos ativos
-    @GetMapping(value = "/ativos")
-    public ResponseEntity<Page<ProdutoDTO>> buscarProdutosAtivos(Pageable pageable){
-        Page<ProdutoDTO> resultado = produtoServico.buscarProdutosAtivos(pageable);
+    //busca produtos por id, nome e ativo (padrão de produtos ativos)
+    @GetMapping
+    public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodos_ProdutosPorIdENomeEAtivo(
+            @RequestParam(value = "id", defaultValue = "") Long id,
+            @RequestParam(value = "nome", defaultValue = "") String nome,
+            @RequestParam(value = "ativo", defaultValue = "S") char ativo,
+            Pageable pageable) {
+        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodos_ProdutosPorIdENomeEAtivo(id, nome, ativo, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
