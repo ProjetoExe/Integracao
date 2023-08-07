@@ -29,9 +29,15 @@ public class VendaServico {
     @Autowired
     private VendaRepositorio vendaRepositorio;
 
-    //busca todos os registros - vendas por id, cliente e data
+    //busca vendas por ID detalhadamente
+    public VendaDTO buscarPorId(Long id){
+        Optional<Venda> resultado = vendaRepositorio.findById(id);
+        return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+    }
+
+    //busca vendas por id, cliente e data resumidamente
     @Transactional(readOnly = true)
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorData(Long id, Long cliente_id ,String minData, String maxData, Pageable pageable){
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long id, Long cliente_id ,String minData, String maxData, Pageable pageable){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(365) : LocalDate.parse(minData, formatter);
         LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
@@ -43,8 +49,6 @@ public class VendaServico {
             Optional<Venda> venda = vendaRepositorio.findById(id);
             if (venda.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
-            }else {
-                throw new ExcecaoRecursoNaoEncontrado(id);
             }
         } else if (cliente_id != null) {
             resultado = vendaRepositorio.buscarVendasPorClienteEData(cliente_id, dataInicial, dataFinal, pageable);

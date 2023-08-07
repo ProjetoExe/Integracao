@@ -20,7 +20,14 @@ public class VendaControle {
     @Autowired
     private VendaServico vendaServico;
 
-    //busca todos os registros - vendas por id, cliente e data
+    //busca vendas por ID detalhadamente
+    @GetMapping(value = "/id/{id}")
+    public ResponseEntity<VendaDTO> buscarPorId(@PathVariable Long id){
+        VendaDTO resultado = vendaServico.buscarPorId(id);
+        return ResponseEntity.ok().body(resultado);
+    }
+
+    //busca vendas por id, cliente e data resumidamente
     @GetMapping
     public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos_VendasPorData(
             @RequestParam(value = "id", defaultValue = "") Long id,
@@ -28,7 +35,7 @@ public class VendaControle {
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
             Pageable pageable) {
-        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorData(id, cliente_id, minData, maxData, pageable);
+        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorIdEClienteEData(id, cliente_id, minData, maxData, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
