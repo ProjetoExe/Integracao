@@ -6,7 +6,6 @@ import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
-import ProjectExe.Integracao.repositorios.ProdutoImagemRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
@@ -22,11 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 public class ProdutoServico {
@@ -37,8 +32,6 @@ public class ProdutoServico {
     private MarcaRepositorio marcaRepositorio;
     @Autowired
     private CategoriaRepositorio categoriaRepositorio;
-    @Autowired
-    private ProdutoImagemRepositorio produtoImagemRepositorio;
 
     //buscar por ID
     @Transactional(readOnly = true)
@@ -135,7 +128,7 @@ public class ProdutoServico {
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
-    //Método utilizado no método de inserir e atualizar dados, incluindo a Marca
+    //Método utilizado no método de inserir e atualizar dados
     private void atualizarDadosProduto(Produto entidade, ProdutoInsereAtualizaDTO dto) {
         if (entidade.getId() == null) {
             entidade.setDataCadastro(Instant.now());
@@ -145,18 +138,40 @@ public class ProdutoServico {
         entidade.setNome(dto.getNome());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
-        Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca"));
+
+        Marca marca = atualizarOuCadastrarMarca(dto);
         entidade.setMarca(marca);
-        if (dto.getCategorias().isEmpty()) {
+
+        Set<Categoria> categorias = atualizarOuCadastrarCategorias(dto.getCategorias());
+        entidade.getCategorias().clear();
+        entidade.getCategorias().addAll(categorias);
+    }
+
+    //Verifica, atualiza e cadastra a Marca, se necessário
+    private Marca atualizarOuCadastrarMarca(ProdutoInsereAtualizaDTO dto) {
+        return marcaRepositorio.buscarPorNome(dto.getMarca().getNome())
+                .orElseGet(() -> {
+                    Marca novaMarca = new Marca();
+                    novaMarca.setNome(dto.getMarca().getNome());
+                    return marcaRepositorio.save(novaMarca);
+                });
+    }
+
+    //Verifica, atualiza e cadastra as Categorias, se necessário
+    private Set<Categoria> atualizarOuCadastrarCategorias(Set<Categoria> categoriasDTO) {
+        if (categoriasDTO.isEmpty()) {
             throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
-        } else {
-            Set<Categoria> categorias = dto.getCategorias().stream()
-                    .map(categoria -> categoriaRepositorio.findById(categoria.getId())
-                            .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Categoria não encontrada: " + categoria.getId())))
-                    .collect(Collectors.toSet());
-            entidade.getCategorias().clear();
-            entidade.getCategorias().addAll(categorias);
         }
+        Set<Categoria> categorias = new HashSet<>();
+        for (Categoria categoriaDTO : categoriasDTO) {
+            Categoria categoria = categoriaRepositorio.buscarPorNome(categoriaDTO.getNome())
+                    .orElseGet(() -> {
+                        Categoria novaCategoria = new Categoria();
+                        novaCategoria.setNome(categoriaDTO.getNome());
+                        return categoriaRepositorio.save(novaCategoria);
+                    });
+            categorias.add(categoria);
+        }
+        return categorias;
     }
 }

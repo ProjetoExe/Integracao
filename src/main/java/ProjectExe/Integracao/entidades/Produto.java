@@ -16,6 +16,7 @@ public class Produto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String nome;
+    private String referencia;
     private String descricaoCurta;
     private String descricaoCompleta;
     private Instant dataCadastro;
@@ -41,9 +42,10 @@ public class Produto implements Serializable {
     public Produto(){
     }
 
-    public Produto(Long id, String nome, String descricaoCurta, String descricaoCompleta, Instant dataCadastro, Instant dataAtualizacao, char ativo, Marca marca) {
+    public Produto(Long id, String nome, String referencia, String descricaoCurta, String descricaoCompleta, Instant dataCadastro, Instant dataAtualizacao, char ativo, Marca marca) {
         this.id = id;
         this.nome = nome;
+        this.referencia = referencia;
         this.descricaoCurta = descricaoCurta;
         this.descricaoCompleta = descricaoCompleta;
         this.dataCadastro = dataCadastro;
@@ -67,6 +69,10 @@ public class Produto implements Serializable {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    public String getReferencia() { return referencia; }
+
+    public void setReferencia(String referencia) { this.referencia = referencia; }
 
     public String getDescricaoCurta() {
         return descricaoCurta;

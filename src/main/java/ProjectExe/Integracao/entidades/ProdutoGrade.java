@@ -13,13 +13,12 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "produto_grade")
-@JsonPropertyOrder({"tamanho", "referencia", "codigoDeBarra", "precoVista", "precoPrazo"})
+@JsonPropertyOrder({"tamanho", "codigoDeBarra", "precoVista", "precoPrazo"})
 public class ProdutoGrade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private ProdutoGradePK id = new ProdutoGradePK();
-    private String referencia;
     private String codigoDeBarra;
     private BigDecimal precoVista;
     private BigDecimal precoPrazo;
@@ -27,10 +26,9 @@ public class ProdutoGrade implements Serializable {
     public ProdutoGrade(){
     }
 
-    public ProdutoGrade(Produto produto, String tamanho, String referencia, String codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo) {
+    public ProdutoGrade(Produto produto, String tamanho, String codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo) {
         id.setProduto(produto);
         id.setTamanho(tamanho);
-        this.referencia = referencia;
         this.codigoDeBarra = codigoDeBarra;
         this.precoVista = precoVista;
         this.precoPrazo = precoPrazo;
@@ -44,10 +42,6 @@ public class ProdutoGrade implements Serializable {
     public String getTamanho() { return id.getTamanho(); }
 
     public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
-
-    public String getReferencia() { return referencia; }
-
-    public void setReferencia(String referencia) { this.referencia = referencia; }
 
     public String getCodigoDeBarra() { return codigoDeBarra; }
 

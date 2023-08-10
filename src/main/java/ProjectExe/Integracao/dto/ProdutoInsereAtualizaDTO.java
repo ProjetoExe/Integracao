@@ -20,6 +20,7 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private Long id;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
+    private String referencia;
     private String descricaoCurta;
     private String descricaoCompleta;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
@@ -44,6 +45,10 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     public String getNome() { return nome; }
 
     public void setNome(String nome) { this.nome = nome; }
+
+    public String getReferencia() { return referencia; }
+
+    public void setReferencia(String referencia) { this.referencia = referencia; }
 
     public String getDescricaoCurta() { return descricaoCurta; }
 

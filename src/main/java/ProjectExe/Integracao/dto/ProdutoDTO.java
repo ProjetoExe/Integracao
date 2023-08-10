@@ -17,6 +17,7 @@ public class ProdutoDTO implements Serializable {
 
     private Long id;
     private String nome;
+    private String referencia;
     private String descricaoCurta;
     private String descricaoCompleta;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
@@ -48,6 +49,10 @@ public class ProdutoDTO implements Serializable {
     public String getNome() { return nome; }
 
     public void setNome(String nome) { this.nome = nome; }
+
+    public String getReferencia() { return referencia; }
+
+    public void setReferencia(String referencia) { this.referencia = referencia; }
 
     public String getDescricaoCurta() { return descricaoCurta; }
 
