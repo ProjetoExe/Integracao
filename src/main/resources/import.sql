@@ -24,10 +24,10 @@ INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, a
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('SDD Kingston 256GB', 'SSD', 'SSD 500MB/s Leitura / 450MB/s Escrita', '2023-05-27T20:21:47.741', 'S', 6);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Monitor ', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 'N', 7);
 
-INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U', '7897897897899', 2400.00, 2900.00);
-INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo) VALUES (1, 'U2', '7897897897999', 2500.00, 3000.00);
-INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo) VALUES (2, 'U', '7897897897888', 235.50, 280.00);
-INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo) VALUES (3, 'U', '7897897897888', 1000.00, 1100.00);
+INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo, quantidade_estoque) VALUES (1, 'U', '7897897897899', 2400.00, 2900.00, 1);
+INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo, quantidade_estoque) VALUES (1, 'U2', '7897897897999', 2500.00, 3000.00, 3);
+INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo, quantidade_estoque) VALUES (2, 'U', '7897897897888', 235.50, 280.00, 3);
+INSERT INTO produto_grade (produto_id, tamanho, codigo_de_barra, preco_vista, preco_prazo, quantidade_estoque) VALUES (3, 'U', '7897897897888', 1000.00, 1100.00, 2);
 
 INSERT INTO produto_categoria (produto_id, categoria_id) values (1,1);
 INSERT INTO produto_categoria (produto_id, categoria_id) values (2,2);

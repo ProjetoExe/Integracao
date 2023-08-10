@@ -13,7 +13,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "produto_grade")
-@JsonPropertyOrder({"tamanho", "codigoDeBarra", "precoVista", "precoPrazo"})
+@JsonPropertyOrder({"tamanho", "codigoDeBarra", "precoVista", "precoPrazo", "quantidadeEstoque"})
 public class ProdutoGrade implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -22,16 +22,18 @@ public class ProdutoGrade implements Serializable {
     private String codigoDeBarra;
     private BigDecimal precoVista;
     private BigDecimal precoPrazo;
+    private Integer quantidadeEstoque;
 
     public ProdutoGrade(){
     }
 
-    public ProdutoGrade(Produto produto, String tamanho, String codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo) {
+    public ProdutoGrade(Produto produto, String tamanho, String codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo, Integer quantidadeEstoque) {
         id.setProduto(produto);
         id.setTamanho(tamanho);
         this.codigoDeBarra = codigoDeBarra;
         this.precoVista = precoVista;
         this.precoPrazo = precoPrazo;
+        this.quantidadeEstoque = quantidadeEstoque;
     }
 
     @JsonIgnore
@@ -54,6 +56,10 @@ public class ProdutoGrade implements Serializable {
     public BigDecimal getPrecoPrazo() { return precoPrazo; }
 
     public void setPrecoPrazo(BigDecimal precoPrazo) { this.precoPrazo = precoPrazo; }
+
+    public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
+
+    public void setQuantidadeEstoque(Integer quantidadeEstoque) { this.quantidadeEstoque = quantidadeEstoque; }
 
     @Override
     public boolean equals(Object o) {
