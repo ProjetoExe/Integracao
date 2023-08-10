@@ -30,6 +30,7 @@ public class VendaServico {
     private VendaRepositorio vendaRepositorio;
 
     //busca vendas por ID detalhadamente
+    @Transactional(readOnly = true)
     public VendaDTO buscarPorId(Long id){
         Optional<Venda> resultado = vendaRepositorio.findById(id);
         return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));

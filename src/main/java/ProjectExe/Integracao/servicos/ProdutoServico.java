@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
+import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
@@ -25,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoServico {
@@ -65,11 +67,11 @@ public class ProdutoServico {
 
     //atualizar registro
     @Transactional
-    public ProdutoDTO atualizar(Long id, ProdutoDTO obj) {
+    public ProdutoInsereAtualizaDTO atualizar(Long id, ProdutoInsereAtualizaDTO obj) {
         try {
             Produto entidade = produtoRepositorio.getReferenceById(id);
             atualizarDadosProduto(entidade, obj);
-            return new ProdutoDTO(produtoRepositorio.save(entidade));
+            return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado(id);
         }
@@ -77,14 +79,11 @@ public class ProdutoServico {
 
     //inserir novo registro
     @Transactional
-    public ProdutoDTO inserir(ProdutoDTO obj, Categoria categoria) {
+    public ProdutoInsereAtualizaDTO inserir(ProdutoInsereAtualizaDTO obj) {
         Produto entidade = new Produto();
         atualizarDadosProduto(entidade, obj);
         entidade.setAtivo('N');
-        Categoria categoriaExistente = categoriaRepositorio.findById(categoria.getId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(categoria.getId()));
-        entidade.getCategorias().add(categoriaExistente);
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
+        return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
     }
 
     //excluir um registro
@@ -117,22 +116,6 @@ public class ProdutoServico {
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
-    //adicionar ou remover categoria ao produto (por ID da Categoria)
-    @Transactional
-    public ProdutoDTO atualizarCategorias(Long id, List<Categoria> categorias) {
-        Produto entidade = produtoRepositorio.findById(id)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
-        Set<Categoria> categoriasExistente = entidade.getCategorias();
-        if (categorias.isEmpty()) {
-            throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
-        }
-        categoriasExistente.removeIf(catExistente -> !categorias.contains(catExistente));
-        categorias.stream()
-                .filter(categoria -> !categoriasExistente.contains(categoria))
-                .forEach(categoriaExistente -> entidade.getCategorias().add(categoriaExistente));
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
     //adicionar tamanho ao produto
     @Transactional
     public ProdutoDTO adicionarGrade(Long id, ProdutoGrade produtoGrade) {
@@ -153,17 +136,27 @@ public class ProdutoServico {
     }
 
     //Método utilizado no método de inserir e atualizar dados, incluindo a Marca
-    private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto) {
-        Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca"));
-        entidade.setNome(dto.getNome());
-        entidade.setDescricaoCurta(dto.getDescricaoCurta());
-        entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
+    private void atualizarDadosProduto(Produto entidade, ProdutoInsereAtualizaDTO dto) {
         if (entidade.getId() == null) {
             entidade.setDataCadastro(Instant.now());
         } else {
             entidade.setDataAtualizacao(Instant.now());
         }
+        entidade.setNome(dto.getNome());
+        entidade.setDescricaoCurta(dto.getDescricaoCurta());
+        entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
+        Marca marca = marcaRepositorio.findById(dto.getMarca().getId())
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(dto.getMarca().getId() + " da Marca"));
         entidade.setMarca(marca);
+        if (dto.getCategorias().isEmpty()) {
+            throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
+        } else {
+            Set<Categoria> categorias = dto.getCategorias().stream()
+                    .map(categoria -> categoriaRepositorio.findById(categoria.getId())
+                            .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Categoria não encontrada: " + categoria.getId())))
+                    .collect(Collectors.toSet());
+            entidade.getCategorias().clear();
+            entidade.getCategorias().addAll(categorias);
+        }
     }
 }

@@ -1,8 +1,8 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
+import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
-import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.entidades.ProdutoGrade;
 import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
@@ -44,17 +44,18 @@ public class ProdutoControle {
 
     //atualizar dados
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProdutoDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
-        ProdutoDTO entidade = produtoServico.atualizar(id, dto);
+    public ResponseEntity<ProdutoInsereAtualizaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoInsereAtualizaDTO dto){
+        ProdutoInsereAtualizaDTO entidade = produtoServico.atualizar(id, dto);
         return ResponseEntity.ok().body(entidade);
     }
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO obj, Categoria categoria){
-        ProdutoDTO entidade = produtoServico.inserir(obj, categoria);
+    public ResponseEntity<ProdutoInsereAtualizaDTO> inserir(@Valid @RequestBody ProdutoInsereAtualizaDTO obj){
+        ProdutoInsereAtualizaDTO entidade = produtoServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getId()).toUri();
+        String mensagem = "Produto Cadastrado com Sucesso";
         return ResponseEntity.created(uri).body(entidade);
     }
 
@@ -69,13 +70,6 @@ public class ProdutoControle {
     @PostMapping(value = "/{id}/imagens")
     public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody List<ProdutoImagem> produtoImagem){
         ProdutoDTO entidade = produtoServico.atualizarImagens(id, produtoImagem);
-        return ResponseEntity.ok().body(entidade);
-    }
-
-    //adicionar ou remover categoria ao produto (por ID da Categoria)
-    @PostMapping(value = "/{id}/categorias")
-    public ResponseEntity<ProdutoDTO> atualizarCategorias(@PathVariable Long id, @RequestBody List<Categoria> categoria){
-        ProdutoDTO entidade = produtoServico.atualizarCategorias(id, categoria);
         return ResponseEntity.ok().body(entidade);
     }
 

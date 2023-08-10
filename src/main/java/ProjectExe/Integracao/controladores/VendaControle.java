@@ -21,7 +21,7 @@ public class VendaControle {
     private VendaServico vendaServico;
 
     //busca vendas por ID detalhadamente
-    @GetMapping(value = "/id/{id}")
+    @GetMapping(value = "/{id}")
     public ResponseEntity<VendaDTO> buscarPorId(@PathVariable Long id){
         VendaDTO resultado = vendaServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
