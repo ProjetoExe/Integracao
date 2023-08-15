@@ -45,7 +45,7 @@ public class MarcaControle {
     public ResponseEntity<MarcaDTO> inserir(@Valid @RequestBody MarcaDTO obj){
         MarcaDTO entidade = marcaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(entidade.getId()).toUri();
+                .buildAndExpand(entidade.getMarcaId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
     }
 

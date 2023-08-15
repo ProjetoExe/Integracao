@@ -15,7 +15,7 @@ public class Marca implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long marcaId;
     private String nome;
 
     @JsonIgnore
@@ -25,19 +25,14 @@ public class Marca implements Serializable {
     public Marca(){
     }
 
-    public Marca(Long id, String nome) {
-        this.id = id;
+    public Marca(Long marcaId, String nome) {
+        this.marcaId = marcaId;
         this.nome = nome;
     }
 
-    //Utilizado para definir o código da Marca na inserção do Produto
-    public Marca(Long id) {
-        this.id = id;
-    }
+    public Long getMarcaId() { return marcaId; }
 
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
+    public void setMarcaId(Long marcaId) { this.marcaId = marcaId; }
 
     public String getNome() { return nome; }
 
@@ -50,11 +45,11 @@ public class Marca implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Marca marca = (Marca) o;
-        return Objects.equals(id, marca.id);
+        return Objects.equals(marcaId, marca.marcaId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(marcaId);
     }
 }

@@ -3,20 +3,17 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.entidades.Produto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.util.Set;
 
-@JsonPropertyOrder({"id", "nome"})
+@JsonPropertyOrder({"categoriaId", "nome"})
 public class CategoriaProdutoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    @JsonProperty("cod_categoria")
-    private Long id;
-    @JsonProperty("nome_categoria")
+    private Long categoriaId;
     private String nome;
     private Set<Produto> produtos;
 
@@ -27,9 +24,9 @@ public class CategoriaProdutoDTO implements Serializable {
     public CategoriaProdutoDTO(Categoria categoria){ BeanUtils.copyProperties(categoria, this);
     }
 
-    public Long getId() { return id; }
+    public Long getCategoriaId() { return categoriaId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setCategoriaId(Long id) { this.categoriaId = id; }
 
     public String getNome() { return nome; }
 

@@ -1,18 +1,15 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Categoria;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.io.Serializable;
 
-@JsonPropertyOrder({"id", "nome"})
+@JsonPropertyOrder({"categoriaId", "nome"})
 public class CategoriaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    @JsonProperty("cod_categoria")
-    private Long id;
-    @JsonProperty("nome_categoria")
+    private Long categoriaId;
     private String nome;
 
     public CategoriaDTO(){
@@ -20,11 +17,11 @@ public class CategoriaDTO implements Serializable {
 
     //Construtor com parâmetro da classe Categoria para CategoriaDTO
     public CategoriaDTO(Categoria categoria){
-        id = categoria.getId();
+        categoriaId = categoria.getCategoriaId();
         nome = categoria.getNome();
     }
 
-    public Long getId() { return id; }
+    public Long getCategoriaId() { return categoriaId; }
 
     public String getNome() { return nome; }
 }

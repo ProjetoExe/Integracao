@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class ClienteDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    private Long id;
+    private Long clienteId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
     @CPF(message = "CPF inválido")
@@ -41,12 +41,12 @@ public class ClienteDTO implements Serializable {
     //Construtor com parâmetro da classe Cliente para ClienteDTO / BeanUtils necessita de setter além de getter no DTO
     public ClienteDTO(Cliente entidade){ BeanUtils.copyProperties(entidade, this); }
 
-    public Long getId() {
-        return id;
+    public Long getClienteId() {
+        return clienteId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getNome() {

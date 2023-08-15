@@ -3,6 +3,7 @@ package ProjectExe.Integracao.entidades;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 @Entity
 @Table(name = "usuario")
@@ -11,7 +12,7 @@ public class Usuario implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long usuarioId;
     private String nome;
     private String cpf;
     private String usuario;
@@ -23,8 +24,8 @@ public class Usuario implements Serializable {
     public Usuario(){
     }
 
-    public Usuario(Long id, String nome, String cpf, String usuario, String email, String senha, char opt_admin, char ativo) {
-        this.id = id;
+    public Usuario(Long usuarioId, String nome, String cpf, String usuario, String email, String senha, char opt_admin, char ativo) {
+        this.usuarioId = usuarioId;
         this.nome = nome;
         this.cpf = cpf;
         this.usuario = usuario;
@@ -34,12 +35,12 @@ public class Usuario implements Serializable {
         this.ativo = ativo;
     }
 
-    public Long getId() {
-        return id;
+    public Long getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public String getNome() {
@@ -96,5 +97,18 @@ public class Usuario implements Serializable {
 
     public void setAtivo(char ativo) {
         this.ativo = ativo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(usuarioId, usuario.usuarioId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(usuarioId);
     }
 }

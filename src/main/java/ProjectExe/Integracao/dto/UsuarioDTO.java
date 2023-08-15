@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class UsuarioDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
+    private Long usuarioId;
     private String nome;
     private String cpf;
     private String usuario;
@@ -23,12 +23,12 @@ public class UsuarioDTO implements Serializable {
     //Construtor com parâmetro da classe Usuario para UsuarioDTO / BeanUtils necessita de setter além de getter no DTO
     public UsuarioDTO(Usuario entidade){ BeanUtils.copyProperties(entidade, this); }
 
-    public Long getId() {
-        return id;
+    public Long getUsuarioId() {
+        return usuarioId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setUsuarioId(Long usuarioId) {
+        this.usuarioId = usuarioId;
     }
 
     public String getNome() {

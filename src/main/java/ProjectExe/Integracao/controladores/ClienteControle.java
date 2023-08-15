@@ -52,7 +52,7 @@ public class ClienteControle {
     public ResponseEntity<ClienteDTO> inserir(@Valid @RequestBody ClienteDTO obj){
         ClienteDTO entidade = clienteServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(entidade.getId()).toUri();
+                .buildAndExpand(entidade.getClienteId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
     }
 

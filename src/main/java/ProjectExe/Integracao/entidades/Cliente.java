@@ -15,7 +15,7 @@ public class Cliente implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long clienteId;
     private String nome;
     private String cpf;
     private String rg;
@@ -37,9 +37,9 @@ public class Cliente implements Serializable {
     public Cliente(){
     }
 
-    public Cliente(Long id, String nome, String cpf, String rg, String celular, String telefone, String email,
+    public Cliente(Long clienteId, String nome, String cpf, String rg, String celular, String telefone, String email,
                    String cep, String endereco, String numero, String bairro, String cidade, String estado, String pais) {
-        this.id = id;
+        this.clienteId = clienteId;
         this.nome = nome;
         this.cpf = cpf;
         this.rg = rg;
@@ -55,12 +55,12 @@ public class Cliente implements Serializable {
         this.pais = pais;
     }
 
-    public Long getId() {
-        return id;
+    public Long getClienteId() {
+        return clienteId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setClienteId(Long clienteId) {
+        this.clienteId = clienteId;
     }
 
     public String getNome() {
@@ -176,11 +176,11 @@ public class Cliente implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cliente cliente = (Cliente) o;
-        return Objects.equals(id, cliente.id);
+        return Objects.equals(clienteId, cliente.clienteId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(clienteId);
     }
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 public class MarcaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    private Long id;
+    private Long marcaId;
     private String nome;
 
     @JsonIgnore
@@ -24,9 +24,9 @@ public class MarcaDTO implements Serializable {
     //Construtor com parâmetro da classe Marca para MarcaDTO / BeanUtils necessita de setter além de getter no DTO
     public MarcaDTO(Marca entidade){ BeanUtils.copyProperties(entidade, this); }
 
-    public Long getId() { return id; }
+    public Long getMarcaId() { return marcaId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setMarcaId(Long marcaId) { this.marcaId = marcaId; }
 
     public String getNome() { return nome; }
 

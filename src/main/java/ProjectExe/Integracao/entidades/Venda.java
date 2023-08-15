@@ -18,7 +18,7 @@ public class Venda implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long vendaId;
     private Instant dataVenda;
     private Integer vendaStatus;
 
@@ -40,8 +40,8 @@ public class Venda implements Serializable {
     public Venda(){
     }
 
-    public Venda(Long id, Instant dataVenda, VendaStatus vendaStatus, BigDecimal frete, BigDecimal desconto, BigDecimal subTotal, BigDecimal total, Cliente cliente) {
-        this.id = id;
+    public Venda(Long vendaId, Instant dataVenda, VendaStatus vendaStatus, BigDecimal frete, BigDecimal desconto, BigDecimal subTotal, BigDecimal total, Cliente cliente) {
+        this.vendaId = vendaId;
         this.dataVenda = dataVenda;
         setVendaStatus(vendaStatus);
         this.frete = frete;
@@ -51,11 +51,11 @@ public class Venda implements Serializable {
         this.cliente = cliente;
     }
 
-    public Long getId() {
-        return id;
+    public Long getVendaId() {
+        return vendaId;
     }
 
-    public void setId(Long id) { this.id = id; }
+    public void setVendaId(Long vendaId) { this.vendaId = vendaId; }
 
     public Instant getDataVenda() { return dataVenda; }
 
@@ -134,11 +134,11 @@ public class Venda implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Venda venda = (Venda) o;
-        return Objects.equals(id, venda.id);
+        return Objects.equals(vendaId, venda.vendaId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(vendaId);
     }
 }

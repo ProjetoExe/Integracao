@@ -13,7 +13,7 @@ import java.io.Serializable;
 public class LojaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    private Long id;
+    private Long lojaId;
     @NotBlank(message = "Razão Social não pode ser nulo ou vazio")
     private String razaoSocial;
     @NotBlank(message = "Nome Fantasia não pode ser nulo ou vazio")
@@ -47,12 +47,12 @@ public class LojaDTO implements Serializable {
         BeanUtils.copyProperties(entidade, this);
     }
 
-    public Long getId() {
-        return id;
+    public Long getLojaId() {
+        return lojaId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLojaId(Long lojaId) {
+        this.lojaId = lojaId;
     }
 
     public String getRazaoSocial() {

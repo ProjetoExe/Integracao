@@ -51,7 +51,7 @@ public class VendaControle {
     public ResponseEntity<VendaDTO> inserir(@Valid @RequestBody VendaDTO obj){
         VendaDTO entidade = vendaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(entidade.getId()).toUri();
+                .buildAndExpand(entidade.getVendaId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
     }
 

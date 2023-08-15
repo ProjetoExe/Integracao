@@ -12,7 +12,7 @@ public class Loja implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long lojaId;
     private String razaoSocial;
     private String nomeFantasia;
     private String cnpj;
@@ -31,9 +31,9 @@ public class Loja implements Serializable {
     public Loja() {
     }
 
-    public Loja(Long id, String razaoSocial, String nomeFantasia, String cnpj, String inscricaoEstadual, String email, String celular, String telefone,
+    public Loja(Long lojaId, String razaoSocial, String nomeFantasia, String cnpj, String inscricaoEstadual, String email, String celular, String telefone,
                 String cep, String endereco, String numero, String bairro, String cidade, String estado, String pais) {
-        this.id = id;
+        this.lojaId = lojaId;
         this.razaoSocial = razaoSocial;
         this.nomeFantasia = nomeFantasia;
         this.cnpj = cnpj;
@@ -50,10 +50,10 @@ public class Loja implements Serializable {
         this.pais = pais;
     }
 
-    public Long getId() { return id; }
+    public Long getLojaId() { return lojaId; }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setLojaId(Long lojaId) {
+        this.lojaId = lojaId;
     }
 
     public String getRazaoSocial() {
@@ -173,11 +173,11 @@ public class Loja implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Loja loja = (Loja) o;
-        return Objects.equals(id, loja.id);
+        return Objects.equals(lojaId, loja.lojaId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(lojaId);
     }
 }

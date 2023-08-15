@@ -59,7 +59,7 @@ public class LojaControle {
     public ResponseEntity<LojaDTO> inserir(@Valid @RequestBody LojaDTO obj){
         LojaDTO newDto = lojaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(newDto.getId()).toUri();
+                .buildAndExpand(newDto.getLojaId()).toUri();
         return ResponseEntity.created(uri).body(newDto);
     }
 

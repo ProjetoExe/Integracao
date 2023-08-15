@@ -58,8 +58,8 @@ public class Produto implements Serializable {
         return produtoId;
     }
 
-    public void setProdutoId(Long id) {
-        this.produtoId = id;
+    public void setProdutoId(Long produtoId) {
+        this.produtoId = produtoId;
     }
 
     public String getNome() {

@@ -5,7 +5,6 @@ import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.beans.BeanUtils;
 
@@ -16,12 +15,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"id", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "pagamento", "cliente",})
+@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "pagamento", "cliente",})
 public class VendaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    @JsonProperty("cod_Venda")
-    private Long id;
+    private Long vendaId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
     private Cliente cliente;
@@ -43,9 +41,9 @@ public class VendaDTO implements Serializable {
                 .collect(Collectors.toSet());
     }
 
-    public Long getId() { return id; }
+    public Long getVendaId() { return vendaId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setVendaId(Long vendaId) { this.vendaId = vendaId; }
 
     public Instant getDataVenda() { return dataVenda; }
 

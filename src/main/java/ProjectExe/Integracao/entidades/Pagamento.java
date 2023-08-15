@@ -19,6 +19,7 @@ public class Pagamento implements Serializable {
 
     @JsonIgnore
     @OneToOne
+    @JoinColumn(name = "venda_id")
     @MapsId
     private Venda venda;
 
