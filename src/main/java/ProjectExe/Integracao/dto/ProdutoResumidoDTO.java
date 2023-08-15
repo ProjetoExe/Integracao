@@ -8,12 +8,12 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 
-@JsonPropertyOrder({"id", "nome", "descricaoCurta", "descricaoLonga", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao"})
+@JsonPropertyOrder({"produtoId", "nome", "descricaoCurta", "descricaoLonga", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao"})
 public class ProdutoResumidoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
     @JsonProperty("codigo")
-    private Long id;
+    private Long produtoId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
     private char ativo;
@@ -25,9 +25,9 @@ public class ProdutoResumidoDTO implements Serializable {
     public ProdutoResumidoDTO(Produto entidade){ BeanUtils.copyProperties(entidade, this);
     }
 
-    public Long getId() { return id; }
+    public Long getProdutoId() { return produtoId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setProdutoId(Long id) { this.produtoId = id; }
 
     public String getNome() { return nome; }
 

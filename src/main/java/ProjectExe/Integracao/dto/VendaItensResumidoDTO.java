@@ -16,7 +16,7 @@ public class VendaItensResumidoDTO {
 
     //Construtor com parâmetro da classe VendaItens para VendaItensResumidoDTO / BeanUtils necessita de setter além de getter no DTO
     public VendaItensResumidoDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this);
-        cod_prod = entidade.getProduto().getId();
+        cod_prod = entidade.getProduto().getProdutoId();
     }
 
     public Long getCod_prod() { return cod_prod; }

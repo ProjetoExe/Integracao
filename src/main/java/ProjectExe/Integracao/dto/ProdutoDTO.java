@@ -11,11 +11,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@JsonPropertyOrder({"id", "nome", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "marca", "categorias", "imgUrl", "grade"})
+@JsonPropertyOrder({"produtoId", "nome", "referencia", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "marca", "categorias", "imgUrl", "grade"})
 public class ProdutoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    private Long id;
+    private Long produtoId;
     private String nome;
     private String referencia;
     private String descricaoCurta;
@@ -42,9 +42,9 @@ public class ProdutoDTO implements Serializable {
     public ProdutoDTO(Produto entidade){ BeanUtils.copyProperties(entidade, this);
     }
 
-    public Long getId() { return id; }
+    public Long getProdutoId() { return produtoId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setProdutoId(Long id) { this.produtoId = id; }
 
     public String getNome() { return nome; }
 

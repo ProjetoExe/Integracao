@@ -13,11 +13,11 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
-@JsonPropertyOrder({"id", "nome", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "marca", "categorias"})
+@JsonPropertyOrder({"produtoId", "nome", "referencia", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "marca", "categorias"})
 public class ProdutoInsereAtualizaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
-    private Long id;
+    private Long produtoId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
     private String referencia;
@@ -38,9 +38,9 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     public ProdutoInsereAtualizaDTO(Produto entidade){ BeanUtils.copyProperties(entidade, this);
     }
 
-    public Long getId() { return id; }
+    public Long getProdutoId() { return produtoId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setProdutoId(Long id) { this.produtoId = id; }
 
     public String getNome() { return nome; }
 
