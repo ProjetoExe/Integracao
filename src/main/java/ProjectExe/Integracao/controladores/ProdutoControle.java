@@ -55,7 +55,6 @@ public class ProdutoControle {
         ProdutoInsereAtualizaDTO entidade = produtoServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getProdutoId()).toUri();
-        String mensagem = "Produto Cadastrado com Sucesso";
         return ResponseEntity.created(uri).body(entidade);
     }
 

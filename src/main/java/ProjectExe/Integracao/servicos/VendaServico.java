@@ -38,7 +38,7 @@ public class VendaServico {
 
     //busca vendas por id, cliente e data resumidamente
     @Transactional(readOnly = true)
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long id, Long cliente_id ,String minData, String maxData, Pageable pageable){
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long id,String minData, String maxData, Pageable pageable){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(365) : LocalDate.parse(minData, formatter);
         LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
@@ -51,8 +51,6 @@ public class VendaServico {
             if (venda.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
             }
-        } else if (cliente_id != null) {
-            resultado = vendaRepositorio.buscarVendasPorClienteEData(cliente_id, dataInicial, dataFinal, pageable);
         } else {
             resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
         }
@@ -95,7 +93,6 @@ public class VendaServico {
     private void atualizarDados(Venda entidade, VendaDTO obj) {
         entidade.setDataVenda(obj.getDataVenda());
         entidade.setVendaStatus(obj.getVendaStatus());
-        entidade.setCliente(obj.getCliente());
         entidade.setPagamento(obj.getPagamento());
         entidade.setFrete(obj.getFrete());
         entidade.setDesconto(obj.getDesconto());

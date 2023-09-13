@@ -28,8 +28,8 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
     private char ativo;
-    private Marca marca;
     private Set<Categoria> categorias = new HashSet<>();
+    private Marca marca;
 
     public ProdutoInsereAtualizaDTO(){
     }

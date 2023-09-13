@@ -3,18 +3,16 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@JsonPropertyOrder({"id", "vendaStatus", "dataVenda", "total"})
+@JsonPropertyOrder({"vendaId", "vendaStatus", "dataVenda", "total"})
 public class VendaResumidaDTO {
 
-    @JsonProperty("cod_Venda")
-    private Long id;
+    private Long vendaId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
     private Integer vendaStatus;
@@ -22,9 +20,9 @@ public class VendaResumidaDTO {
 
     public VendaResumidaDTO(Venda entidade) { BeanUtils.copyProperties(entidade, this); }
 
-    public Long getId() { return id; }
+    public Long getVendaId() { return vendaId; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setVendaId(Long vendaId) { this.vendaId = vendaId; }
 
     public Instant getDataVenda() { return dataVenda; }
 

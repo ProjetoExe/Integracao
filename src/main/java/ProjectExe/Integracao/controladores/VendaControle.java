@@ -31,11 +31,10 @@ public class VendaControle {
     @GetMapping
     public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos_VendasPorData(
             @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestParam(value = "cliente_id", defaultValue = "") Long cliente_id,
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
             Pageable pageable) {
-        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorIdEClienteEData(id, cliente_id, minData, maxData, pageable);
+        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorIdEClienteEData(id, minData, maxData, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
