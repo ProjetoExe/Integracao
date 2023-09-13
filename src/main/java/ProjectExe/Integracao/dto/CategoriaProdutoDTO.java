@@ -1,39 +1,32 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Categoria;
-import ProjectExe.Integracao.entidades.Produto;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"categoriaId", "nome"})
+@JsonPropertyOrder({"categoriaId", "nome", "produtos"})
+@Getter
+@Setter
 public class CategoriaProdutoDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
     private Long categoriaId;
     private String nome;
-    private Set<Produto> produtos;
-
-    public CategoriaProdutoDTO(){
-    }
+    private Set<ProdutoResumidoDTO> produtos;
 
     //Construtor com parâmetro da classe Categoria para CategoriaDTO / BeanUtils necessita de setter além de getter no DTO
     public CategoriaProdutoDTO(Categoria categoria){ BeanUtils.copyProperties(categoria, this);
+        this.produtos = categoria.getProdutos().stream()
+                .map(ProdutoResumidoDTO::new)
+                .sorted(Comparator.comparingLong(ProdutoResumidoDTO::getProdutoId)) //Ordenando a lista de produtos mapeados com base no produtoId
+                .collect(Collectors.toCollection(LinkedHashSet::new));              //Coletando os produtos em um LinkedHashSet, garantindo que a ordem seja mantida.
     }
-
-    public Long getCategoriaId() { return categoriaId; }
-
-    public void setCategoriaId(Long id) { this.categoriaId = id; }
-
-    public String getNome() { return nome; }
-
-    public void setNome(String nome) { this.nome = nome; }
-
-    @JsonIgnoreProperties({"descricaoCurta", "descricaoCompleta", "imgUrl", "categorias", "grade"})
-    public Set<Produto> getProdutos() { return produtos; }
-
-    public void setProdutos(Set<Produto> produtos) { this.produtos = produtos; }
 }

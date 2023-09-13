@@ -140,20 +140,20 @@ public class ProdutoServico {
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
         entidade.setReferencia(dto.getReferencia());
 
-        Marca marca = atualizarOuCadastrarMarca(dto);
+        Marca marca = atualizarOuCadastrarMarca(dto.getMarca());
         entidade.setMarca(marca);
 
-        Set<Categoria> categorias = atualizarOuCadastrarCategorias(dto.getCategorias());
-        entidade.getCategorias().clear();
+        Set<Categoria> categorias = new HashSet<>(dto.getCategorias());
+        atualizarOuCadastrarCategorias(categorias);
         entidade.getCategorias().addAll(categorias);
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private Marca atualizarOuCadastrarMarca(ProdutoInsereAtualizaDTO dto) {
-        return marcaRepositorio.buscarPorNome(dto.getMarca().getNome())
+    private Marca atualizarOuCadastrarMarca(Marca dto) {
+        return marcaRepositorio.buscarPorNome(dto.getNome())
                 .orElseGet(() -> {
                     Marca novaMarca = new Marca();
-                    novaMarca.setNome(dto.getMarca().getNome());
+                    novaMarca.setNome(dto.getNome());
                     return marcaRepositorio.save(novaMarca);
                 });
     }

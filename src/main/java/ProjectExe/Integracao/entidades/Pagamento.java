@@ -2,13 +2,18 @@ package ProjectExe.Integracao.entidades;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Objects;
 
 @Entity
 @Table(name = "pagamento")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(of="id")
 public class Pagamento implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -22,50 +27,4 @@ public class Pagamento implements Serializable {
     @JoinColumn(name = "venda_id")
     @MapsId
     private Venda venda;
-
-    public Pagamento(){
-    }
-
-    public Pagamento(Long id, Instant dataPagamento, Venda venda) {
-        this.id = id;
-        this.dataPagamento = dataPagamento;
-        this.venda = venda;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Instant getDataPagamento() {
-        return dataPagamento;
-    }
-
-    public void setDataPagamento(Instant dataPagamento) {
-        this.dataPagamento = dataPagamento;
-    }
-
-    public Venda getVenda() {
-        return venda;
-    }
-
-    public void setVenda(Venda venda) {
-        this.venda = venda;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Pagamento pagamento = (Pagamento) o;
-        return Objects.equals(id, pagamento.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

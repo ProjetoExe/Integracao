@@ -5,20 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.Objects;
 
-@Entity
-@Table(name = "produto_imagem")
+@Entity //Não adicionado @Getter e @Setter pois ambos são personalizados e já estão implementados, incluindo o conflito gerando com @JsonIgnore de 'getProduto'
+@NoArgsConstructor
+@EqualsAndHashCode(of="id")
+@Table(name = "produto_imagem")  //Lembrar de rever a lógica, pois, não iremos receber nem passar imagem por JSON, apenas anexo direto na plataforma
 public class ProdutoImagem implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private ProdutoImagemPK id = new ProdutoImagemPK();
-
-    public ProdutoImagem() {
-    }
 
     public ProdutoImagem(Produto produto, String imgUrl) {
         id.setProduto(produto);
@@ -33,17 +33,4 @@ public class ProdutoImagem implements Serializable {
     public String getImgUrl() { return id.getImgUrl(); }
 
     public void setImgUrl(String imgUrl) { id.setImgUrl(imgUrl); }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ProdutoImagem that = (ProdutoImagem) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }

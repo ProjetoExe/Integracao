@@ -4,14 +4,15 @@ import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.entidades.Marca;
 import ProjectExe.Integracao.entidades.Produto;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @JsonPropertyOrder({"produtoId", "nome", "referencia", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "marca", "categorias"})
 public class ProdutoInsereAtualizaDTO implements Serializable {
@@ -28,10 +29,12 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
     private char ativo;
-    private Set<Categoria> categorias = new HashSet<>();
+    @JsonIgnoreProperties("categoriaId")
+    private List<Categoria> categorias = new ArrayList<>();
+    @JsonIgnoreProperties("marcaId")
     private Marca marca;
 
-    public ProdutoInsereAtualizaDTO(){
+    public ProdutoInsereAtualizaDTO() {
     }
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
@@ -70,9 +73,9 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
 
     public void setAtivo(char ativo) { this.ativo = ativo; }
 
-    public Set<Categoria> getCategorias() { return categorias; }
+    public List<Categoria> getCategorias() { return categorias; }
 
-    public void setCategorias(Set<Categoria> categorias) { this.categorias = categorias; }
+    public void setCategorias(List<Categoria> categorias) { this.categorias = categorias; }
 
     public Marca getMarca() { return marca; }
 
