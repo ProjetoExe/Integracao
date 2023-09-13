@@ -14,8 +14,26 @@ INSERT INTO marca (nome) VALUES ('ZOTAC');
 INSERT INTO marca (nome) VALUES ('KINGSTON');
 INSERT INTO marca (nome) VALUES ('MSI');
 
-INSERT INTO produto (nome, referencia, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Geforce RTX 3060', 'RTX30', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '2023-05-25T18:21:47.741', 'S', 1);
-INSERT INTO produto (nome, referencia, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Mouse Logitech G403', 'G400', 'Mouse', 'Sensor profissional', '2023-05-26T19:21:47.741', 'S', 2);
+INSERT INTO classe (nome) VALUES ('LETRA')
+INSERT INTO classe (nome) VALUES ('NUMERO')
+INSERT INTO classe (nome) VALUES ('KILO')
+
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'U')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'P')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'PP')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'M')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'G')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'GG')
+
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '33')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '34')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '35')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '36')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '37')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '38')
+
+INSERT INTO produto (nome, referencia, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id, classe_id) VALUES ('Geforce RTX 3060', 'RTX30', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '2023-05-25T18:21:47.741', 'S', 1, 1);
+INSERT INTO produto (nome, referencia, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id, classe_id) VALUES ('Mouse Logitech G403', 'G400', 'Mouse', 'Sensor profissional', '2023-05-26T19:21:47.741', 'S', 2, 1);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 'S', 3);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('Memória RAM Kingston 16GB', 'Memória RAM', 'C16, 3666MHz', '2023-05-27T20:21:47.741', 'S', 6);
 INSERT INTO produto (nome, descricao_Curta, descricao_Completa, data_Cadastro, ativo, marca_id) VALUES ('SDD Kingston 256GB', 'SSD', 'SSD 500MB/s Leitura / 450MB/s Escrita', '2023-05-27T20:21:47.741', 'S', 6);

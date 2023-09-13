@@ -33,16 +33,20 @@ public class Produto implements Serializable{
     private Instant dataAtualizacao;
     private char ativo;
 
+    @ManyToOne
+    @JoinColumn(name = "classe_id")
+    private Classe classe;
+
     @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdutoImagem> imagens = new ArrayList<>();
-
-    @ManyToMany
-    @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-    private Set<Categoria> categorias = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "marca_id")
     private Marca marca;
+
+    @ManyToMany
+    @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    private Set<Categoria> categorias = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProdutoGrade> grade = new ArrayList<>();
