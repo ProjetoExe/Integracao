@@ -140,25 +140,26 @@ public class ProdutoServico {
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
         entidade.setReferencia(dto.getReferencia());
 
-        Marca marca = atualizarOuCadastrarMarca(dto);
+        Marca marca = atualizarOuCadastrarMarca(dto.getMarca());
         entidade.setMarca(marca);
 
-        Set<Categoria> categorias = new HashSet<>(atualizarOuCadastrarCategorias(dto.getCategorias()));
+        Set<Categoria> categorias = new HashSet<>(dto.getCategorias());
+        atualizarOuCadastrarCategorias(categorias);
         entidade.getCategorias().addAll(categorias);
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private Marca atualizarOuCadastrarMarca(ProdutoInsereAtualizaDTO dto) {
-        return marcaRepositorio.buscarPorNome(dto.getMarca().getNome())
+    private Marca atualizarOuCadastrarMarca(Marca dto) {
+        return marcaRepositorio.buscarPorNome(dto.getNome())
                 .orElseGet(() -> {
                     Marca novaMarca = new Marca();
-                    novaMarca.setNome(dto.getMarca().getNome());
+                    novaMarca.setNome(dto.getNome());
                     return marcaRepositorio.save(novaMarca);
                 });
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
-    private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categoriasDTO) {
+    private Set<Categoria> atualizarOuCadastrarCategorias(Set<Categoria> categoriasDTO) {
         if (categoriasDTO.isEmpty()) {
             throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
         } else {
