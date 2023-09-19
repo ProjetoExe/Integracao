@@ -29,7 +29,7 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
     private char ativo;
-    @JsonIgnoreProperties("categoriaId")
+    @JsonIgnoreProperties("categoriaId") //colocado como list para aceitar a coleção completa pelo JSON
     private List<Categoria> categorias = new ArrayList<>();
     @JsonIgnoreProperties("marcaId")
     private Marca marca;
