@@ -32,7 +32,7 @@ public class ProdutoDTO implements Serializable {
     private Instant dataAtualizacao;
     private char ativo;
 
-    @JsonIgnoreProperties("classeId")
+    @JsonIgnoreProperties("nome")
     @JsonUnwrapped(suffix = "_classe")
     private Classe classe;
     private List<ProdutoImagem> imagens = new ArrayList<>();

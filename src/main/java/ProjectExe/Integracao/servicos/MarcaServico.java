@@ -24,9 +24,9 @@ public class MarcaServico {
 
     //buscar por ID
     @Transactional(readOnly = true)
-    public MarcaDTO buscarPorId(Long id){
-        Optional<Marca> resultado = marcaRepositorio.findById(id);
-        return resultado.map(MarcaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+    public MarcaDTO buscarPorId(Long marcaId){
+        Optional<Marca> resultado = marcaRepositorio.findById(marcaId);
+        return resultado.map(MarcaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada"));
     }
 
     //buscar todos registros
@@ -53,23 +53,23 @@ public class MarcaServico {
 
     //atualizar um registro
     @Transactional
-    public MarcaDTO atualizar(Long id, MarcaDTO obj){
+    public MarcaDTO atualizar(Long marcaId, MarcaDTO obj){
         try {
-            Marca entidade = marcaRepositorio.getReferenceById(id);
+            Marca entidade = marcaRepositorio.getReferenceById(marcaId);
             atualizarDados(entidade, obj);
             return new MarcaDTO(marcaRepositorio.save(entidade));
         }catch (EntityNotFoundException e) {
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada");
         }
     }
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    public void deletar(Long id){
+    public void deletar(Long marcaId){
         try {
-            marcaRepositorio.deleteById(id);
+            marcaRepositorio.deleteById(marcaId);
         }catch (EmptyResultDataAccessException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada");
         }catch (DataIntegrityViolationException e){
             throw new ExcecaoBancoDeDados(e.getMessage());
         }

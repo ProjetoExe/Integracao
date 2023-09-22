@@ -25,9 +25,9 @@ public class CategoriaServico {
 
     //buscar por ID
     @Transactional(readOnly = true)
-    public CategoriaDTO buscarPorId(Long id){
-        Optional<Categoria> resultado = categoriaRepositorio.findById(id);
-        return resultado.map(CategoriaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+    public CategoriaDTO buscarPorId(Long categoriaId){
+        Optional<Categoria> resultado = categoriaRepositorio.findById(categoriaId);
+        return resultado.map(CategoriaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada"));
     }
 
     //buscar todos os registros
@@ -46,20 +46,20 @@ public class CategoriaServico {
 
     //buscar por ID trazendo os Produtos da Categoria
     @Transactional(readOnly = true)
-    public CategoriaProdutoDTO buscarCategoriaProdutoPorId(Long id){
-        Optional<Categoria> resultado = categoriaRepositorio.findById(id);
-        return resultado.map(CategoriaProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+    public CategoriaProdutoDTO buscarCategoriaProdutoPorId(Long categoriaId){
+        Optional<Categoria> resultado = categoriaRepositorio.findById(categoriaId);
+        return resultado.map(CategoriaProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada"));
     }
 
     //atualizar um registro
     @Transactional
-    public CategoriaDTO atualizar(Long id, CategoriaDTO obj){
+    public CategoriaDTO atualizar(Long categoriaId, CategoriaDTO obj){
         try {
-            Categoria entidade = categoriaRepositorio.getReferenceById(id);
+            Categoria entidade = categoriaRepositorio.getReferenceById(categoriaId);
             atualizarDados(entidade, obj);
             return new CategoriaDTO(categoriaRepositorio.save(entidade));
         }catch (EntityNotFoundException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada");
         }
     }
 
@@ -73,11 +73,11 @@ public class CategoriaServico {
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    public void deletar(Long id){
+    public void deletar(Long categoriaId){
         try {
-            categoriaRepositorio.deleteById(id);
+            categoriaRepositorio.deleteById(categoriaId);
         }catch (EmptyResultDataAccessException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada");
         }catch (DataIntegrityViolationException e){
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
@@ -85,6 +85,6 @@ public class CategoriaServico {
 
     //Método para criar ou atualizar dados
     private void atualizarDados(Categoria entidade, CategoriaDTO obj) {
-        entidade.setNome(obj.getNome());
+        entidade.setNome(obj.nome());
     }
 }

@@ -31,14 +31,14 @@ public class VendaServico {
 
     //busca vendas por ID detalhadamente
     @Transactional(readOnly = true)
-    public VendaDTO buscarPorId(Long id){
-        Optional<Venda> resultado = vendaRepositorio.findById(id);
-        return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+    public VendaDTO buscarPorId(Long vendaId){
+        Optional<Venda> resultado = vendaRepositorio.findById(vendaId);
+        return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Venda " + vendaId + " não encontrada"));
     }
 
     //busca vendas por id, cliente e data resumidamente
     @Transactional(readOnly = true)
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long id,String minData, String maxData, Pageable pageable){
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId,String minData, String maxData, Pageable pageable){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(365) : LocalDate.parse(minData, formatter);
         LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
@@ -46,8 +46,8 @@ public class VendaServico {
         Instant dataFinal = localDateMax.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
 
         Page<Venda> resultado = new PageImpl<>(Collections.emptyList());
-        if(id != null){
-            Optional<Venda> venda = vendaRepositorio.findById(id);
+        if(vendaId != null){
+            Optional<Venda> venda = vendaRepositorio.findById(vendaId);
             if (venda.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
             }
@@ -59,13 +59,13 @@ public class VendaServico {
 
     //atualizar um registro - no caso apenas o status da venda atualmente
     @Transactional
-    public VendaDTO atualizar(Long id, VendaDTO obj){
+    public VendaDTO atualizar(Long vendaId, VendaDTO obj){
         try {
             Venda entidade = new Venda();
             entidade.setVendaStatus(obj.getVendaStatus());
             return new VendaDTO(vendaRepositorio.save(entidade));
         }catch (EntityNotFoundException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Venda " + vendaId + " não encontrada");
         }
     }
 
@@ -79,11 +79,11 @@ public class VendaServico {
 
     //excluir um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    public void deletar(Long id) {
+    public void deletar(Long vendaId) {
         try {
-            vendaRepositorio.deleteById(id);
+            vendaRepositorio.deleteById(vendaId);
         }catch (EmptyResultDataAccessException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Venda " + vendaId + " não encontrada");
         }catch (DataIntegrityViolationException e){
             throw new ExcecaoBancoDeDados(e.getMessage());
         }

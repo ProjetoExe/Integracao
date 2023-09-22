@@ -45,7 +45,7 @@ public class VendaItens implements Serializable {
 
     public void setVenda(Venda venda){ id.setVenda(venda); }
 
-    @JsonIgnoreProperties({"grade", "imgUrl", "ativo"}) //Ignora a coleção de grade do Produto ao puxar o Objeto Venda
+    @JsonIgnoreProperties({"grade", "imgUrl", "ativo"}) //Ignora a coleção de grade e os campos imgUrl e ativo do Produto ao puxar o Objeto Venda
     public Produto getProduto(){ return id.getProduto(); }
 
     public void setProduto(Produto produto){ id.setProduto(produto); }

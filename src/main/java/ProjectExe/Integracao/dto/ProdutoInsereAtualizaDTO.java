@@ -1,12 +1,14 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Categoria;
+import ProjectExe.Integracao.entidades.Classe;
 import ProjectExe.Integracao.entidades.Marca;
 import ProjectExe.Integracao.entidades.Produto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
@@ -14,7 +16,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonPropertyOrder({"produtoId", "nome", "referencia", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "marca", "categorias"})
+@JsonPropertyOrder({"produtoId", "nome", "referencia", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "classe", "marca", "categorias"})
 public class ProdutoInsereAtualizaDTO implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -29,10 +31,16 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
     private char ativo;
-    @JsonIgnoreProperties("categoriaId")
-    private List<Categoria> categorias = new ArrayList<>();
+
     @JsonIgnoreProperties("marcaId")
     private Marca marca;
+
+    @NotNull(message = "Produto precisa estar vinculado a uma classe")
+    @JsonIgnoreProperties("nome")
+    private Classe classe;
+
+    @JsonIgnoreProperties("categoriaId")
+    private List<Categoria> categorias = new ArrayList<>();
 
     public ProdutoInsereAtualizaDTO() {
     }
@@ -73,11 +81,15 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
 
     public void setAtivo(char ativo) { this.ativo = ativo; }
 
-    public List<Categoria> getCategorias() { return categorias; }
+    public Classe getClasse() { return classe; }
 
-    public void setCategorias(List<Categoria> categorias) { this.categorias = categorias; }
+    public void setClasse(Classe classe) { this.classe = classe; }
 
     public Marca getMarca() { return marca; }
 
     public void setMarca(Marca marca) { this.marca = marca; }
+
+    public List<Categoria> getCategorias() { return categorias; }
+
+    public void setCategorias(List<Categoria> categorias) { this.categorias = categorias; }
 }

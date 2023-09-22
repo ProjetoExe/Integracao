@@ -5,6 +5,7 @@ import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
+import ProjectExe.Integracao.repositorios.ClasseRepositorio;
 import ProjectExe.Integracao.repositorios.MarcaRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
@@ -33,12 +34,15 @@ public class ProdutoServico {
     @Autowired
     private CategoriaRepositorio categoriaRepositorio;
 
+    @Autowired
+    private ClasseRepositorio classeRepositorio;
+
     //buscar por ID
     @Transactional(readOnly = true)
     public ProdutoDTO buscarPorId(Long produtoId) {
         Optional<Produto> resultado = produtoRepositorio.findById(produtoId);
         return resultado.map(ProdutoDTO::new)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(produtoId));
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
     }
 
     //busca produtos por id, nome e ativo
@@ -66,7 +70,7 @@ public class ProdutoServico {
             atualizarDadosProduto(entidade, obj);
             return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
         } catch (EntityNotFoundException e) {
-            throw new ExcecaoRecursoNaoEncontrado(produtoId);
+            throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
         }
     }
 
@@ -85,7 +89,7 @@ public class ProdutoServico {
         try {
             produtoRepositorio.deleteById(produtoId);
         } catch (EmptyResultDataAccessException e) {
-            throw new ExcecaoRecursoNaoEncontrado(produtoId);
+            throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
         } catch (DataIntegrityViolationException e) {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
@@ -95,7 +99,7 @@ public class ProdutoServico {
     @Transactional
     public ProdutoDTO atualizarImagens(Long produtoId, List<ProdutoImagem> imagens) {
         Produto entidade = produtoRepositorio.findById(produtoId)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(produtoId));
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
         List<ProdutoImagem> imagensExistente = entidade.getImagens();
         imagensExistente.removeIf(imagemExistente -> !imagens.contains(imagemExistente));
         imagens.stream()
@@ -113,7 +117,7 @@ public class ProdutoServico {
     @Transactional
     public ProdutoDTO adicionarGrade(Long produtoId, ProdutoGrade produtoGrade) {
         Produto entidade = produtoRepositorio.findById(produtoId)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(produtoId));
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
         entidade.getGrade().add(produtoGrade);
         produtoGrade.setProduto(entidade);
         return new ProdutoDTO(produtoRepositorio.save(entidade));
@@ -123,7 +127,7 @@ public class ProdutoServico {
     @Transactional
     public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
         Produto entidade = produtoRepositorio.findById(produtoId)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(produtoId));
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + "  encontrado"));
         entidade.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
@@ -140,11 +144,20 @@ public class ProdutoServico {
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
         entidade.setReferencia(dto.getReferencia());
 
+        Classe classe = atualizarClasse(dto.getClasse());
+        entidade.setClasse(dto.getClasse());
+
         Marca marca = atualizarOuCadastrarMarca(dto.getMarca());
         entidade.setMarca(marca);
 
         Set<Categoria> categorias = new HashSet<>(atualizarOuCadastrarCategorias(dto.getCategorias()));
         entidade.getCategorias().addAll(categorias);
+    }
+
+    //Verifica se a classe existe para atualizar no produto
+    private Classe atualizarClasse(Classe dto){
+        return classeRepositorio.findById(dto.getClasseId())
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + dto.getClasseId() + " não existe"));
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
@@ -158,6 +171,7 @@ public class ProdutoServico {
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
+    //Não está retornando no JSON ainda as categorias ao incluir, listagem sendo exibida vazia
     private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categoriasDTO) {
         if (categoriasDTO.isEmpty()) {
             throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");

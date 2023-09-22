@@ -24,9 +24,9 @@ public class LojaServico {
 
     //buscar por ID
     @Transactional(readOnly = true)
-    public LojaDTO buscarPorId(Long id) {
-        Optional<Loja> resultado = lojaRepositorio.findById(id);
-        return resultado.map(LojaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado(id));
+    public LojaDTO buscarPorId(Long lojaId) {
+        Optional<Loja> resultado = lojaRepositorio.findById(lojaId);
+        return resultado.map(LojaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada"));
     }
 
     //buscar todos os registros
@@ -60,23 +60,23 @@ public class LojaServico {
 
     //atualizar um registro
     @Transactional
-    public LojaDTO atualizar(Long id, LojaDTO obj) {
+    public LojaDTO atualizar(Long lojaId, LojaDTO obj) {
         try {
-            Loja entidade = lojaRepositorio.getReferenceById(id);
+            Loja entidade = lojaRepositorio.getReferenceById(lojaId);
             atualizarDados(entidade, obj);
             return new LojaDTO(lojaRepositorio.save(entidade));
         }catch (EntityNotFoundException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada");
         }
     }
 
     //excluir registro por ID
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    public void deletar(Long id) {
+    public void deletar(Long lojaId) {
         try {
-            lojaRepositorio.deleteById(id);
+            lojaRepositorio.deleteById(lojaId);
         }catch (EmptyResultDataAccessException e){
-            throw new ExcecaoRecursoNaoEncontrado(id);
+            throw new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada");
         }catch (DataIntegrityViolationException e){
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
