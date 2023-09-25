@@ -3,7 +3,6 @@ package ProjectExe.Integracao.controladores;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
-import ProjectExe.Integracao.entidades.ProdutoGrade;
 import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
 import jakarta.validation.Valid;
@@ -71,13 +70,6 @@ public class ProdutoControle {
     @PostMapping(value = "/{id}/imagens")
     public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody List<ProdutoImagem> produtoImagem){
         ProdutoDTO entidade = produtoServico.atualizarImagens(id, produtoImagem);
-        return ResponseEntity.ok().body(entidade);
-    }
-
-    //adicionar tamanho ao produto
-    @PostMapping(value = "/{id}/grade")
-    public ResponseEntity<ProdutoDTO> inserirGrade(@PathVariable Long id, @RequestBody ProdutoGrade produtoGrade){
-        ProdutoDTO entidade = produtoServico.adicionarGrade(id, produtoGrade);
         return ResponseEntity.ok().body(entidade);
     }
 
