@@ -44,18 +44,20 @@ public class ProdutoControle {
 
     //atualizar dados
     @PutMapping(value = "/{id}")
-    public ResponseEntity<ProdutoInsereAtualizaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoInsereAtualizaDTO dto){
+    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoInsereAtualizaDTO dto){
         ProdutoInsereAtualizaDTO entidade = produtoServico.atualizar(id, dto);
-        return ResponseEntity.ok().body(entidade);
+        String msg = "Produto " + id + " atualizado com Sucesso";
+        return ResponseEntity.ok().body(msg);
     }
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<ProdutoInsereAtualizaDTO> inserir(@Valid @RequestBody ProdutoInsereAtualizaDTO obj){
+    public ResponseEntity<String> inserir(@Valid @RequestBody ProdutoInsereAtualizaDTO obj){
         ProdutoInsereAtualizaDTO entidade = produtoServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getProdutoId()).toUri();
-        return ResponseEntity.created(uri).body(entidade);
+        String msg = "Produto " + entidade.getProdutoId() + " cadastrado com Sucesso";
+        return ResponseEntity.created(uri).body(msg);
     }
 
     //exclui um registro

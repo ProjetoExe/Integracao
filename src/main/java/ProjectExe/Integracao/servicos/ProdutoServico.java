@@ -4,10 +4,7 @@ import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
-import ProjectExe.Integracao.repositorios.ClasseRepositorio;
-import ProjectExe.Integracao.repositorios.MarcaRepositorio;
-import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
+import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoUnico;
@@ -23,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ProdutoServico {
@@ -30,12 +28,15 @@ public class ProdutoServico {
     @Autowired
     private ProdutoRepositorio produtoRepositorio;
     @Autowired
+    private ClasseRepositorio classeRepositorio;
+    @Autowired
+    private ClasseGradeRepositorio classeGradeRepositorio;
+    @Autowired
     private MarcaRepositorio marcaRepositorio;
     @Autowired
     private CategoriaRepositorio categoriaRepositorio;
-
     @Autowired
-    private ClasseRepositorio classeRepositorio;
+    private ProdutoGradeRepositorio produtoGradeRepositorio;
 
     //buscar por ID
     @Transactional(readOnly = true)
@@ -113,16 +114,6 @@ public class ProdutoServico {
         return new ProdutoDTO(produtoRepositorio.save(entidade));
     }
 
-    //adicionar tamanho ao produto
-    @Transactional
-    public ProdutoDTO adicionarGrade(Long produtoId, ProdutoGrade produtoGrade) {
-        Produto entidade = produtoRepositorio.findById(produtoId)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
-        entidade.getGrade().add(produtoGrade);
-        produtoGrade.setProduto(entidade);
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
     //remover tamanho do produto
     @Transactional
     public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
@@ -151,21 +142,26 @@ public class ProdutoServico {
         entidade.setMarca(marca);
 
         Set<Categoria> categorias = new HashSet<>(atualizarOuCadastrarCategorias(dto.getCategorias()));
+        entidade.getCategorias().clear();
         entidade.getCategorias().addAll(categorias);
+
+        produtoRepositorio.save(entidade);
+        List<ProdutoGrade> grade = new ArrayList<>(atualizarOuInserirGrade(entidade, dto.getGrade()));
+        entidade.getGrade().addAll(grade);
     }
 
     //Verifica se a classe existe para atualizar no produto
-    private Classe atualizarClasse(Classe dto){
-        return classeRepositorio.findById(dto.getClasseId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + dto.getClasseId() + " não existe"));
+    private Classe atualizarClasse(Classe classeDTO) {
+        return classeRepositorio.findById(classeDTO.getClasseId())
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classeDTO.getClasseId() + " não existe"));
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private Marca atualizarOuCadastrarMarca(Marca dto) {
-        return marcaRepositorio.buscarPorNome(dto.getNome())
+    private Marca atualizarOuCadastrarMarca(Marca marcaDTO) {
+        return marcaRepositorio.buscarPorNome(marcaDTO.getNome())
                 .orElseGet(() -> {
                     Marca novaMarca = new Marca();
-                    novaMarca.setNome(dto.getNome());
+                    novaMarca.setNome(marcaDTO.getNome());
                     return marcaRepositorio.save(novaMarca);
                 });
     }
@@ -188,5 +184,35 @@ public class ProdutoServico {
             }
             return categorias;
         }
+    }
+
+    //Atualiza e insere novos tamanhos a grade produtos se necessário
+    private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, List<ProdutoGrade> gradesDTO) {
+        List<ProdutoGrade> gradesAtualizadas = gradesDTO.stream()
+                .map(grade -> {
+                    Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
+                    return produtoGrade.map(produtoExistente -> {
+                        produtoExistente.setPrecoVista(grade.getPrecoVista());
+                        produtoExistente.setPrecoPrazo(grade.getPrecoPrazo());
+                        produtoExistente.setCodigoDeBarra(grade.getCodigoDeBarra());
+                        produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
+                        return produtoGradeRepositorio.save(produtoExistente);
+                    }).orElseGet(() -> {
+                        Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getTamanho());
+                        return classeGrade.map(classe -> {
+                            ProdutoGrade novaGrade = new ProdutoGrade();
+                            novaGrade.setProduto(produto);
+                            novaGrade.setTamanho(grade.getTamanho());
+                            novaGrade.setPrecoVista(grade.getPrecoVista());
+                            novaGrade.setPrecoPrazo(grade.getPrecoPrazo());
+                            novaGrade.setCodigoDeBarra(grade.getCodigoDeBarra());
+                            novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
+                            return produtoGradeRepositorio.save(novaGrade);
+                        }).orElseGet(null); // Retorna null se o tamanho não existir na ClasseGrade
+                    });
+                })
+                .filter(Objects::nonNull) // Filtra grades não nulas
+                .collect(Collectors.toList());
+        return gradesAtualizadas;
     }
 }

@@ -3,7 +3,9 @@ package ProjectExe.Integracao.entidades;
 import ProjectExe.Integracao.entidades.pk.ProdutoGradePK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.persistence.*;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -22,12 +24,12 @@ public class ProdutoGrade implements Serializable {
 
     @EmbeddedId
     private ProdutoGradePK id = new ProdutoGradePK();
-    private String codigoDeBarra;
+    private Long codigoDeBarra;
     private BigDecimal precoVista;
     private BigDecimal precoPrazo;
     private Integer quantidadeEstoque;
 
-    public ProdutoGrade(Produto produto, String tamanho, String codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo, Integer quantidadeEstoque) {
+    public ProdutoGrade(Produto produto, String tamanho, Long codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo, Integer quantidadeEstoque) {
         id.setProduto(produto);
         id.setTamanho(tamanho);
         this.codigoDeBarra = codigoDeBarra;
@@ -45,7 +47,7 @@ public class ProdutoGrade implements Serializable {
 
     public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
 
-    public String getCodigoDeBarra() { return codigoDeBarra; }
+    public Long getCodigoDeBarra() { return codigoDeBarra; }
 
     public BigDecimal getPrecoVista() { return precoVista; }
 

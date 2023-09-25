@@ -35,7 +35,6 @@ public class ProdutoDTO implements Serializable {
     @JsonIgnoreProperties("nome")
     @JsonUnwrapped(suffix = "_classe")
     private Classe classe;
-    private List<ProdutoImagem> imagens = new ArrayList<>();
 
     @JsonIgnoreProperties("marcaId")
     @JsonUnwrapped(suffix = "_marca")
@@ -45,6 +44,8 @@ public class ProdutoDTO implements Serializable {
     private Set<Categoria> categorias = new HashSet<>();
 
     private List<ProdutoGrade> grade = new ArrayList<>();
+
+    private List<ProdutoImagem> imagens = new ArrayList<>();
 
     @JsonIgnore
     private Set<VendaItens> itens = new HashSet<>();

@@ -1,9 +1,6 @@
 package ProjectExe.Integracao.dto;
 
-import ProjectExe.Integracao.entidades.Categoria;
-import ProjectExe.Integracao.entidades.Classe;
-import ProjectExe.Integracao.entidades.Marca;
-import ProjectExe.Integracao.entidades.Produto;
+import ProjectExe.Integracao.entidades.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -32,15 +29,17 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private Instant dataAtualizacao;
     private char ativo;
 
-    @JsonIgnoreProperties("marcaId")
-    private Marca marca;
-
     @NotNull(message = "Produto precisa estar vinculado a uma classe")
     @JsonIgnoreProperties("nome")
     private Classe classe;
 
+    @JsonIgnoreProperties("marcaId")
+    private Marca marca;
+
     @JsonIgnoreProperties("categoriaId")
     private List<Categoria> categorias = new ArrayList<>();
+
+    private List<ProdutoGrade> grade = new ArrayList<>();
 
     public ProdutoInsereAtualizaDTO() {
     }
@@ -92,4 +91,8 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     public List<Categoria> getCategorias() { return categorias; }
 
     public void setCategorias(List<Categoria> categorias) { this.categorias = categorias; }
+
+    public List<ProdutoGrade> getGrade() { return grade; }
+
+    public void setGrades(List<ProdutoGrade> grade) { this.grade = grade; }
 }
