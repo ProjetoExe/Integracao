@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,8 +42,8 @@ public class Venda implements Serializable {
     @OneToMany(mappedBy = "id.venda", cascade = CascadeType.REMOVE)
     private Set<VendaItens> itens = new HashSet<>();
 
-    @OneToOne(mappedBy = "venda", cascade = CascadeType.ALL)
-    private Pagamento pagamento;
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    private List<Pagamento> pagamentos;
 
     private BigDecimal frete;
     private BigDecimal desconto;

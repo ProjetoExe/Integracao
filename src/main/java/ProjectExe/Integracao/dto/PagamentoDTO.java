@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
@@ -16,6 +17,9 @@ public class PagamentoDTO {
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataPagamento;
+    private String tipoPagamento;
+    private BigDecimal valorPagamento;
+    private Integer quantidadeParcelas;
     private Venda venda;
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO

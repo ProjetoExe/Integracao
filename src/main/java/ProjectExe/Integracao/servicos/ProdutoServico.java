@@ -63,6 +63,15 @@ public class ProdutoServico {
         return resultado.map(ProdutoResumidoDTO::new);
     }
 
+    //inserir novo registro
+    @Transactional
+    public ProdutoInsereAtualizaDTO inserir(ProdutoInsereAtualizaDTO obj) {
+        Produto entidade = new Produto();
+        atualizarDadosProduto(entidade, obj);
+        entidade.setAtivo('N');
+        return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
+    }
+
     //atualizar registro
     @Transactional
     public ProdutoInsereAtualizaDTO atualizar(Long produtoId, ProdutoInsereAtualizaDTO obj) {
@@ -73,15 +82,6 @@ public class ProdutoServico {
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
         }
-    }
-
-    //inserir novo registro
-    @Transactional
-    public ProdutoInsereAtualizaDTO inserir(ProdutoInsereAtualizaDTO obj) {
-        Produto entidade = new Produto();
-        atualizarDadosProduto(entidade, obj);
-        entidade.setAtivo('N');
-        return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
     }
 
     //excluir um registro

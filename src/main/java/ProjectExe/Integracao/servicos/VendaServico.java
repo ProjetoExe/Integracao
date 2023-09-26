@@ -93,7 +93,7 @@ public class VendaServico {
     private void atualizarDados(Venda entidade, VendaDTO obj) {
         entidade.setDataVenda(obj.getDataVenda());
         entidade.setVendaStatus(obj.getVendaStatus());
-        entidade.setPagamento(obj.getPagamento());
+        //entidade.setPagamento(obj.getPagamento());
         entidade.setFrete(obj.getFrete());
         entidade.setDesconto(obj.getDesconto());
         entidade.setSubTotal(obj.getSubTotal());

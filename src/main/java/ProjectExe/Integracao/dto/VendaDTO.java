@@ -6,7 +6,6 @@ import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -15,11 +14,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "pagamento", "subTotal", "frete", "desconto", "total", "nomeCliente", "cpf", "celular", "email", "cep", "endereco",
-        "numero", "bairro", "cidade", "estado", "pais"})
+@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "nomeCliente", "cpf", "celular", "email", "cep", "endereco",
+        "numero", "bairro", "cidade", "estado", "pais", "itens", "pagamentos"})
 @Getter
 @Setter
 public class VendaDTO implements Serializable {
@@ -29,6 +29,11 @@ public class VendaDTO implements Serializable {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
+    private Integer vendaStatus;
+    private BigDecimal frete;
+    private BigDecimal desconto;
+    private BigDecimal subTotal;
+    private BigDecimal total;
     private String nomeCliente;
     private String cpf;
     private String celular;
@@ -44,14 +49,7 @@ public class VendaDTO implements Serializable {
     private Set<VendaItensResumidoDTO> itens = new HashSet<>();
 
     @JsonIgnoreProperties("id")
-    @JsonUnwrapped
-    private Pagamento pagamento;
-
-    private Integer vendaStatus;
-    private BigDecimal frete;
-    private BigDecimal desconto;
-    private BigDecimal subTotal;
-    private BigDecimal total;
+    private List<Pagamento> pagamentos;
 
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO
     public VendaDTO(Venda venda) { BeanUtils.copyProperties(venda, this);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 @Entity
@@ -21,10 +22,12 @@ public class Pagamento implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Instant dataPagamento;
+    private String tipoPagamento;
+    private BigDecimal valorPagamento;
+    private Integer quantidadeParcelas;
 
     @JsonIgnore
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "venda_id")
-    @MapsId
     private Venda venda;
 }
