@@ -5,7 +5,6 @@ import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -16,13 +15,10 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "nomeCliente", "cpf", "celular", "email", "cep", "endereco",
-                    "numero", "bairro", "cidade", "estado", "pais", "itens", "pagamentos"})
 @Getter
 @Setter
-public class VendaDTO implements Serializable {
+public class VendaInsereAtualizaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long vendaId;
@@ -46,16 +42,17 @@ public class VendaDTO implements Serializable {
     private String estado;
     private String pais;
 
+    @JsonIgnoreProperties({"vendaId"})
     private Set<VendaItensResumidoDTO> itens = new HashSet<>();
 
     @JsonIgnoreProperties("id")
     private List<Pagamento> pagamentos;
 
+    public VendaInsereAtualizaDTO(){
+    }
+
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO
-    public VendaDTO(Venda venda) { BeanUtils.copyProperties(venda, this);
-        this.itens = venda.getItens().stream()
-                .map(VendaItensResumidoDTO::new)
-                .collect(Collectors.toSet()); //Utilizado para carregar os itens da venda no objeto
+    public VendaInsereAtualizaDTO(Venda entidade) { BeanUtils.copyProperties(entidade, this);
     }
 
     public VendaStatus getVendaStatus() { return VendaStatus.codigoStatus(vendaStatus); }

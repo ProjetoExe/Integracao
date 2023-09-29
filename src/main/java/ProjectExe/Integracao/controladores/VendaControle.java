@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.VendaDTO;
+import ProjectExe.Integracao.dto.VendaInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.servicos.VendaServico;
 import jakarta.validation.Valid;
@@ -40,18 +41,20 @@ public class VendaControle {
 
     //atualizar registro
     @PutMapping(value = "/{id}")
-    public ResponseEntity<VendaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody VendaDTO dto){
-        VendaDTO entidade = vendaServico.atualizar(id, dto);
-        return ResponseEntity.ok().body(entidade);
+    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody VendaInsereAtualizaDTO dto){
+        VendaInsereAtualizaDTO entidade = vendaServico.atualizar(id, dto);
+        String msg = "Venda atualizada com sucesso";
+        return ResponseEntity.ok().body(msg);
     }
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<VendaDTO> inserir(@Valid @RequestBody VendaDTO obj){
-        VendaDTO entidade = vendaServico.inserir(obj);
+    public ResponseEntity<String> inserir(@Valid @RequestBody VendaInsereAtualizaDTO obj){
+        VendaInsereAtualizaDTO entidade = vendaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getVendaId()).toUri();
-        return ResponseEntity.created(uri).body(entidade);
+        String msg = "Venda inserida com sucesso";
+        return ResponseEntity.created(uri).body(msg);
     }
 
     //excluir um registro

@@ -17,7 +17,7 @@ import java.util.Set;
 @Getter
 @Setter
 public class ProdutoDTO implements Serializable {
-    private static final long SerialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private Long produtoId;
     private String nome;

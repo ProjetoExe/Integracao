@@ -22,6 +22,9 @@ public class PagamentoDTO {
     private Integer quantidadeParcelas;
     private Venda venda;
 
+    public PagamentoDTO(){
+    }
+
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
     public PagamentoDTO(Pagamento pagamento){ BeanUtils.copyProperties(pagamento, this);
     }

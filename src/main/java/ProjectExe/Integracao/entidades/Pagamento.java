@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,6 +22,7 @@ public class Pagamento implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT") //retirar depois para atualizar somente na ProdutoDTO
     private Instant dataPagamento;
     private String tipoPagamento;
     private BigDecimal valorPagamento;
