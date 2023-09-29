@@ -75,7 +75,7 @@ public class VendaServico {
         return new VendaInsereAtualizaDTO(vendaRepositorio.save(entidade));
     }
 
-    //atualizar um registro - no caso apenas o status da venda atualmente
+    //atualizar um registro - *no caso apenas o status da venda*
     @Transactional
     public VendaInsereAtualizaDTO atualizar(Long vendaId, VendaInsereAtualizaDTO obj) {
         try {
@@ -99,7 +99,7 @@ public class VendaServico {
         }
     }
 
-    //Método para inserir ou atualizar dados
+    //inserir ou atualizar (no caso apenas o status da venda) dados das Vendas
     private void atualizarDados(Venda entidade, VendaInsereAtualizaDTO obj) {
         entidade.setDataVenda(obj.getDataVenda());
         entidade.setVendaStatus(obj.getVendaStatus());
@@ -130,6 +130,7 @@ public class VendaServico {
         entidade.getPagamentos().addAll(obj.getPagamentos());
     }
 
+    //
     private VendaItens converterParaVendaItens(VendaItensResumidoDTO itemDTO, Venda venda, Produto produto) {
         VendaItens item = new VendaItens();
         item.setVenda(venda);
