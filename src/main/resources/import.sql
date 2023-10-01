@@ -52,11 +52,11 @@ INSERT INTO produto_categoria (produto_id, categoria_id) values (4,5);
 INSERT INTO produto_categoria (produto_id, categoria_id) values (5,1);
 INSERT INTO produto_categoria (produto_id, categoria_id) values (6,1);
 
-INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-05-05T20:50:15Z', 1, 'GUSTAVO PARIZZATO', '483.366.048-20', '(16) 99723-4150', 'gustavoventura246@gmail.com', '14804-072', 'Rua Benedito Barbosa', '101', 'Vale do Sol', 'Araraquara', 'SP', 'BR', 10.00, 5.00, 2645.50, 2640.50);
+INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-05-05T20:50:15Z', 1, 'GUSTAVO PARIZZATO', '000.000.000-00', '(00) 00000-0000', 'gustavo@gmail.com', '14000-000', 'Rua Teste', '101', 'Bairro teste', 'Cidade teste', 'SP', 'BR', 10.00, 5.00, 2645.50, 2640.50);
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, sub_total, total) VALUES (1, 1, 1, 2400.00, 0.00, 2400.00, 2400.00);
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, sub_total, total) VALUES (1, 2, 1, 235.50, 10.00, 225.50, 235.50);
 
-INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-05-05T20:50:15Z', 3, 'GUSTAVO PARIZZATO', '483.366.048-20', '(16) 99723-4150', 'gustavoventura246@gmail.com', '14804-072', 'Rua Benedito Barbosa', '101', 'Vale do Sol', 'Araraquara', 'SP', 'BR', 0.00, 50.00, 1000.00, 950.00);
+INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-05-05T20:50:15Z', 3, 'GUSTAVO PARIZZATO', '000.000.000-00', '(00) 00000-0000', 'gustavo@gmail.com', '14000-000', 'Rua Teste', '101', 'Bairro teste', 'Cidade teste', 'SP', 'BR', 0.00, 50.00, 1000.00, 950.00);
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, sub_total, total) VALUES (2, 3, 1, 1000.00, 0.00, 1000.00, 1000.00);
 
 INSERT INTO pagamento (venda_id, data_pagamento, tipo_pagamento, valor_pagamento, quantidade_parcelas) VALUES (2, '2023-06-03T15:01:27Z', 'DÉBITO', 200.00, 1)

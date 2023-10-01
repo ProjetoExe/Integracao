@@ -46,7 +46,8 @@ public class VendaDTO implements Serializable {
     private String estado;
     private String pais;
 
-    private Set<VendaItensResumidoDTO> itens = new HashSet<>();
+    @JsonIgnoreProperties({"produto"})
+    private Set<VendaItensDTO> itens = new HashSet<>();
 
     @JsonIgnoreProperties("id")
     private List<Pagamento> pagamentos;
@@ -54,7 +55,7 @@ public class VendaDTO implements Serializable {
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO
     public VendaDTO(Venda venda) { BeanUtils.copyProperties(venda, this);
         this.itens = venda.getItens().stream()
-                .map(VendaItensResumidoDTO::new)
+                .map(VendaItensDTO::new)
                 .collect(Collectors.toSet()); //Utilizado para carregar os itens da venda no objeto
     }
 

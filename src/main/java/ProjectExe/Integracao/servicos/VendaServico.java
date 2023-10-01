@@ -2,7 +2,7 @@ package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.dto.VendaInsereAtualizaDTO;
-import ProjectExe.Integracao.dto.VendaItensResumidoDTO;
+import ProjectExe.Integracao.dto.VendaItensInsereDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.entidades.Venda;
@@ -120,7 +120,7 @@ public class VendaServico {
         entidade.setPais(obj.getPais());
         vendaRepositorio.save(entidade);
 
-        for (VendaItensResumidoDTO itemDTO : obj.getItens()) {
+        for (VendaItensInsereDTO itemDTO : obj.getItens()) {
             Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
                     .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProduto().getProdutoId() + " não encontrado"));
             VendaItens item = converterParaVendaItens(itemDTO, entidade, produto);
@@ -131,7 +131,7 @@ public class VendaServico {
     }
 
     //
-    private VendaItens converterParaVendaItens(VendaItensResumidoDTO itemDTO, Venda venda, Produto produto) {
+    private VendaItens converterParaVendaItens(VendaItensInsereDTO itemDTO, Venda venda, Produto produto) {
         VendaItens item = new VendaItens();
         item.setVenda(venda);
         item.setProduto(produto);

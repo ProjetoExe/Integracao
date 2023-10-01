@@ -43,7 +43,7 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String pais;
 
     @JsonIgnoreProperties({"vendaId"})
-    private Set<VendaItensResumidoDTO> itens = new HashSet<>();
+    private Set<VendaItensInsereDTO> itens = new HashSet<>();
 
     @JsonIgnoreProperties("id")
     private List<Pagamento> pagamentos;
