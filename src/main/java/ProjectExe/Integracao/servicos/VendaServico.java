@@ -4,9 +4,11 @@ import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.dto.VendaInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.VendaItensInsereDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
+import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.VendaItens;
+import ProjectExe.Integracao.repositorios.PagamentoRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
 import ProjectExe.Integracao.repositorios.VendaItensRepositorio;
 import ProjectExe.Integracao.repositorios.VendaRepositorio;
@@ -38,6 +40,8 @@ public class VendaServico {
     private ProdutoRepositorio produtoRepositorio;
     @Autowired
     private VendaItensRepositorio vendaItensRepositorio;
+    @Autowired
+    private PagamentoRepositorio pagamentoRepositorio;
 
     //busca vendas por ID detalhadamente
     @Transactional(readOnly = true)
@@ -127,7 +131,11 @@ public class VendaServico {
             vendaItensRepositorio.save(item);
             entidade.getItens().add(item);
         }
-        entidade.getPagamentos().addAll(obj.getPagamentos());
+        for (Pagamento pagamento : obj.getPagamentos()) {
+            pagamento.setVenda(entidade);
+            pagamentoRepositorio.save(pagamento);
+            entidade.getPagamentos().add(pagamento);
+        }
     }
 
     //

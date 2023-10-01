@@ -46,7 +46,6 @@ public class VendaDTO implements Serializable {
     private String estado;
     private String pais;
 
-    @JsonIgnoreProperties({"produto"})
     private Set<VendaItensDTO> itens = new HashSet<>();
 
     @JsonIgnoreProperties("id")
