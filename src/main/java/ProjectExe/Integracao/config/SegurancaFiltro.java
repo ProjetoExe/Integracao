@@ -1,6 +1,6 @@
 package ProjectExe.Integracao.config;
 
-import ProjectExe.Integracao.repositorios.UserRepository;
+import ProjectExe.Integracao.repositorios.UsuarioRepositorio;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,30 +15,30 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 
 @Component
-public class SecurityFilter extends OncePerRequestFilter {
+public class SegurancaFiltro extends OncePerRequestFilter {
 
     @Autowired
-    TokenService tokenService;
+    TokenServico tokenServico;
     @Autowired
-    UserRepository userRepository;
+    UsuarioRepositorio usuarioRepositorio;
 
     //Configuração do filtro interno antes de chamar o filtro da classe na SecurityConfig
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        var token = this.recoverToken(request);
+        var token = this.retornarToken(request);
         if (token != null){
-            var login = tokenService.validateToken(token);
-            UserDetails user = userRepository.findByLogin(login);
-            var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            var conexao = tokenServico.validarToken(token);
+            UserDetails usuario = usuarioRepositorio.findByLogin(conexao);
+            var autenticacao = new UsernamePasswordAuthenticationToken(usuario, null, usuario.getAuthorities());
+            SecurityContextHolder.getContext().setAuthentication(autenticacao);
         }
         filterChain.doFilter(request, response);
     }
 
     //Retorna o token padrão substituindo Bearer para pegar somente o valor do token
-    private String recoverToken(HttpServletRequest request){
-        var authHeader = request.getHeader("Authorization");
-        if (authHeader == null) return null;
-        return authHeader.replace("Bearer ", "");
+    private String retornarToken(HttpServletRequest request){
+        var cabecalhoAutenticacao = request.getHeader("Authorization");
+        if (cabecalhoAutenticacao == null) return null;
+        return cabecalhoAutenticacao.replace("Bearer ", "");
     }
 }

@@ -16,39 +16,47 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class SegurancaConfig {
 
     @Autowired
-    SecurityFilter securityFilter;
+    SegurancaFiltro segurancaFiltro;
 
     //Filtros de segurança as URLs
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+    SecurityFilterChain cadeiaFiltrosSeguranca(HttpSecurity http) throws Exception {
+        return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll() //URL do Swagger
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll() //URL do Swagger
+                        //produtos
+                        .requestMatchers(HttpMethod.GET, "/produtos").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/vendas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/produtos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/produtos").hasRole("ADMIN")
+                        //vendas
+                        .requestMatchers(HttpMethod.GET, "/vendas/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/vendas/**").permitAll()
+                        //categorias
                         .requestMatchers(HttpMethod.POST, "/categorias").hasRole("ADMIN")
+                        //marcas
                         .requestMatchers(HttpMethod.POST, "/marcas").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(segurancaFiltro, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
     //Configuração de autenticação para pegar a instância do método usado na AuthenticationController
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager gerenciadorAutenticacao(AuthenticationConfiguration configuracaoAutenticacao) throws Exception {
+        return configuracaoAutenticacao.getAuthenticationManager();
     }
 
     //Faz a criptografia da senha para salvá-la
     @Bean
-    public PasswordEncoder passwordEncoder(){ return new BCryptPasswordEncoder(); }
+    public PasswordEncoder criptografarSenha(){ return new BCryptPasswordEncoder(); }
 }

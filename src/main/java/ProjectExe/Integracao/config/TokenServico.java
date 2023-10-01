@@ -1,6 +1,6 @@
 package ProjectExe.Integracao.config;
 
-import ProjectExe.Integracao.entidades.User;
+import ProjectExe.Integracao.entidades.Usuario;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
@@ -13,18 +13,18 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
 @Service
-public class TokenService {
+public class TokenServico {
     @Value("${api.security.token.secret}")
     private String secret;
 
     //Geração do token para autenticação
-    public String generateToken(User user){
+    public String gerarToken(Usuario usuario){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer("auth-integracao")
-                    .withSubject(user.getLogin())
-                    .withExpiresAt(generateExpirationDate())
+                    .withSubject(usuario.getLogin())
+                    .withExpiresAt(gerarExpiracaoToken())
                     .sign(algorithm);
             return token;
         } catch (JWTCreationException exception){
@@ -33,7 +33,7 @@ public class TokenService {
     }
 
     //Validação de token do usuário
-    public String validateToken(String token){
+    public String validarToken(String token){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             return JWT.require(algorithm)
@@ -47,7 +47,7 @@ public class TokenService {
     }
 
     //Configuração de expiração do token
-    private Instant generateExpirationDate(){
+    private Instant gerarExpiracaoToken(){
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
 }
