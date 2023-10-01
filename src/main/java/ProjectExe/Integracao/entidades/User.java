@@ -29,12 +29,14 @@ public class User implements Serializable, UserDetails {
     private String password;
     private UserRole role;
 
+    @Column(unique = true)
     private String email;
     private char ativo;
 
-    public User(String login, String password, UserRole role){
+    public User(String login, String password, String email, UserRole role){
         this.login = login;
         this.password = password;
+        this.email = email;
         this.role = role;
     }
 
