@@ -3,6 +3,8 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -17,9 +19,13 @@ public class PagamentoDTO {
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataPagamento;
+    @NotBlank
     private String tipoPagamento;
+    @NotBlank
     private BigDecimal valorPagamento;
+    @NotBlank
     private Integer quantidadeParcelas;
+    @NotNull
     private Venda venda;
 
     public PagamentoDTO(){

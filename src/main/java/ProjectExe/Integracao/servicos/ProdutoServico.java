@@ -7,7 +7,6 @@ import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
-import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoUnico;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -169,22 +168,19 @@ public class ProdutoServico {
     //Verifica, atualiza e cadastra as Categorias, se necessário
     //Não está retornando no JSON ainda as categorias ao incluir, listagem sendo exibida vazia
     private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categoriasDTO) {
-        if (categoriasDTO.isEmpty()) {
-            throw new ExcecaoRecursoUnico("O produto precisa conter pelo menos 1 categoria");
-        } else {
-            Set<Categoria> categorias = new HashSet<>();
-            for (Categoria categoriaDTO : categoriasDTO) {
-                Categoria categoria = categoriaRepositorio.buscarPorNome(categoriaDTO.getNome())
-                        .orElseGet(() -> {
-                            Categoria novaCategoria = new Categoria();
-                            novaCategoria.setNome(categoriaDTO.getNome());
-                            return categoriaRepositorio.save(novaCategoria);
-                        });
-                categorias.add(categoria);
-            }
-            return categorias;
+        Set<Categoria> categorias = new HashSet<>();
+        for (Categoria categoriaDTO : categoriasDTO) {
+            Categoria categoria = categoriaRepositorio.buscarPorNome(categoriaDTO.getNome())
+                    .orElseGet(() -> {
+                        Categoria novaCategoria = new Categoria();
+                        novaCategoria.setNome(categoriaDTO.getNome());
+                        return categoriaRepositorio.save(novaCategoria);
+                    });
+            categorias.add(categoria);
         }
+        return categorias;
     }
+
 
     //Atualiza e insere novos tamanhos a grade produtos se necessário
     private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, List<ProdutoGrade> gradesDTO) {

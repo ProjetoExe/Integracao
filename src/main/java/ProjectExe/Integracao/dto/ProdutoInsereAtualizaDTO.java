@@ -4,6 +4,7 @@ import ProjectExe.Integracao.entidades.*;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,7 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
     private String referencia;
+    @NotBlank(message = "Produto precisa conter uma descrição")
     private String descricaoCurta;
     private String descricaoCompleta;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
@@ -35,12 +37,15 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @JsonIgnoreProperties("nome")
     private Classe classe;
 
+    @NotNull(message = "Produto precisa conter 1 marca")
     @JsonIgnoreProperties("marcaId")
     private Marca marca;
 
+    @NotEmpty(message = "Produto precisa conter pelo menos 1 categoria")
     @JsonIgnoreProperties("categoriaId")
     private List<Categoria> categorias = new ArrayList<>();
 
+    @NotEmpty(message = "Produto precisa conter pelo menos 1 tamanho")
     private List<ProdutoGrade> grade = new ArrayList<>();
 
     public ProdutoInsereAtualizaDTO() {

@@ -28,7 +28,6 @@ public class Usuario implements Serializable, UserDetails {
     private String login;
     private String password;
     private UsuarioPermissao permissao;
-
     @Column(unique = true)
     private String email;
     private char ativo;

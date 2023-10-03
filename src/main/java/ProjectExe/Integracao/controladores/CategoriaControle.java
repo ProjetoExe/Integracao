@@ -53,7 +53,7 @@ public class CategoriaControle {
     public ResponseEntity<CategoriaDTO> inserir(@Valid @RequestBody CategoriaDTO obj){
         CategoriaDTO entidade = categoriaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(entidade.categoriaId()).toUri();
+                .buildAndExpand(entidade.getCategoriaId()).toUri();
         return ResponseEntity.created(uri).body(entidade);
     }
 

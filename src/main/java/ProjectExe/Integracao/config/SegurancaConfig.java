@@ -30,20 +30,35 @@ public class SegurancaConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
+                        //swagger
                         .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.PUT, "/swagger-ui/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.DELETE, "/swagger-ui/**").permitAll() //URL do Swagger
                         .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.POST, "/v3/api-docs/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.PUT, "/v3/api-docs/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.DELETE, "/v3/api-docs/**").permitAll() //URL do Swagger
                         //produtos
-                        .requestMatchers(HttpMethod.GET, "/produtos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/produtos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/produtos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/produtos").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole("ADMIN")
                         //vendas
-                        .requestMatchers(HttpMethod.GET, "/vendas/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/vendas/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/vendas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/vendas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/vendas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/vendas/**").hasRole("ADMIN")
                         //categorias
-                        .requestMatchers(HttpMethod.POST, "/categorias").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasRole("ADMIN")
                         //marcas
-                        .requestMatchers(HttpMethod.POST, "/marcas").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/marcas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/marcas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/marcas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/marcas/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(segurancaFiltro, UsernamePasswordAuthenticationFilter.class)

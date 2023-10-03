@@ -3,7 +3,7 @@ package ProjectExe.Integracao.controladores;
 import ProjectExe.Integracao.config.TokenServico;
 import ProjectExe.Integracao.dto.AutenticacaoDTO;
 import ProjectExe.Integracao.dto.RespostaLoginDTO;
-import ProjectExe.Integracao.dto.RegistroDTO;
+import ProjectExe.Integracao.dto.UsuarioCadastroDTO;
 import ProjectExe.Integracao.entidades.Usuario;
 import ProjectExe.Integracao.repositorios.UsuarioRepositorio;
 import jakarta.validation.Valid;
@@ -40,10 +40,10 @@ public class AutenticacaoControle {
 
     //Criação de novo Usuário
     @PostMapping("/registro")
-    public ResponseEntity registro(@RequestBody @Valid RegistroDTO dto){
-        if (this.usuarioRepositorio.findByLogin(dto.login()) != null) return ResponseEntity.badRequest().build();
-        String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.password());
-        Usuario novoUsuario = new Usuario(dto.login(), senhaCriptografada, dto.email(), dto.permissao());
+    public ResponseEntity registro(@RequestBody @Valid UsuarioCadastroDTO dto){
+        if (this.usuarioRepositorio.findByLogin(dto.getLogin()) != null) return ResponseEntity.badRequest().build();
+        String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getPassword());
+        Usuario novoUsuario = new Usuario(dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao());
         this.usuarioRepositorio.save(novoUsuario);
         return ResponseEntity.ok().build();
     }

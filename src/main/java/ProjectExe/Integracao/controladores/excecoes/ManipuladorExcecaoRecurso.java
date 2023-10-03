@@ -2,7 +2,6 @@ package ProjectExe.Integracao.controladores.excecoes;
 
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
-import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoUnico;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +31,6 @@ public class ManipuladorExcecaoRecurso {
     @ExceptionHandler(ExcecaoBancoDeDados.class)
     public ResponseEntity<ErroPadrao> bancoDeDados(ExcecaoBancoDeDados e, HttpServletRequest request){
         String erro = "Erro banco de dados";
-        HttpStatus status = HttpStatus.BAD_REQUEST;
-        ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
-        return ResponseEntity.status(status).body(erroPadrao);
-    }
-
-    @ExceptionHandler(ExcecaoRecursoUnico.class)
-    public ResponseEntity<ErroPadrao> recursoUnico(ExcecaoRecursoUnico e, HttpServletRequest request){
-        String erro = "Erro ao excluir";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erroPadrao);
