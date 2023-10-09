@@ -32,21 +32,21 @@ public class LojaServico {
     //buscar todos os registros
     @Transactional(readOnly = true)
     public Page<LojaDTO> buscarTodos(Pageable pageable) {
-        Page<Loja> resultado = lojaRepositorio.buscarTodos(pageable);
+        Page<Loja> resultado = lojaRepositorio.findAll(pageable);
         return resultado.map(LojaDTO::new);
     }
 
     //buscar registros por Razão Social
     @Transactional(readOnly = true)
     public Page<LojaDTO> buscarPorRazaoSocial(String razaoSocial, Pageable pageable) {
-        Page<Loja> resultado = lojaRepositorio.buscarPorRazaoSocial(razaoSocial, pageable);
+        Page<Loja> resultado = lojaRepositorio.findByRazaoSocialContaining(razaoSocial, pageable);
         return resultado.map(LojaDTO::new);
     }
 
     //buscar registros por CNPJ
     @Transactional(readOnly = true)
     public Page<LojaDTO> buscarPorCNPJ(String cnpj, Pageable pageable) {
-        Page<Loja> resultado = lojaRepositorio.buscarPorCnpj(cnpj, pageable);
+        Page<Loja> resultado = lojaRepositorio.findByCnpjContaining(cnpj, pageable);
         return resultado.map(LojaDTO::new);
     }
 

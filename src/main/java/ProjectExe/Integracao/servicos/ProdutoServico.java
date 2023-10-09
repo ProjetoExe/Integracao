@@ -55,9 +55,9 @@ public class ProdutoServico {
                 resultado = new PageImpl<>(Collections.singletonList(produto.get()), pageable, 1);
             }
         } else if (!nome.isEmpty()) {
-            resultado = produtoRepositorio.buscarProdutoPorNomeEAtivo(nome, ativo, pageable);
+            resultado = produtoRepositorio.findByNomeContainingAndAtivo(nome, ativo, pageable);
         } else {
-            resultado = produtoRepositorio.buscarProdutosAtivos(ativo, pageable);
+            resultado = produtoRepositorio.findByAtivo(ativo, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);
     }
@@ -157,7 +157,7 @@ public class ProdutoServico {
 
     //Verifica, atualiza e cadastra a Marca, se necessário
     private Marca atualizarOuCadastrarMarca(Marca marcaDTO) {
-        return marcaRepositorio.buscarPorNome(marcaDTO.getNome())
+        return marcaRepositorio.findByNome(marcaDTO.getNome())
                 .orElseGet(() -> {
                     Marca novaMarca = new Marca();
                     novaMarca.setNome(marcaDTO.getNome());
@@ -170,7 +170,7 @@ public class ProdutoServico {
     private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categoriasDTO) {
         Set<Categoria> categorias = new HashSet<>();
         for (Categoria categoriaDTO : categoriasDTO) {
-            Categoria categoria = categoriaRepositorio.buscarPorNome(categoriaDTO.getNome())
+            Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome())
                     .orElseGet(() -> {
                         Categoria novaCategoria = new Categoria();
                         novaCategoria.setNome(categoriaDTO.getNome());
@@ -188,8 +188,8 @@ public class ProdutoServico {
                 .map(grade -> {
                     Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
                     return produtoGrade.map(produtoExistente -> {
-                        produtoExistente.setPrecoVista(grade.getPrecoVista());
-                        produtoExistente.setPrecoPrazo(grade.getPrecoPrazo());
+                        produtoExistente.setPreco(grade.getPreco());
+                        produtoExistente.setPrecoPromocional(grade.getPrecoPromocional());
                         produtoExistente.setCodigoDeBarra(grade.getCodigoDeBarra());
                         produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                         return produtoGradeRepositorio.save(produtoExistente);
@@ -199,8 +199,8 @@ public class ProdutoServico {
                             ProdutoGrade novaGrade = new ProdutoGrade();
                             novaGrade.setProduto(produto);
                             novaGrade.setTamanho(grade.getTamanho());
-                            novaGrade.setPrecoVista(grade.getPrecoVista());
-                            novaGrade.setPrecoPrazo(grade.getPrecoPrazo());
+                            novaGrade.setPreco(grade.getPreco());
+                            novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
                             novaGrade.setCodigoDeBarra(grade.getCodigoDeBarra());
                             novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                             return produtoGradeRepositorio.save(novaGrade);

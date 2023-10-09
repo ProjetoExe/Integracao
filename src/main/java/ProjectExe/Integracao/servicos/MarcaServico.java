@@ -32,14 +32,14 @@ public class MarcaServico {
     //buscar todos registros
     @Transactional(readOnly = true)
     public Page<MarcaDTO> buscarTodos(Pageable pageable){
-        Page<Marca> resultado = marcaRepositorio.buscarTodos(pageable);
+        Page<Marca> resultado = marcaRepositorio.findAll(pageable);
         return resultado.map(MarcaDTO::new);
     }
 
     //buscar registros por nome
     @Transactional(readOnly = true)
     public Page<MarcaDTO> buscarPorNome(String nome, Pageable pageable){
-        Page<Marca> resultado = marcaRepositorio.buscarPorNome(nome, pageable);
+        Page<Marca> resultado = marcaRepositorio.findByNomeContaining(nome, pageable);
         return resultado.map(MarcaDTO::new);
     }
 

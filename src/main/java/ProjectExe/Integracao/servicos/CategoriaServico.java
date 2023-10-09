@@ -33,14 +33,14 @@ public class CategoriaServico {
     //buscar todos os registros
     @Transactional(readOnly = true)
     public Page<CategoriaDTO> buscarTodos(Pageable pageable){
-        Page<Categoria> resultado = categoriaRepositorio.buscarTodos(pageable);
+        Page<Categoria> resultado = categoriaRepositorio.findAll(pageable);
         return resultado.map(CategoriaDTO::new);
     }
 
     //buscar registros por nome
     @Transactional(readOnly = true)
     public Page<CategoriaDTO> buscarPorNome(String nome, Pageable pageable){
-        Page<Categoria> resultado = categoriaRepositorio.buscarPorNome(nome, pageable);
+        Page<Categoria> resultado = categoriaRepositorio.findByNomeContaining(nome, pageable);
         return resultado.map(CategoriaDTO::new);
     }
 
