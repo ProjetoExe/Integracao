@@ -37,6 +37,10 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private BigDecimal precoPromocional;
     private String tempoGarantia;
     private String mensagemGarantia;
+    private Double comprimento;
+    private Double largura;
+    private Double altura;
+    private Double peso;
     private char ativo;
 
     @NotNull(message = "Produto precisa estar vinculado a uma classe")

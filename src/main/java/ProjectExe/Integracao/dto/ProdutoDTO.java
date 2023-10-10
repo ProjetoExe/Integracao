@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,12 +25,19 @@ public class ProdutoDTO implements Serializable {
     private String referencia;
     private String descricaoCurta;
     private String descricaoCompleta;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCadastro;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
+    private Integer estoqueTotal;
+    private BigDecimal preco;
+    private BigDecimal precoPromocional;
+    private String tempoGarantia;
+    private String mensagemGarantia;
+    private Double comprimento;
+    private Double largura;
+    private Double altura;
+    private Double peso;
     private char ativo;
 
     @JsonIgnoreProperties("nome")

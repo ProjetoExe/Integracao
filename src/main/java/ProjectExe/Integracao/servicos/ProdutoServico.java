@@ -138,6 +138,10 @@ public class ProdutoServico {
         entidade.setPrecoPromocional(dto.getPrecoPromocional());
         entidade.setTempoGarantia(dto.getTempoGarantia());
         entidade.setMensagemGarantia(dto.getMensagemGarantia());
+        entidade.setComprimento(dto.getComprimento());
+        entidade.setLargura(dto.getLargura());
+        entidade.setAltura(dto.getAltura());
+        entidade.setPeso(dto.getPeso());
 
         Classe classe = atualizarClasse(dto.getClasse());
         entidade.setClasse(dto.getClasse());

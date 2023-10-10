@@ -7,8 +7,9 @@ import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-@JsonPropertyOrder({"produtoId", "nome", "descricaoCurta", "descricaoLonga", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao"})
+@JsonPropertyOrder({"produtoId", "nome", "estoqueTotal", "preco", "precoPromocional", "ativo"})
 @Getter
 @Setter
 public class ProdutoResumidoDTO implements Serializable {
@@ -16,6 +17,9 @@ public class ProdutoResumidoDTO implements Serializable {
 
     private Long produtoId;
     private String nome;
+    private Integer estoqueTotal;
+    private BigDecimal preco;
+    private BigDecimal precoPromocional;
     private char ativo;
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
