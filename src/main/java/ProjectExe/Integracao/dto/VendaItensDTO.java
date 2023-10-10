@@ -14,10 +14,11 @@ public class VendaItensDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long productId;
+    private String nomeProduto;
+    private String tamanho;
     private Integer quantidade;
     private BigDecimal preco;
     private BigDecimal desconto;
-    private BigDecimal subTotal;
     private BigDecimal total;
 
     public VendaItensDTO(){

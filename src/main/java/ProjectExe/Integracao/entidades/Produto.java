@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -31,6 +32,12 @@ public class Produto implements Serializable{
     private String descricaoCompleta;
     private Instant dataCadastro;
     private Instant dataAtualizacao;
+    private Integer estoqueTotal;
+    private BigDecimal preco;
+    private BigDecimal precoPromocional;
+    private String tempoGarantia;
+    private String mensagemGarantia;
+
     private char ativo;
 
     @ManyToOne

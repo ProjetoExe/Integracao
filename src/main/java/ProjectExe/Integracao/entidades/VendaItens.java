@@ -23,20 +23,21 @@ public class VendaItens implements Serializable {
 
     @EmbeddedId
     private VendaItemPK id = new VendaItemPK();
-
+    private String nomeProduto;
+    private String tamanho;
     private Integer quantidade;
     private BigDecimal preco;
     private BigDecimal desconto;
-    private BigDecimal subTotal;
     private BigDecimal total;
 
-    public VendaItens(Venda venda, Produto produto, Integer quantidade, BigDecimal preco, BigDecimal desconto, BigDecimal subTotal, BigDecimal total) {
+    public VendaItens(Venda venda, Produto produto, String nomeProduto, String tamanho, Integer quantidade, BigDecimal preco, BigDecimal desconto, BigDecimal subTotal, BigDecimal total) {
         id.setVenda(venda);
         id.setProduto(produto);
+        this.nomeProduto = nomeProduto;
+        this.tamanho = tamanho;
         this.quantidade = quantidade;
         this.preco = preco;
         this.desconto = desconto;
-        this.subTotal = subTotal;
         this.total = total;
     }
 
@@ -50,13 +51,15 @@ public class VendaItens implements Serializable {
 
     public void setProduto(Produto produto){ id.setProduto(produto); }
 
+    public String getNomeProduto() { return nomeProduto; }
+
+    public String getTamanho() { return tamanho; }
+
     public Integer getQuantidade() { return quantidade; }
 
     public BigDecimal getPreco() { return preco; }
 
     public BigDecimal getDesconto() { return desconto; }
-
-    public BigDecimal getSubTotal() { return subTotal; }
 
     public BigDecimal getTotal() { return total; }
 }

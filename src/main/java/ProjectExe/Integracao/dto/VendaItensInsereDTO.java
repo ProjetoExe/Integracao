@@ -15,16 +15,15 @@ public class VendaItensInsereDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Produto produto;
+    private String tamanho;
     private Integer quantidade;
     private BigDecimal preco;
     private BigDecimal desconto;
-    private BigDecimal subTotal;
     private BigDecimal total;
 
     public VendaItensInsereDTO() {
     }
 
     //Construtor com parâmetro da classe VendaItens para VendaItensResumidoDTO / BeanUtils necessita de setter além de getter no DTO
-    public VendaItensInsereDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this);
-    }
+    public VendaItensInsereDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this); }
 }

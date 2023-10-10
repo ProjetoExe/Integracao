@@ -19,10 +19,14 @@ public class ProdutoImagem implements Serializable {
 
     @EmbeddedId
     private ProdutoImagemPK id = new ProdutoImagemPK();
+    private String titulo;
+    private Integer ordem;
 
-    public ProdutoImagem(Produto produto, String imgUrl) {
+    public ProdutoImagem(Produto produto, String imgUrl, String titulo, Integer ordem) {
         id.setProduto(produto);
         id.setImgUrl(imgUrl);
+        this.ordem = ordem;
+        this.titulo = titulo;
     }
 
     @JsonIgnore
@@ -33,4 +37,12 @@ public class ProdutoImagem implements Serializable {
     public String getImgUrl() { return id.getImgUrl(); }
 
     public void setImgUrl(String imgUrl) { id.setImgUrl(imgUrl); }
+
+    public Integer getOrdem() { return ordem; }
+
+    public void setOrdem(Integer ordem) { this.ordem = ordem; }
+
+    public String getTitulo() { return titulo; }
+
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 }

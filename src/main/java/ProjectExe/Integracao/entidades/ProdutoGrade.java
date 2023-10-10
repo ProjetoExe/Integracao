@@ -24,17 +24,17 @@ public class ProdutoGrade implements Serializable {
 
     @EmbeddedId
     private ProdutoGradePK id = new ProdutoGradePK();
-    private Long codigoDeBarra;
-    private BigDecimal precoVista;
-    private BigDecimal precoPrazo;
+    private Long ean;
+    private BigDecimal preco;
+    private BigDecimal precoPromocional;
     private Integer quantidadeEstoque;
 
-    public ProdutoGrade(Produto produto, String tamanho, Long codigoDeBarra, BigDecimal precoVista, BigDecimal precoPrazo, Integer quantidadeEstoque) {
+    public ProdutoGrade(Produto produto, String tamanho, Long ean, BigDecimal preco, BigDecimal precoPromocional, Integer quantidadeEstoque) {
         id.setProduto(produto);
         id.setTamanho(tamanho);
-        this.codigoDeBarra = codigoDeBarra;
-        this.precoVista = precoVista;
-        this.precoPrazo = precoPrazo;
+        this.ean = ean;
+        this.preco = preco;
+        this.precoPromocional = precoPromocional;
         this.quantidadeEstoque = quantidadeEstoque;
     }
 
@@ -47,11 +47,11 @@ public class ProdutoGrade implements Serializable {
 
     public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
 
-    public Long getCodigoDeBarra() { return codigoDeBarra; }
+    public Long getEan() { return ean; }
 
-    public BigDecimal getPrecoVista() { return precoVista; }
+    public BigDecimal getPreco() { return preco; }
 
-    public BigDecimal getPrecoPrazo() { return precoPrazo; }
+    public BigDecimal getPrecoPromocional() { return precoPromocional; }
 
     public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
 }

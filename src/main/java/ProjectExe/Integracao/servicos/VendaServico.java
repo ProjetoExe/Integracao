@@ -4,14 +4,8 @@ import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.dto.VendaInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.VendaItensInsereDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
-import ProjectExe.Integracao.entidades.Pagamento;
-import ProjectExe.Integracao.entidades.Produto;
-import ProjectExe.Integracao.entidades.Venda;
-import ProjectExe.Integracao.entidades.VendaItens;
-import ProjectExe.Integracao.repositorios.PagamentoRepositorio;
-import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
-import ProjectExe.Integracao.repositorios.VendaItensRepositorio;
-import ProjectExe.Integracao.repositorios.VendaRepositorio;
+import ProjectExe.Integracao.entidades.*;
+import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
@@ -42,6 +36,8 @@ public class VendaServico {
     private VendaItensRepositorio vendaItensRepositorio;
     @Autowired
     private PagamentoRepositorio pagamentoRepositorio;
+    @Autowired
+    private ProdutoGradeRepositorio produtoGradeRepositorio;
 
     //busca vendas por ID detalhadamente
     @Transactional(readOnly = true)
@@ -130,6 +126,9 @@ public class VendaServico {
             VendaItens item = converterParaVendaItens(itemDTO, entidade, produto);
             vendaItensRepositorio.save(item);
             entidade.getItens().add(item);
+
+            ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho_(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
+            atualizarEstoque(produtoGrade, itemDTO.getQuantidade());
         }
         for (Pagamento pagamento : obj.getPagamentos()) {
             pagamento.setVenda(entidade);
@@ -138,16 +137,25 @@ public class VendaServico {
         }
     }
 
-    //
+    //Converte de VendaItensInsereDTO para VendaItens para salvar no banco de dados
     private VendaItens converterParaVendaItens(VendaItensInsereDTO itemDTO, Venda venda, Produto produto) {
         VendaItens item = new VendaItens();
         item.setVenda(venda);
         item.setProduto(produto);
+        item.setNomeProduto(produto.getNome());
+        item.setTamanho(itemDTO.getTamanho());
         item.setQuantidade(itemDTO.getQuantidade());
         item.setPreco(itemDTO.getPreco());
         item.setDesconto(itemDTO.getDesconto());
-        item.setSubTotal(itemDTO.getSubTotal());
         item.setTotal(itemDTO.getTotal());
         return item;
+    }
+
+    //Reduz do estoque as quantidades vendidas
+    private void atualizarEstoque(ProdutoGrade produtoGrade, Integer quantidadeVendida){
+        if (produtoGrade != null) {
+            produtoGrade.setQuantidadeEstoque(produtoGrade.getQuantidadeEstoque() - quantidadeVendida);
+            produtoGradeRepositorio.save(produtoGrade);
+        }
     }
 }

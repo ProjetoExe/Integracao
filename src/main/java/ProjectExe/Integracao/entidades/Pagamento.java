@@ -23,10 +23,10 @@ public class Pagamento implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT") //retirar depois para atualizar somente na ProdutoDTO
-    private Instant dataPagamento;
-    private String tipoPagamento;
-    private BigDecimal valorPagamento;
-    private Integer quantidadeParcelas;
+    private Instant data;
+    private String tipo;
+    private BigDecimal valor;
+    private Integer qtdParcelas;
 
     @JsonIgnore
     @ManyToOne

@@ -10,4 +10,7 @@ public interface ProdutoGradeRepositorio extends JpaRepository<ProdutoGrade, Lon
 
     @Query(value = "SELECT pg FROM ProdutoGrade pg WHERE pg.id.produto.id = :produtoId AND pg.id.tamanho = :tamanho")
     Optional<ProdutoGrade> buscarPorProdutoIdETamanho(Long produtoId, String tamanho);
+
+    @Query(value = "SELECT pg FROM ProdutoGrade pg WHERE pg.id.produto.id = :produtoId AND pg.id.tamanho = :tamanho")
+    ProdutoGrade buscarPorProdutoIdETamanho_(Long produtoId, String tamanho);
 }

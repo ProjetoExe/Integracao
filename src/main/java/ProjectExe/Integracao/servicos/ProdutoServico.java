@@ -130,9 +130,14 @@ public class ProdutoServico {
             entidade.setDataAtualizacao(Instant.now());
         }
         entidade.setNome(dto.getNome());
+        entidade.setReferencia(dto.getReferencia());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
-        entidade.setReferencia(dto.getReferencia());
+        entidade.setEstoqueTotal(dto.getEstoqueTotal());
+        entidade.setPreco(dto.getPreco());
+        entidade.setPrecoPromocional(dto.getPrecoPromocional());
+        entidade.setTempoGarantia(dto.getTempoGarantia());
+        entidade.setMensagemGarantia(dto.getMensagemGarantia());
 
         Classe classe = atualizarClasse(dto.getClasse());
         entidade.setClasse(dto.getClasse());
@@ -190,7 +195,7 @@ public class ProdutoServico {
                     return produtoGrade.map(produtoExistente -> {
                         produtoExistente.setPreco(grade.getPreco());
                         produtoExistente.setPrecoPromocional(grade.getPrecoPromocional());
-                        produtoExistente.setCodigoDeBarra(grade.getCodigoDeBarra());
+                        produtoExistente.setEan(grade.getEan());
                         produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                         return produtoGradeRepositorio.save(produtoExistente);
                     }).orElseGet(() -> {
@@ -201,7 +206,7 @@ public class ProdutoServico {
                             novaGrade.setTamanho(grade.getTamanho());
                             novaGrade.setPreco(grade.getPreco());
                             novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
-                            novaGrade.setCodigoDeBarra(grade.getCodigoDeBarra());
+                            novaGrade.setEan(grade.getEan());
                             novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                             return produtoGradeRepositorio.save(novaGrade);
                         }).orElseGet(null); // Retorna null se o tamanho não existir na ClasseGrade

@@ -11,6 +11,7 @@ import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,11 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
+    private Integer estoqueTotal;
+    private BigDecimal preco;
+    private BigDecimal precoPromocional;
+    private String tempoGarantia;
+    private String mensagemGarantia;
     private char ativo;
 
     @NotNull(message = "Produto precisa estar vinculado a uma classe")
