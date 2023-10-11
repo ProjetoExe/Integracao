@@ -36,6 +36,8 @@ public class ProdutoServico {
     private CategoriaRepositorio categoriaRepositorio;
     @Autowired
     private ProdutoGradeRepositorio produtoGradeRepositorio;
+    @Autowired
+    private ProdutoImagemRepositorio produtoImagemRepositorio;
 
     //buscar por ID
     @Transactional(readOnly = true)
@@ -95,24 +97,6 @@ public class ProdutoServico {
         }
     }
 
-    //inserir imagem ao Produto (por String imgUrl)
-    @Transactional
-    public ProdutoDTO atualizarImagens(Long produtoId, List<ProdutoImagem> imagens) {
-        Produto entidade = produtoRepositorio.findById(produtoId)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
-        List<ProdutoImagem> imagensExistente = entidade.getImagens();
-        imagensExistente.removeIf(imagemExistente -> !imagens.contains(imagemExistente));
-        imagens.stream()
-                .filter(produtoImagem -> !imagensExistente.contains(produtoImagem))
-                .forEach(produtoImagem -> {
-                    if (produtoImagem != null && !produtoImagem.getImgUrl().isEmpty()) {
-                        entidade.getImagens().add(produtoImagem);
-                        produtoImagem.setProduto(entidade);
-                    }
-                });
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
-    }
-
     //remover tamanho do produto
     @Transactional
     public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
@@ -144,7 +128,7 @@ public class ProdutoServico {
         entidade.setPeso(dto.getPeso());
 
         Classe classe = atualizarClasse(dto.getClasse());
-        entidade.setClasse(dto.getClasse());
+        entidade.setClasse(classe);
 
         Marca marca = atualizarOuCadastrarMarca(dto.getMarca());
         entidade.setMarca(marca);
@@ -154,8 +138,11 @@ public class ProdutoServico {
         entidade.getCategorias().addAll(categorias);
 
         produtoRepositorio.save(entidade);
-        List<ProdutoGrade> grade = new ArrayList<>(atualizarOuInserirGrade(entidade, dto.getGrade()));
-        entidade.getGrade().addAll(grade);
+        List<ProdutoGrade> grades = new ArrayList<>(atualizarOuInserirGrade(entidade, dto.getGrade()));
+        entidade.getGrade().addAll(grades);
+
+        List<ProdutoImagem> imagems = new ArrayList<>(atualizarOuInserirImagens(entidade, dto.getImagens()));
+        entidade.getImagens().addAll(imagems);
     }
 
     //Verifica se a classe existe para atualizar no produto
@@ -190,7 +177,6 @@ public class ProdutoServico {
         return categorias;
     }
 
-
     //Atualiza e insere novos tamanhos a grade produtos se necessário
     private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, List<ProdutoGrade> gradesDTO) {
         List<ProdutoGrade> gradesAtualizadas = gradesDTO.stream()
@@ -219,5 +205,25 @@ public class ProdutoServico {
                 .filter(Objects::nonNull) // Filtra grades não nulas
                 .collect(Collectors.toList());
         return gradesAtualizadas;
+    }
+
+    public List<ProdutoImagem> atualizarOuInserirImagens(Produto produto, List<ProdutoImagem> novasImagens) {
+        List<ProdutoImagem> imagensAtualizadas = novasImagens.stream()
+                .map(imagem -> {
+                    Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());
+                    if (produtoImagem.isPresent()) {
+                        ProdutoImagem produtoImagemExistente = produtoImagem.get();
+                        produtoImagemExistente.setTitulo(imagem.getTitulo());
+                        return produtoImagemRepositorio.save(produtoImagemExistente);
+                    } else {
+                        ProdutoImagem novaImagem = new ProdutoImagem();
+                        novaImagem.setProduto(produto);
+                        novaImagem.setTitulo(imagem.getTitulo());
+                        novaImagem.setImgUrl(imagem.getImgUrl());
+                        return produtoImagemRepositorio.save(novaImagem);
+                    }
+                })
+                .collect(Collectors.toList());
+        return imagensAtualizadas;
     }
 }

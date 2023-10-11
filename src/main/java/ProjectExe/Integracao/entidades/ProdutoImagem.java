@@ -2,9 +2,7 @@ package ProjectExe.Integracao.entidades;
 
 import ProjectExe.Integracao.entidades.pk.ProdutoImagemPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
@@ -20,12 +18,10 @@ public class ProdutoImagem implements Serializable {
     @EmbeddedId
     private ProdutoImagemPK id = new ProdutoImagemPK();
     private String titulo;
-    private Integer ordem;
 
-    public ProdutoImagem(Produto produto, String imgUrl, String titulo, Integer ordem) {
+    public ProdutoImagem(Produto produto, String imgUrl, String titulo) {
         id.setProduto(produto);
         id.setImgUrl(imgUrl);
-        this.ordem = ordem;
         this.titulo = titulo;
     }
 
@@ -37,10 +33,6 @@ public class ProdutoImagem implements Serializable {
     public String getImgUrl() { return id.getImgUrl(); }
 
     public void setImgUrl(String imgUrl) { id.setImgUrl(imgUrl); }
-
-    public Integer getOrdem() { return ordem; }
-
-    public void setOrdem(Integer ordem) { this.ordem = ordem; }
 
     public String getTitulo() { return titulo; }
 

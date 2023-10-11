@@ -58,6 +58,8 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     @NotEmpty(message = "Produto precisa conter pelo menos 1 tamanho")
     private List<ProdutoGrade> grade = new ArrayList<>();
 
+    private List<ProdutoImagem> imagens = new ArrayList<>();
+
     public ProdutoInsereAtualizaDTO() {
     }
 

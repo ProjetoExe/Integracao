@@ -3,7 +3,6 @@ package ProjectExe.Integracao.controladores;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
-import ProjectExe.Integracao.entidades.ProdutoImagem;
 import ProjectExe.Integracao.servicos.ProdutoServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/produtos")
@@ -64,13 +62,6 @@ public class ProdutoControle {
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         produtoServico.deletar(id);
         return ResponseEntity.noContent().build();
-    }
-
-    //inserir imagem ao produto (por String imgUrl)
-    @PostMapping(value = "/{id}/imagens")
-    public ResponseEntity<ProdutoDTO> atualizarImagens(@PathVariable Long id, @RequestBody List<ProdutoImagem> produtoImagem){
-        ProdutoDTO entidade = produtoServico.atualizarImagens(id, produtoImagem);
-        return ResponseEntity.ok().body(entidade);
     }
 
     //remover tamanho de um produto pelo parâmetro tamanho
