@@ -179,7 +179,7 @@ public class ProdutoServico {
 
     //Atualiza e insere novos tamanhos a grade produtos se necessário
     private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, List<ProdutoGrade> gradesDTO) {
-        List<ProdutoGrade> gradesAtualizadas = gradesDTO.stream()
+        return gradesDTO.stream()
                 .map(grade -> {
                     Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
                     return produtoGrade.map(produtoExistente -> {
@@ -204,11 +204,10 @@ public class ProdutoServico {
                 })
                 .filter(Objects::nonNull) // Filtra grades não nulas
                 .collect(Collectors.toList());
-        return gradesAtualizadas;
     }
 
     public List<ProdutoImagem> atualizarOuInserirImagens(Produto produto, List<ProdutoImagem> novasImagens) {
-        List<ProdutoImagem> imagensAtualizadas = novasImagens.stream()
+        return novasImagens.stream()
                 .map(imagem -> {
                     Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());
                     if (produtoImagem.isPresent()) {
@@ -224,6 +223,5 @@ public class ProdutoServico {
                     }
                 })
                 .collect(Collectors.toList());
-        return imagensAtualizadas;
     }
 }

@@ -4,6 +4,7 @@ import ProjectExe.Integracao.entidades.pk.ProdutoImagemPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -17,6 +18,7 @@ public class ProdutoImagem implements Serializable {
 
     @EmbeddedId
     private ProdutoImagemPK id = new ProdutoImagemPK();
+    @Getter
     private String titulo;
 
     public ProdutoImagem(Produto produto, String imgUrl, String titulo) {
@@ -33,8 +35,6 @@ public class ProdutoImagem implements Serializable {
     public String getImgUrl() { return id.getImgUrl(); }
 
     public void setImgUrl(String imgUrl) { id.setImgUrl(imgUrl); }
-
-    public String getTitulo() { return titulo; }
 
     public void setTitulo(String titulo) { this.titulo = titulo; }
 }

@@ -44,7 +44,7 @@ public class ManipuladorExcecaoRecurso {
 
         //a exceção MethodArgumentNotValidException preenche o BindResult como padrão, permitindo buscar erros e tratá-los de forma personalizada
         BindingResult bindingResult = e.getBindingResult();
-        List<String> erros = bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).collect(Collectors.toList());
+        List<String> erros = bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).toList();
 
         ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, erros.toString(), request.getRequestURI());
         return ResponseEntity.status(status).body(erroPadrao);

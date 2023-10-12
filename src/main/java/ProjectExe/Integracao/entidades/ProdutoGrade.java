@@ -7,6 +7,7 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -16,7 +17,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "produto_grade")
 @NoArgsConstructor
-@Setter //Não adicionado o @Getter pelo conflito com o @JsonIgnore do 'getProduto', solução ainda não encontrada
+@Setter //Não adicionado o @Getter pelo conflito com o @JsonIgnore do 'getProduto'
 @EqualsAndHashCode(of="id")
 @JsonPropertyOrder({"tamanho", "codigoDeBarra", "precoVista", "precoPrazo", "quantidadeEstoque"})
 public class ProdutoGrade implements Serializable {
@@ -24,9 +25,13 @@ public class ProdutoGrade implements Serializable {
 
     @EmbeddedId
     private ProdutoGradePK id = new ProdutoGradePK();
+    @Getter
     private Long ean;
+    @Getter
     private BigDecimal preco;
+    @Getter
     private BigDecimal precoPromocional;
+    @Getter
     private Integer quantidadeEstoque;
 
     public ProdutoGrade(Produto produto, String tamanho, Long ean, BigDecimal preco, BigDecimal precoPromocional, Integer quantidadeEstoque) {
@@ -46,12 +51,4 @@ public class ProdutoGrade implements Serializable {
     public String getTamanho() { return id.getTamanho(); }
 
     public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
-
-    public Long getEan() { return ean; }
-
-    public BigDecimal getPreco() { return preco; }
-
-    public BigDecimal getPrecoPromocional() { return precoPromocional; }
-
-    public Integer getQuantidadeEstoque() { return quantidadeEstoque; }
 }

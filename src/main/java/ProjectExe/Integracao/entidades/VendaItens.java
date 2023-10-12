@@ -7,6 +7,7 @@ import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -16,18 +17,24 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "venda_itens")
 @NoArgsConstructor
-@Setter //Não adicionado o @Getter pelo conflito com o @JsonIgnore do 'getVenda', está em utilização o VendaItensResumidoDTO que não contém a associação com a Venda, solução ainda não encontrada
+@Setter //Não adicionado o @Getter no id pelo conflito com o @JsonIgnore do 'getVenda', está em utilização o VendaItensResumidoDTO que não contém a associação com a Venda
 @EqualsAndHashCode(of="id")
 public class VendaItens implements Serializable {
     private static final long SerialVersionUID = 1L;
 
     @EmbeddedId
     private VendaItemPK id = new VendaItemPK();
+    @Getter
     private String nomeProduto;
+    @Getter
     private String tamanho;
+    @Getter
     private Integer quantidade;
+    @Getter
     private BigDecimal preco;
+    @Getter
     private BigDecimal desconto;
+    @Getter
     private BigDecimal total;
 
     public VendaItens(Venda venda, Produto produto, String nomeProduto, String tamanho, Integer quantidade, BigDecimal preco, BigDecimal desconto, BigDecimal subTotal, BigDecimal total) {
@@ -50,16 +57,4 @@ public class VendaItens implements Serializable {
     public Produto getProduto(){ return id.getProduto(); }
 
     public void setProduto(Produto produto){ id.setProduto(produto); }
-
-    public String getNomeProduto() { return nomeProduto; }
-
-    public String getTamanho() { return tamanho; }
-
-    public Integer getQuantidade() { return quantidade; }
-
-    public BigDecimal getPreco() { return preco; }
-
-    public BigDecimal getDesconto() { return desconto; }
-
-    public BigDecimal getTotal() { return total; }
 }
