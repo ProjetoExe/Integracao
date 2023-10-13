@@ -206,6 +206,7 @@ public class ProdutoServico {
                 .collect(Collectors.toList());
     }
 
+    //atualiza e insere novas imagens ao produto
     public List<ProdutoImagem> atualizarOuInserirImagens(Produto produto, List<ProdutoImagem> novasImagens) {
         return novasImagens.stream()
                 .map(imagem -> {

@@ -51,4 +51,8 @@ public class ProdutoGrade implements Serializable {
     public String getTamanho() { return id.getTamanho(); }
 
     public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
+
+    public void atualizarEstoque(Integer quantidade) {
+        this.quantidadeEstoque -= quantidade;
+    }
 }

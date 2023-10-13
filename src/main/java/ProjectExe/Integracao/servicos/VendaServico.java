@@ -128,7 +128,7 @@ public class VendaServico {
             entidade.getItens().add(item);
 
             ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho_(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
-            atualizarEstoque(produtoGrade, itemDTO.getQuantidade());
+            produtoGrade.atualizarEstoque(itemDTO.getQuantidade());
         }
         for (Pagamento pagamento : obj.getPagamentos()) {
             pagamento.setVenda(entidade);
@@ -149,13 +149,5 @@ public class VendaServico {
         item.setDesconto(itemDTO.getDesconto());
         item.setTotal(itemDTO.getTotal());
         return item;
-    }
-
-    //Reduz do estoque as quantidades vendidas
-    private void atualizarEstoque(ProdutoGrade produtoGrade, Integer quantidadeVendida){
-        if (produtoGrade != null) {
-            produtoGrade.setQuantidadeEstoque(produtoGrade.getQuantidadeEstoque() - quantidadeVendida);
-            produtoGradeRepositorio.save(produtoGrade);
-        }
     }
 }
