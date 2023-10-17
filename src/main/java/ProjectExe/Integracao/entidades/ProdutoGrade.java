@@ -52,7 +52,7 @@ public class ProdutoGrade implements Serializable {
 
     public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
 
-    public void atualizarEstoque(Integer quantidade) {
-        this.quantidadeEstoque -= quantidade;
+    public void atualizarEstoque(ProdutoGrade produtoGrade, Integer qtdVendida) {
+        produtoGrade.quantidadeEstoque -= qtdVendida;
     }
 }

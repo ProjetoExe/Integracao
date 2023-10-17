@@ -127,8 +127,11 @@ public class VendaServico {
             vendaItensRepositorio.save(item);
             entidade.getItens().add(item);
 
-            ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho_(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
-            produtoGrade.atualizarEstoque(itemDTO.getQuantidade());
+            Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
+            if (produtoGrade.isPresent()) {
+                ProdutoGrade grade = produtoGrade.get();
+                grade.atualizarEstoque(grade, itemDTO.getQuantidade());
+            }
         }
         for (Pagamento pagamento : obj.getPagamentos()) {
             pagamento.setVenda(entidade);
