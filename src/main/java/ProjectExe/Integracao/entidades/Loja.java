@@ -1,9 +1,12 @@
 package ProjectExe.Integracao.entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "lojas")
@@ -32,4 +35,8 @@ public class Loja implements Serializable {
     private String cidade;
     private String estado;
     private String pais;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "loja")
+    List<Usuario> usuarios = new ArrayList<>();
 }

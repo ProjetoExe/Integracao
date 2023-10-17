@@ -43,7 +43,7 @@ public class AutenticacaoControle {
     public ResponseEntity registro(@RequestBody @Valid UsuarioCadastroDTO dto){
         if (this.usuarioRepositorio.findByLogin(dto.getLogin()) != null) return ResponseEntity.badRequest().build();
         String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getPassword());
-        Usuario novoUsuario = new Usuario(dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao());
+        Usuario novoUsuario = new Usuario(dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao(), dto.getLoja());
         this.usuarioRepositorio.save(novoUsuario);
         return ResponseEntity.ok().build();
     }

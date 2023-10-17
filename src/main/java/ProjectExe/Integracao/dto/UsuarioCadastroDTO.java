@@ -1,7 +1,9 @@
 package ProjectExe.Integracao.dto;
 
+import ProjectExe.Integracao.entidades.Loja;
 import ProjectExe.Integracao.entidades.Usuario;
 import ProjectExe.Integracao.entidades.enums.UsuarioPermissao;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -23,6 +25,9 @@ public class UsuarioCadastroDTO implements Serializable {
     private String email;
     @NotNull(message = "Permissão não pode ser nulo ou vazio")
     private UsuarioPermissao permissao;
+    @NotNull(message = "Loja não pode ser nulo ou vazio")
+    @JsonUnwrapped
+    private Loja loja;
 
     public UsuarioCadastroDTO(){
     }

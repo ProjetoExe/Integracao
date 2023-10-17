@@ -32,11 +32,16 @@ public class Usuario implements Serializable, UserDetails {
     private String email;
     private char ativo;
 
-    public Usuario(String login, String password, String email, UsuarioPermissao role){
+    @ManyToOne
+    @JoinColumn(name = "loja_id")
+    private Loja loja;
+
+    public Usuario(String login, String password, String email, UsuarioPermissao role, Loja loja){
         this.login = login;
         this.password = password;
         this.email = email;
         this.permissao = role;
+        this.loja = loja;
     }
 
     //Se o usuário for ADMIN, contém permissões de ADMIN e USER, se for USER, contém apenas de USER
