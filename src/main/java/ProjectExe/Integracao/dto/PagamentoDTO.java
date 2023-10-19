@@ -9,12 +9,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @Getter
 @Setter
-public class PagamentoDTO {
+public class PagamentoDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")

@@ -9,6 +9,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -49,6 +50,7 @@ public class ProdutoServico {
 
     //busca produtos por id, nome e ativo
     @Transactional(readOnly = true)
+    @Cacheable("produtos")
     public Page<ProdutoResumidoDTO> buscarTodos_ProdutosPorIdENomeEAtivo(Long produtoId, String nome, char ativo, Pageable pageable) {
         Page<Produto> resultado = new PageImpl<>(Collections.emptyList());
         if (produtoId != null) {

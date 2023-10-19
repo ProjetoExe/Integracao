@@ -8,13 +8,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
 @JsonPropertyOrder({"vendaId", "vendaStatus", "dataVenda", "total"})
 @Getter
 @Setter
-public class VendaResumidaDTO {
+public class VendaResumidaDTO implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private Long vendaId;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")

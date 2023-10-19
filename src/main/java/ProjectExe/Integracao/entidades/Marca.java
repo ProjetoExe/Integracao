@@ -16,7 +16,7 @@ import java.util.Set;
 @Setter
 @EqualsAndHashCode(of="marcaId")
 public class Marca implements Serializable {
-    private static final long SerialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -8,6 +8,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -32,6 +33,7 @@ public class CategoriaServico {
 
     //buscar todos os registros
     @Transactional(readOnly = true)
+    @Cacheable("categorias")
     public Page<CategoriaDTO> buscarTodos(Pageable pageable){
         Page<Categoria> resultado = categoriaRepositorio.findAll(pageable);
         return resultado.map(CategoriaDTO::new);

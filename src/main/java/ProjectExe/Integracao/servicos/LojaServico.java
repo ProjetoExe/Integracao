@@ -7,6 +7,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -30,6 +31,7 @@ public class LojaServico {
     }
 
     //buscar todos os registros
+    @Cacheable("lojas")
     @Transactional(readOnly = true)
     public Page<LojaDTO> buscarTodos(Pageable pageable) {
         Page<Loja> resultado = lojaRepositorio.findAll(pageable);

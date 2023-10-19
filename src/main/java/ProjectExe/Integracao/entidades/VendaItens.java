@@ -20,7 +20,7 @@ import java.math.BigDecimal;
 @Setter //Não adicionado o @Getter no id pelo conflito com o @JsonIgnore do 'getVenda', está em utilização o VendaItensResumidoDTO que não contém a associação com a Venda
 @EqualsAndHashCode(of="id")
 public class VendaItens implements Serializable {
-    private static final long SerialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private VendaItemPK id = new VendaItemPK();

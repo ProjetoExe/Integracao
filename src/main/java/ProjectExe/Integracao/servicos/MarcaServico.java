@@ -7,6 +7,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -31,6 +32,7 @@ public class MarcaServico {
 
     //buscar todos registros
     @Transactional(readOnly = true)
+    @Cacheable("marcas")
     public Page<MarcaDTO> buscarTodos(Pageable pageable){
         Page<Marca> resultado = marcaRepositorio.findAll(pageable);
         return resultado.map(MarcaDTO::new);

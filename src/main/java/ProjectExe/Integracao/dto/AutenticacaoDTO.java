@@ -1,4 +1,6 @@
 package ProjectExe.Integracao.dto;
 
-public record AutenticacaoDTO(String login, String password) {
+import java.io.Serializable;
+
+public record AutenticacaoDTO(String login, String password) implements Serializable {
 }

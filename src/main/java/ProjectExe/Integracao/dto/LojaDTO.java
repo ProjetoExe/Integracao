@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class LojaDTO implements Serializable {
-    private static final long SerialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private Long lojaId;
     @NotBlank(message = "Razão Social não pode ser nulo ou vazio")

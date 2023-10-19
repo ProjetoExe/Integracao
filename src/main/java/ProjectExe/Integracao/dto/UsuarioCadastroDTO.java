@@ -15,7 +15,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class UsuarioCadastroDTO implements Serializable {
-    private static final long SerialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @NotBlank(message = "Login não pode ser nulo ou vazio")
     private String login;
