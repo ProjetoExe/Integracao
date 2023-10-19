@@ -55,11 +55,11 @@ INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (6,1);
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www.site.com.br/teste1.jpg', 'Imagem do Produto tamanho U')
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www.site.com.br/teste2.jpg', 'Imagem do Produto tamanho U2')
 
-INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-06-05T20:50:15Z', 1, 'GUSTAVO PARIZZATO', '000.000.000-00', '(00) 00000-0000', 'gustavo@gmail.com', '14000-000', 'Rua Teste', '101', 'Bairro teste', 'Cidade teste', 'SP', 'BR', 10.00, 5.00, 2645.50, 2640.50);
+INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-08-05T20:50:15Z', 1, 'GUSTAVO PARIZZATO', '000.000.000-00', '(00) 00000-0000', 'gustavo@gmail.com', '14000-000', 'Rua Teste', '101', 'Bairro teste', 'Cidade teste', 'SP', 'BR', 10.00, 5.00, 2645.50, 2640.50);
 INSERT INTO venda_itens (venda_id, produto_id, nome_Produto, quantidade, preco, desconto, total) VALUES (1, 1, 'Geforce RTX 3060', 1, 2400.00, 0.00, 2400.00);
 INSERT INTO venda_itens (venda_id, produto_id, nome_Produto, quantidade, preco, desconto, total) VALUES (1, 2, 'Mouse Logitech G403', 1, 235.50, 10.00, 225.50);
 
-INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-05-05T20:50:15Z', 3, 'GUSTAVO PARIZZATO', '000.000.000-00', '(00) 00000-0000', 'gustavo@gmail.com', '14000-000', 'Rua Teste', '101', 'Bairro teste', 'Cidade teste', 'SP', 'BR', 0.00, 50.00, 1000.00, 950.00);
+INSERT INTO venda (data_Venda, venda_Status, nome_cliente, cpf, celular, email, cep, endereco, numero, bairro, cidade, estado, pais, frete, desconto, sub_total, total) VALUES ('2023-07-05T20:50:15Z', 3, 'GUSTAVO PARIZZATO', '000.000.000-00', '(00) 00000-0000', 'gustavo@gmail.com', '14000-000', 'Rua Teste', '101', 'Bairro teste', 'Cidade teste', 'SP', 'BR', 0.00, 50.00, 1000.00, 950.00);
 INSERT INTO venda_itens (venda_id, produto_id, quantidade, preco, desconto, total) VALUES (2, 3, 1, 1000.00, 0.00, 1000.00);
 
 INSERT INTO pagamento (venda_id, data, tipo, valor, qtd_parcelas) VALUES (2, '2023-06-03T15:01:27Z', 'DÉBITO', 200.00, 1)

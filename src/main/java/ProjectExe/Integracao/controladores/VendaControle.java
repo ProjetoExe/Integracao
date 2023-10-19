@@ -34,8 +34,9 @@ public class VendaControle {
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
+            @RequestParam(value = "nomeCliente", defaultValue = "") String nomeCliente,
             Pageable pageable) {
-        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorIdEClienteEData(id, minData, maxData, pageable);
+        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorIdEClienteEData(id, minData, maxData, nomeCliente, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

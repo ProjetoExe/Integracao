@@ -12,13 +12,14 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-@JsonPropertyOrder({"vendaId", "vendaStatus", "dataVenda", "total"})
+@JsonPropertyOrder({"vendaId", "nomeCliente", "vendaStatus", "dataVenda", "total"})
 @Getter
 @Setter
 public class VendaResumidaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long vendaId;
+    private String nomeCliente;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
     private Integer vendaStatus;

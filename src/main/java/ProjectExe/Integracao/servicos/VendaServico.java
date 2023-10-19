@@ -50,9 +50,9 @@ public class VendaServico {
     //busca vendas por id, cliente e data resumidamente
     @Transactional(readOnly = true)
     @Cacheable("vendas")
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, Pageable pageable) {
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, String nomeCliente, Pageable pageable) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(365) : LocalDate.parse(minData, formatter);
+        LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(180) : LocalDate.parse(minData, formatter);
         LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
         Instant dataInicial = localDateMin.atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant dataFinal = localDateMax.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
@@ -64,7 +64,7 @@ public class VendaServico {
                 resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
             }
         } else {
-            resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
+            resultado = vendaRepositorio.buscarVendasClienteEData(dataInicial, dataFinal, nomeCliente, pageable);
         }
         return resultado.map(VendaResumidaDTO::new);
     }
