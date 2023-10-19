@@ -2,6 +2,7 @@ package ProjectExe.Integracao.controladores.excecoes;
 
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
+import ProjectExe.Integracao.servicos.excecao.ExcecaoRegistroExistente;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,15 @@ public class ManipuladorExcecaoRecurso {
     @ExceptionHandler(ExcecaoBancoDeDados.class)
     public ResponseEntity<ErroPadrao> bancoDeDados(ExcecaoBancoDeDados e, HttpServletRequest request){
         String erro = "Erro banco de dados";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erroPadrao);
+    }
+
+    //exceção personalizada para registros já existentes
+    @ExceptionHandler(ExcecaoRegistroExistente.class)
+    public ResponseEntity<ErroPadrao> registroExistente(ExcecaoRegistroExistente e, HttpServletRequest request){
+        String erro = "Cadastro Existente";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erroPadrao);
