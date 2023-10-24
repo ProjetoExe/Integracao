@@ -62,7 +62,7 @@ public class ProdutoServico {
             resultado = produtoRepositorio.findByNomeContainingAndAtivo(nome, ativo, pageable);
         } else if (categoriaId != -1) {
             resultado = produtoRepositorio.findByCategoria(categoriaId, pageable);
-        }  else {
+        } else {
             resultado = produtoRepositorio.findByAtivo(ativo, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);

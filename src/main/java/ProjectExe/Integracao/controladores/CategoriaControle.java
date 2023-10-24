@@ -19,24 +19,13 @@ public class CategoriaControle {
     @Autowired
     private CategoriaServico categoriaServico;
 
-    //buscar por ID
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<CategoriaDTO> buscarPorId(@PathVariable Long id){
-        CategoriaDTO resultado = categoriaServico.buscarPorId(id);
-        return ResponseEntity.ok().body(resultado);
-    }
-
     //buscar todas os registros
     @GetMapping
-    public ResponseEntity<Page<CategoriaDTO>> buscarTodos(Pageable pageable) {
-        Page<CategoriaDTO> resultado = categoriaServico.buscarTodos(pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar registros por nome
-    @GetMapping(value = "/nome/{nome}")
-    public ResponseEntity<Page<CategoriaDTO>> buscarPorNome(@PathVariable String nome, Pageable pageable){
-        Page<CategoriaDTO> resultado = categoriaServico.buscarPorNome(nome, pageable);
+    public ResponseEntity<Page<CategoriaDTO>> buscarTodos(
+            @RequestParam(value = "id", defaultValue = "") Long id,
+            @RequestParam(value = "nome", defaultValue = "") String nome,
+            Pageable pageable) {
+        Page<CategoriaDTO> resultado = categoriaServico.buscarTodos(id, nome, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

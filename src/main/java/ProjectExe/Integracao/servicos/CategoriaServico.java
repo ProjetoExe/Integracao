@@ -2,6 +2,7 @@ package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.CategoriaDTO;
 import ProjectExe.Integracao.entidades.Categoria;
+import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
@@ -11,10 +12,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -23,25 +26,21 @@ public class CategoriaServico {
     @Autowired
     private CategoriaRepositorio categoriaRepositorio;
 
-    //buscar por ID
-    @Transactional(readOnly = true)
-    public CategoriaDTO buscarPorId(Long categoriaId){
-        Optional<Categoria> resultado = categoriaRepositorio.findById(categoriaId);
-        return resultado.map(CategoriaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada"));
-    }
-
     //buscar todos os registros
     @Transactional(readOnly = true)
     @Cacheable("categorias")
-    public Page<CategoriaDTO> buscarTodos(Pageable pageable){
-        Page<Categoria> resultado = categoriaRepositorio.findAll(pageable);
-        return resultado.map(CategoriaDTO::new);
-    }
-
-    //buscar registros por nome
-    @Transactional(readOnly = true)
-    public Page<CategoriaDTO> buscarPorNome(String nome, Pageable pageable){
-        Page<Categoria> resultado = categoriaRepositorio.findByNomeContaining(nome, pageable);
+    public Page<CategoriaDTO> buscarTodos(Long categoriaId, String nome, Pageable pageable){
+        Page<Categoria> resultado = new PageImpl<>(Collections.emptyList());
+        if (categoriaId != null){
+            Optional<Categoria> categoria = categoriaRepositorio.findById(categoriaId);
+            if (categoria.isPresent()){
+                resultado = new PageImpl<>(Collections.singletonList(categoria.get()), pageable, 1);
+            }
+        } else if (!nome.isEmpty()) {
+            resultado = categoriaRepositorio.findByNomeContaining(nome, pageable);
+        } else {
+            resultado = categoriaRepositorio.findAll(pageable);
+        }
         return resultado.map(CategoriaDTO::new);
     }
 
