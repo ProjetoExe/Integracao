@@ -33,9 +33,10 @@ public class ProdutoControle {
     public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodos_ProdutosPorIdENomeEAtivo(
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestParam(value = "nome", defaultValue = "") String nome,
+            @RequestParam(value = "categoriaId", defaultValue = "-1") Long categoriaId,
             @RequestParam(value = "ativo", defaultValue = "S") char ativo,
             Pageable pageable) {
-        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodos_ProdutosPorIdENomeEAtivo(id, nome, ativo, pageable);
+        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodos_ProdutosPorIdENomeEAtivo(id, nome, categoriaId, ativo, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

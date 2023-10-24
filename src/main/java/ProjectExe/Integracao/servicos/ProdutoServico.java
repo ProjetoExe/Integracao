@@ -51,7 +51,7 @@ public class ProdutoServico {
     //busca produtos por id, nome e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
-    public Page<ProdutoResumidoDTO> buscarTodos_ProdutosPorIdENomeEAtivo(Long produtoId, String nome, char ativo, Pageable pageable) {
+    public Page<ProdutoResumidoDTO> buscarTodos_ProdutosPorIdENomeEAtivo(Long produtoId, String nome, Long categoriaId, char ativo, Pageable pageable) {
         Page<Produto> resultado = new PageImpl<>(Collections.emptyList());
         if (produtoId != null) {
             Optional<Produto> produto = produtoRepositorio.findById(produtoId);
@@ -60,7 +60,9 @@ public class ProdutoServico {
             }
         } else if (!nome.isEmpty()) {
             resultado = produtoRepositorio.findByNomeContainingAndAtivo(nome, ativo, pageable);
-        } else {
+        } else if (categoriaId != -1) {
+            resultado = produtoRepositorio.findByCategoria(categoriaId, pageable);
+        }  else {
             resultado = produtoRepositorio.findByAtivo(ativo, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);

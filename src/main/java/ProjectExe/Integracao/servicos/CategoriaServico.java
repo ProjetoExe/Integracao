@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.CategoriaDTO;
-import ProjectExe.Integracao.dto.CategoriaProdutoDTO;
 import ProjectExe.Integracao.entidades.Categoria;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
@@ -44,13 +43,6 @@ public class CategoriaServico {
     public Page<CategoriaDTO> buscarPorNome(String nome, Pageable pageable){
         Page<Categoria> resultado = categoriaRepositorio.findByNomeContaining(nome, pageable);
         return resultado.map(CategoriaDTO::new);
-    }
-
-    //buscar por ID trazendo os Produtos da Categoria
-    @Transactional(readOnly = true)
-    public CategoriaProdutoDTO buscarCategoriaProdutoPorId(Long categoriaId){
-        Optional<Categoria> resultado = categoriaRepositorio.findById(categoriaId);
-        return resultado.map(CategoriaProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada"));
     }
 
     //atualizar um registro

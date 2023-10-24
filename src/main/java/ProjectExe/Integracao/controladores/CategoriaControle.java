@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.CategoriaDTO;
-import ProjectExe.Integracao.dto.CategoriaProdutoDTO;
 import ProjectExe.Integracao.servicos.CategoriaServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +37,6 @@ public class CategoriaControle {
     @GetMapping(value = "/nome/{nome}")
     public ResponseEntity<Page<CategoriaDTO>> buscarPorNome(@PathVariable String nome, Pageable pageable){
         Page<CategoriaDTO> resultado = categoriaServico.buscarPorNome(nome, pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar por ID trazendo os Produtos da Categoria
-    @GetMapping(value = "/{id}/produtos")
-    public ResponseEntity<CategoriaProdutoDTO> buscarCategoriaProdutoPorId(@PathVariable Long id){
-        CategoriaProdutoDTO resultado = categoriaServico.buscarCategoriaProdutoPorId(id);
         return ResponseEntity.ok().body(resultado);
     }
 
