@@ -52,7 +52,7 @@ public class ProdutoServico {
     @Transactional(readOnly = true)
     @Cacheable("produtos")
     public Page<ProdutoResumidoDTO> buscarTodos_PorIdNomeCategoriaAtivo(Long produtoId, String nome, Long categoriaId, char ativo, Pageable pageable) {
-        Page<Produto> resultado = new PageImpl<>(Collections.emptyList());
+        Page<Produto> resultado = Page.empty();
         if (produtoId != null) {
             Optional<Produto> produto = produtoRepositorio.findById(produtoId);
             if (produto.isPresent()) {

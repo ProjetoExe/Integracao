@@ -30,7 +30,7 @@ public class CategoriaServico {
     @Transactional(readOnly = true)
     @Cacheable("categorias")
     public Page<CategoriaDTO> buscarTodos_PorIdNome(Long categoriaId, String nome, Pageable pageable){
-        Page<Categoria> resultado = new PageImpl<>(Collections.emptyList());
+        Page<Categoria> resultado = Page.empty();
         if (categoriaId != null){
             Optional<Categoria> categoria = categoriaRepositorio.findById(categoriaId);
             if (categoria.isPresent()){
