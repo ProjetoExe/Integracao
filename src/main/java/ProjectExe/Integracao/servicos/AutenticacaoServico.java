@@ -23,7 +23,7 @@ public class AutenticacaoServico {
     private TokenServico tokenServico;
 
     //Login com usuário com o método de autenticação
-    public String login(AutenticacaoDTO dto){
+    public String login(AutenticacaoDTO dto) {
         var loginPassword = new UsernamePasswordAuthenticationToken(dto.login(), dto.password());
         var autenticacao = this.gerenciadorAutenticacao.authenticate(loginPassword);
 
@@ -31,12 +31,13 @@ public class AutenticacaoServico {
     }
 
     //Criação de novo Usuário
-    public void registro(UsuarioCadastroDTO dto){
+    public void registro(UsuarioCadastroDTO dto) {
         if (this.usuarioRepositorio.findByLogin(dto.getLogin()) != null) {
             throw new ExcecaoRegistroExistente("Login informado já existe");
+        } else {
+            String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getPassword());
+            Usuario novoUsuario = new Usuario(dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao(), dto.getLoja());
+            this.usuarioRepositorio.save(novoUsuario);
         }
-        String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getPassword());
-        Usuario novoUsuario = new Usuario(dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao(), dto.getLoja());
-        this.usuarioRepositorio.save(novoUsuario);
     }
 }

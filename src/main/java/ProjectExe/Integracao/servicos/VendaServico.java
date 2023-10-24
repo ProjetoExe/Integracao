@@ -23,8 +23,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class VendaServico {
@@ -51,13 +50,12 @@ public class VendaServico {
     @Transactional(readOnly = true)
     @Cacheable("vendas")
     public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, String nomeCliente, Pageable pageable) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        LocalDate localDateMin = minData.equals("") ? LocalDate.now().minusDays(180) : LocalDate.parse(minData, formatter);
-        LocalDate localDateMax = maxData.equals("") ? LocalDate.now() : LocalDate.parse(maxData, formatter);
-        Instant dataInicial = localDateMin.atStartOfDay().toInstant(ZoneOffset.UTC);
-        Instant dataFinal = localDateMax.atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
+        Instant dataInicial = minData.isBlank() ? LocalDate.now().minusDays(180).atStartOfDay().toInstant(ZoneOffset.UTC) :
+                LocalDate.parse(minData, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay().toInstant(ZoneOffset.UTC);
+        Instant dataFinal = maxData.isBlank() ? LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC) :
+                LocalDate.parse(maxData, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
 
-        Page<Venda> resultado = new PageImpl<>(Collections.emptyList());
+        Page<Venda> resultado = Page.empty();
         if (vendaId != null) {
             Optional<Venda> venda = vendaRepositorio.findById(vendaId);
             if (venda.isPresent()) {
@@ -122,24 +120,30 @@ public class VendaServico {
         entidade.setPais(obj.getPais());
         vendaRepositorio.save(entidade);
 
-        for (VendaItensInsereDTO itemDTO : obj.getItens()) {
+        atualizarItensDaVenda(entidade, obj.getItens());
+        atualizarPagamentosDaVenda(entidade, obj.getPagamentos());
+    }
+
+    //inserir ou atualizar itens da venda (atualmente só inserir)
+    private void atualizarItensDaVenda(Venda entidade, Set<VendaItensInsereDTO> itensDTO) {
+        List<VendaItens> itens = new ArrayList<>();
+        for (VendaItensInsereDTO itemDTO : itensDTO) {
             Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
                     .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProduto().getProdutoId() + " não encontrado"));
             VendaItens item = converterParaVendaItens(itemDTO, entidade, produto);
-            vendaItensRepositorio.save(item);
-            entidade.getItens().add(item);
-
+            itens.add(item);
             Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
-            if (produtoGrade.isPresent()) {
-                ProdutoGrade grade = produtoGrade.get();
-                grade.atualizarEstoque(grade, itemDTO.getQuantidade());
-            }
+            produtoGrade.ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQuantidade()));
         }
-        for (Pagamento pagamento : obj.getPagamentos()) {
-            pagamento.setVenda(entidade);
-            pagamentoRepositorio.save(pagamento);
-            entidade.getPagamentos().add(pagamento);
-        }
+        entidade.getItens().addAll(itens);
+    }
+
+    //inserir ou atualizar pagamentos da venda (atualmente só inserir)
+    private void atualizarPagamentosDaVenda(Venda entidade, List<Pagamento> pagamentos) {
+        List<Pagamento> novosPagamentos = pagamentos.stream()
+                .peek(pagamento -> pagamento.setVenda(entidade))
+                .toList();
+        entidade.getPagamentos().addAll(novosPagamentos);
     }
 
     //Converte de VendaItensInsereDTO para VendaItens para salvar no banco de dados
