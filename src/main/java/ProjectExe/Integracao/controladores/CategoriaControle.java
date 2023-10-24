@@ -25,7 +25,7 @@ public class CategoriaControle {
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestParam(value = "nome", defaultValue = "") String nome,
             Pageable pageable) {
-        Page<CategoriaDTO> resultado = categoriaServico.buscarTodos(id, nome, pageable);
+        Page<CategoriaDTO> resultado = categoriaServico.buscarTodos_PorIdNome(id, nome, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
