@@ -26,7 +26,7 @@ public class CategoriaServico {
     @Autowired
     private CategoriaRepositorio categoriaRepositorio;
 
-    //buscar todos os registros
+    //buscar todos os registros com filtro de id e nome
     @Transactional(readOnly = true)
     @Cacheable("categorias")
     public Page<CategoriaDTO> buscarTodos_PorIdNome(Long categoriaId, String nome, Pageable pageable){

@@ -28,7 +28,7 @@ public class VendaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca vendas por id, cliente e data resumidamente
+    //buscar todos os registros com filtro de id, data e cliente
     @GetMapping
     public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos_VendasPorData(
             @RequestParam(value = "id", defaultValue = "") Long id,

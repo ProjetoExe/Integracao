@@ -19,7 +19,7 @@ public class MarcaControle {
     @Autowired
     private MarcaServico marcaServico;
 
-    //buscar todos registros
+    //buscar todos os registros com filtro de id e nome
     @GetMapping
     public ResponseEntity<Page<MarcaDTO>> buscarTodos_PorIdNome(
             @RequestParam(value = "id", defaultValue = "") Long id,

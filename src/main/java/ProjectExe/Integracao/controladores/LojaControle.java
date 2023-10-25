@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.LojaDTO;
+import ProjectExe.Integracao.dto.LojaResumidoDTO;
 import ProjectExe.Integracao.servicos.LojaServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,24 +27,14 @@ public class LojaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //buscar todas os registros
+    //buscar todos os registros com filtro de id, razaoSocial e cnpj
     @GetMapping
-    public ResponseEntity<Page<LojaDTO>> buscarTodos(Pageable pageable) {
-        Page<LojaDTO> resultado= lojaServico.buscarTodos(pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar registros por Razão Social
-    @GetMapping(value = "/razaoSocial/{razaoSocial}")
-    public ResponseEntity<Page<LojaDTO>> buscarPorNome(@PathVariable String razaoSocial, Pageable pageable) {
-        Page<LojaDTO> resultado = lojaServico.buscarPorRazaoSocial(razaoSocial, pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar registros por CNPJ
-    @GetMapping(value = "/cnpj/{cnpj}")
-    public ResponseEntity<Page<LojaDTO>> buscarPorCpf(@PathVariable String cnpj, Pageable pageable) {
-        Page<LojaDTO> resultado = lojaServico.buscarPorCNPJ(cnpj, pageable);
+    public ResponseEntity<Page<LojaResumidoDTO>> buscarTodos_PorIdRazaoCnpj(
+            @RequestParam(value = "id", defaultValue = "") Long id,
+            @RequestParam(value = "razaoSocial", defaultValue = "") String razaoSocial,
+            @RequestParam(value = "cnpj", defaultValue = "") String cnpj,
+            Pageable pageable) {
+        Page<LojaResumidoDTO> resultado= lojaServico.buscarTodos_PorIdRazaoCnpj(id, razaoSocial, cnpj, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

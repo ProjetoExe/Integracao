@@ -48,7 +48,7 @@ public class ProdutoServico {
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
     }
 
-    //busca produtos por id, nome e ativo
+    //buscar todos os registros com filtro de id, nome, categoria e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
     public Page<ProdutoResumidoDTO> buscarTodos_PorIdNomeCategoriaAtivo(Long produtoId, String nome, Long categoriaId, char ativo, Pageable pageable) {

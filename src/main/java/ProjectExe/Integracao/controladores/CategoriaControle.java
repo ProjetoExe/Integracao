@@ -19,7 +19,7 @@ public class CategoriaControle {
     @Autowired
     private CategoriaServico categoriaServico;
 
-    //buscar todas os registros
+    //buscar todos os registros com filtro de id e nome
     @GetMapping
     public ResponseEntity<Page<CategoriaDTO>> buscarTodos(
             @RequestParam(value = "id", defaultValue = "") Long id,

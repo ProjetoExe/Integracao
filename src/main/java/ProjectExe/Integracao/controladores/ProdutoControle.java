@@ -28,7 +28,7 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca produtos por id, nome e ativo (padrão de produtos ativos)
+    //busca produtos por id, nome, categoria e ativo (padrão de produtos ativos)
     @GetMapping
     public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodos_ProdutosPorIdENomeEAtivo(
             @RequestParam(value = "id", defaultValue = "") Long id,

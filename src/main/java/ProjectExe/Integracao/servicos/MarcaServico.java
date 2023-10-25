@@ -25,7 +25,7 @@ public class MarcaServico {
     @Autowired
     private MarcaRepositorio marcaRepositorio;
 
-    //buscar todos registros
+    //buscar todos os registros com filtro de id e nome
     @Transactional(readOnly = true)
     @Cacheable("marcas")
     public Page<MarcaDTO> buscarTodos_PorIdNome(Long id, String nome, Pageable pageable) {

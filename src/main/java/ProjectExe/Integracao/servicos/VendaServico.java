@@ -46,7 +46,7 @@ public class VendaServico {
         return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Venda " + vendaId + " não encontrada"));
     }
 
-    //busca vendas por id, cliente e data resumidamente
+    //buscar todos os registros com filtro de id, data e cliente
     @Transactional(readOnly = true)
     @Cacheable("vendas")
     public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, String nomeCliente, Pageable pageable) {
