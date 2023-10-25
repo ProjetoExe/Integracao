@@ -31,14 +31,19 @@ public class SegurancaConfig {
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()
                         //swagger
-                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.PUT, "/swagger-ui/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.DELETE, "/swagger-ui/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.POST, "/v3/api-docs/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.PUT, "/v3/api-docs/**").permitAll() //URL do Swagger
-                        .requestMatchers(HttpMethod.DELETE, "/v3/api-docs/**").permitAll() //URL do Swagger
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/v3/api-docs/**").permitAll()
+                        //lojas
+                        .requestMatchers(HttpMethod.GET, "/lojas/**").hasRole("DEV")
+                        .requestMatchers(HttpMethod.POST, "/lojas/**").hasRole("DEV")
+                        .requestMatchers(HttpMethod.PUT, "/lojas/**").hasRole("DEV")
+                        .requestMatchers(HttpMethod.DELETE, "/lojas/**").hasRole("DEV")
                         //produtos
                         .requestMatchers(HttpMethod.GET, "/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")

@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.entidades.enums;
 
 public enum UsuarioPermissao {
+    DEV("dev"),
     ADMIN("admin"),
     USER("user");
 

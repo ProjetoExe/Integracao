@@ -17,8 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of="usuarioId")
-public class Usuario implements Serializable, UserDetails {
+@EqualsAndHashCode(of = "usuarioId")
+public class Usuario implements UserDetails, Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -36,7 +36,7 @@ public class Usuario implements Serializable, UserDetails {
     @JoinColumn(name = "loja_id")
     private Loja loja;
 
-    public Usuario(String login, String password, String email, UsuarioPermissao role, Loja loja){
+    public Usuario(String login, String password, String email, UsuarioPermissao role, Loja loja) {
         this.login = login;
         this.password = password;
         this.email = email;
@@ -44,25 +44,38 @@ public class Usuario implements Serializable, UserDetails {
         this.loja = loja;
     }
 
-    //Se o usuário for ADMIN, contém permissões de ADMIN e USER, se for USER, contém apenas de USER
+    //Se o usuário for ADMIN ou DEV, contém permissões de ADMIN e USER, se for USER, contém apenas de USER
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.permissao == UsuarioPermissao.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if (this.permissao == UsuarioPermissao.DEV)
+            return List.of(new SimpleGrantedAuthority("ROLE_DEV"), new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        else if (this.permissao == UsuarioPermissao.ADMIN)
+            return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
     @Override
-    public String getUsername() { return login; }
+    public String getUsername() {
+        return login;
+    }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() {
+        return true;
+    }
 }
