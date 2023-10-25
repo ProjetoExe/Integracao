@@ -11,10 +11,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -23,31 +25,27 @@ public class MarcaServico {
     @Autowired
     private MarcaRepositorio marcaRepositorio;
 
-    //buscar por ID
-    @Transactional(readOnly = true)
-    public MarcaDTO buscarPorId(Long marcaId){
-        Optional<Marca> resultado = marcaRepositorio.findById(marcaId);
-        return resultado.map(MarcaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada"));
-    }
-
     //buscar todos registros
     @Transactional(readOnly = true)
     @Cacheable("marcas")
-    public Page<MarcaDTO> buscarTodos(Pageable pageable){
-        Page<Marca> resultado = marcaRepositorio.findAll(pageable);
-        return resultado.map(MarcaDTO::new);
-    }
-
-    //buscar registros por nome
-    @Transactional(readOnly = true)
-    public Page<MarcaDTO> buscarPorNome(String nome, Pageable pageable){
-        Page<Marca> resultado = marcaRepositorio.findByNomeContaining(nome, pageable);
+    public Page<MarcaDTO> buscarTodos_PorIdNome(Long id, String nome, Pageable pageable) {
+        Page<Marca> resultado = Page.empty();
+        if (id != null) {
+            Optional<Marca> marca = marcaRepositorio.findById(id);
+            if (marca.isPresent()) {
+                resultado = new PageImpl<>(Collections.singletonList(marca.get()), pageable, 1);
+            }
+        } else if (!nome.isEmpty()) {
+            resultado = marcaRepositorio.findByNomeContaining(nome, pageable);
+        } else {
+            resultado = marcaRepositorio.findAll(pageable);
+        }
         return resultado.map(MarcaDTO::new);
     }
 
     //inserir novo registro
     @Transactional
-    public MarcaDTO inserir(MarcaDTO obj){
+    public MarcaDTO inserir(MarcaDTO obj) {
         Marca entidade = new Marca();
         atualizarDados(entidade, obj);
         return new MarcaDTO(marcaRepositorio.save(entidade));
@@ -55,24 +53,24 @@ public class MarcaServico {
 
     //atualizar um registro
     @Transactional
-    public MarcaDTO atualizar(Long marcaId, MarcaDTO obj){
+    public MarcaDTO atualizar(Long marcaId, MarcaDTO obj) {
         try {
             Marca entidade = marcaRepositorio.getReferenceById(marcaId);
             atualizarDados(entidade, obj);
             return new MarcaDTO(marcaRepositorio.save(entidade));
-        }catch (EntityNotFoundException e) {
+        } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada");
         }
     }
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    public void deletar(Long marcaId){
+    public void deletar(Long marcaId) {
         try {
             marcaRepositorio.deleteById(marcaId);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada");
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
     }

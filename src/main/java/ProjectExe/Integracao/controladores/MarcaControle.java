@@ -19,24 +19,13 @@ public class MarcaControle {
     @Autowired
     private MarcaServico marcaServico;
 
-    //buscar por ID
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<MarcaDTO> buscarPorId(@PathVariable Long id){
-        MarcaDTO resultado = marcaServico.buscarPorId(id);
-        return ResponseEntity.ok().body(resultado);
-    }
-
     //buscar todos registros
     @GetMapping
-    public ResponseEntity<Page<MarcaDTO>> buscarTodos(Pageable pageable){
-        Page<MarcaDTO> resultado = marcaServico.buscarTodos(pageable);
-        return ResponseEntity.ok().body(resultado);
-    }
-
-    //buscar registros por nome
-    @GetMapping(value = "/nome/{nome}")
-    public ResponseEntity<Page<MarcaDTO>> buscarPorNome(@PathVariable String nome, Pageable pageable){
-        Page<MarcaDTO> resultado = marcaServico.buscarPorNome(nome, pageable);
+    public ResponseEntity<Page<MarcaDTO>> buscarTodos_PorIdNome(
+            @RequestParam(value = "id", defaultValue = "") Long id,
+            @RequestParam(value = "nome", defaultValue = "") String nome,
+            Pageable pageable){
+        Page<MarcaDTO> resultado = marcaServico.buscarTodos_PorIdNome(id, nome, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
