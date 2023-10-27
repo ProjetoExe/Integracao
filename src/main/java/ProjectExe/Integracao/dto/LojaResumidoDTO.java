@@ -21,5 +21,5 @@ public class LojaResumidoDTO implements Serializable {
     private String inscricaoEstadual;
 
     //Construtor com parâmetro da classe Loja para LojaResumidoDTO / BeanUtils necessita de setter além de getter no DTO
-    public LojaResumidoDTO(Loja entidade){ BeanUtils.copyProperties(this, entidade); }
+    public LojaResumidoDTO(Loja entidade){ BeanUtils.copyProperties(entidade, this); }
 }

@@ -38,9 +38,9 @@ public class LojaServico {
     @Cacheable("lojas")
     public Page<LojaResumidoDTO> buscarTodos_PorIdRazaoCnpj(Long id, String razaoSocial, String cnpj, Pageable pageable) {
         Page<Loja> resultado = Page.empty();
-        if (id != null){
+        if (id != null) {
             Optional<Loja> loja = lojaRepositorio.findById(id);
-            if (loja.isPresent()){
+            if (loja.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(loja.get()), pageable, 1);
             }
         } else if (!razaoSocial.isEmpty()) {
@@ -68,7 +68,7 @@ public class LojaServico {
             Loja entidade = lojaRepositorio.getReferenceById(lojaId);
             atualizarDados(entidade, obj);
             return new LojaDTO(lojaRepositorio.save(entidade));
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada");
         }
     }
@@ -78,9 +78,9 @@ public class LojaServico {
     public void deletar(Long lojaId) {
         try {
             lojaRepositorio.deleteById(lojaId);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada");
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
     }

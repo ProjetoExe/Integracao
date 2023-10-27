@@ -14,10 +14,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class ManipuladorExcecaoRecurso {
+public class ManipuladorExcecao {
 
     //exceção personalizada para recurso não encontrado
     @ExceptionHandler(ExcecaoRecursoNaoEncontrado.class)

@@ -29,11 +29,11 @@ public class CategoriaServico {
     //buscar todos os registros com filtro de id e nome
     @Transactional(readOnly = true)
     @Cacheable("categorias")
-    public Page<CategoriaDTO> buscarTodos_PorIdNome(Long categoriaId, String nome, Pageable pageable){
+    public Page<CategoriaDTO> buscarTodos_PorIdNome(Long categoriaId, String nome, Pageable pageable) {
         Page<Categoria> resultado = Page.empty();
-        if (categoriaId != null){
+        if (categoriaId != null) {
             Optional<Categoria> categoria = categoriaRepositorio.findById(categoriaId);
-            if (categoria.isPresent()){
+            if (categoria.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(categoria.get()), pageable, 1);
             }
         } else if (!nome.isEmpty()) {
@@ -46,19 +46,19 @@ public class CategoriaServico {
 
     //atualizar um registro
     @Transactional
-    public CategoriaDTO atualizar(Long categoriaId, CategoriaDTO obj){
+    public CategoriaDTO atualizar(Long categoriaId, CategoriaDTO obj) {
         try {
             Categoria entidade = categoriaRepositorio.getReferenceById(categoriaId);
             atualizarDados(entidade, obj);
             return new CategoriaDTO(categoriaRepositorio.save(entidade));
-        }catch (EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada");
         }
     }
 
     //inserir novo registro
     @Transactional
-    public CategoriaDTO inserir(CategoriaDTO obj){
+    public CategoriaDTO inserir(CategoriaDTO obj) {
         Categoria entidade = new Categoria();
         atualizarDados(entidade, obj);
         return new CategoriaDTO(categoriaRepositorio.save(entidade));
@@ -66,12 +66,12 @@ public class CategoriaServico {
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    public void deletar(Long categoriaId){
+    public void deletar(Long categoriaId) {
         try {
             categoriaRepositorio.deleteById(categoriaId);
-        }catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             throw new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada");
-        }catch (DataIntegrityViolationException e){
+        } catch (DataIntegrityViolationException e) {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
     }

@@ -45,22 +45,22 @@ public class SegurancaConfig {
                         .requestMatchers(HttpMethod.PUT, "/lojas/**").hasRole("DEV")
                         .requestMatchers(HttpMethod.DELETE, "/lojas/**").hasRole("DEV")
                         //produtos
-                        .requestMatchers(HttpMethod.GET, "/produtos/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/produtos/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/produtos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/produtos/**").hasRole("ADMIN")
                         //vendas
-                        .requestMatchers(HttpMethod.GET, "/vendas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/vendas/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/vendas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/vendas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/vendas/**").hasRole("ADMIN")
                         //categorias
-                        .requestMatchers(HttpMethod.GET, "/categorias/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/categorias/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/categorias/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/categorias/**").hasRole("ADMIN")
                         //marcas
-                        .requestMatchers(HttpMethod.GET, "/marcas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/marcas/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/marcas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/marcas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/marcas/**").hasRole("ADMIN")
