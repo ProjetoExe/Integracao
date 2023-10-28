@@ -43,7 +43,7 @@ public class Venda implements Serializable {
     private String estado;
     private String pais;
 
-    @OneToMany(mappedBy = "id.venda", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "id.venda", cascade = CascadeType.ALL)
     private Set<VendaItens> itens = new HashSet<>();
 
     @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
