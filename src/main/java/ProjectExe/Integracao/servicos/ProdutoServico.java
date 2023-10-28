@@ -7,6 +7,7 @@ import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
+import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -118,6 +119,8 @@ public class ProdutoServico {
             entidade.setDataAtualizacao(Instant.now());
         }
         entidade.setNome(dto.getNome());
+        String ncmFormatado = Formatador.formatarNCM(dto.getNcm());
+        entidade.setNcm(ncmFormatado);
         entidade.setReferencia(dto.getReferencia());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricao(dto.getDescricao());

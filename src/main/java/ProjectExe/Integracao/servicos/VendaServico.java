@@ -101,30 +101,30 @@ public class VendaServico {
     }
 
     //inserir ou atualizar (no caso apenas o status da venda) dados das Vendas
-    private void atualizarDados(Venda entidade, VendaInsereAtualizaDTO obj) {
-        entidade.setDataVenda(obj.getDataVenda());
-        entidade.setVendaStatus(obj.getVendaStatus());
-        entidade.setFrete(obj.getFrete());
-        entidade.setDesconto(obj.getDesconto());
-        entidade.setSubTotal(obj.getSubTotal());
-        entidade.setTotal(obj.getTotal());
-        entidade.setNomeCliente(obj.getNomeCliente().toUpperCase());
-        String cpfFormatado = Formatador.formatarCPF(obj.getCpf());
+    private void atualizarDados(Venda entidade, VendaInsereAtualizaDTO dto) {
+        entidade.setDataVenda(dto.getDataVenda());
+        entidade.setVendaStatus(dto.getVendaStatus());
+        entidade.setFrete(dto.getFrete());
+        entidade.setDesconto(dto.getDesconto());
+        entidade.setSubTotal(dto.getSubTotal());
+        entidade.setTotal(dto.getTotal());
+        entidade.setNomeCliente(dto.getNomeCliente().toUpperCase());
+        String cpfFormatado = Formatador.formatarCPF(dto.getCpf());
         entidade.setCpf(cpfFormatado);
-        String celularFormatado = Formatador.formatarCelular(obj.getCelular());
+        String celularFormatado = Formatador.formatarCelular(dto.getCelular());
         entidade.setCelular(celularFormatado);
-        entidade.setEmail(obj.getEmail());
-        entidade.setCep(obj.getCep());
-        entidade.setEndereco(obj.getEndereco());
-        entidade.setNumero(obj.getNumero());
-        entidade.setBairro(obj.getBairro());
-        entidade.setCidade(obj.getCidade());
-        entidade.setEstado(obj.getEstado());
-        entidade.setPais(obj.getPais());
+        entidade.setEmail(dto.getEmail());
+        entidade.setCep(dto.getCep());
+        entidade.setEndereco(dto.getEndereco());
+        entidade.setNumero(dto.getNumero());
+        entidade.setBairro(dto.getBairro());
+        entidade.setCidade(dto.getCidade());
+        entidade.setEstado(dto.getEstado());
+        entidade.setPais(dto.getPais());
         vendaRepositorio.save(entidade);
 
-        atualizarItensDaVenda(entidade, obj.getItens());
-        atualizarPagamentosDaVenda(entidade, obj.getPagamentos());
+        atualizarItensDaVenda(entidade, dto.getItens());
+        atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
