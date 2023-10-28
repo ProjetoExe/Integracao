@@ -25,11 +25,12 @@ public class Produto implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long produtoId;
     private String nome;
+    private String ncm;
     private String referencia;
     @Column(columnDefinition = "TEXT")
     private String descricaoCurta;
     @Column(columnDefinition = "TEXT")
-    private String descricaoCompleta;
+    private String descricao;
     private Instant dataCadastro;
     private Instant dataAtualizacao;
     private Integer estoqueTotal;

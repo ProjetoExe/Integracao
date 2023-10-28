@@ -120,7 +120,7 @@ public class ProdutoServico {
         entidade.setNome(dto.getNome());
         entidade.setReferencia(dto.getReferencia());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
-        entidade.setDescricaoCompleta(dto.getDescricaoCompleta());
+        entidade.setDescricao(dto.getDescricao());
         entidade.setEstoqueTotal(dto.getEstoqueTotal());
         entidade.setPreco(dto.getPreco());
         entidade.setPrecoPromocional(dto.getPrecoPromocional());

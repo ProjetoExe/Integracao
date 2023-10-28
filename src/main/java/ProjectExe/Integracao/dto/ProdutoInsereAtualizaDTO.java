@@ -24,10 +24,11 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private Long produtoId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
+    private String ncm;
     private String referencia;
     @NotBlank(message = "Produto precisa conter uma descrição")
     private String descricaoCurta;
-    private String descricaoCompleta;
+    private String descricao;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")

@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@JsonPropertyOrder({"produtoId", "nome", "referencia", "descricaoCurta", "descricaoCompleta", "ativo", "dataCadastro", "dataAtualizacao", "classe", "marca", "categorias", "imgUrl", "grade"})
+@JsonPropertyOrder({"produtoId", "nome", "ncm", "referencia", "descricaoCurta", "descricao", "ativo", "dataCadastro", "dataAtualizacao", "classe", "marca", "categorias", "imgUrl", "grade"})
 @Getter
 @Setter
 public class ProdutoDTO implements Serializable {
@@ -22,9 +22,10 @@ public class ProdutoDTO implements Serializable {
 
     private Long produtoId;
     private String nome;
+    private String ncm;
     private String referencia;
     private String descricaoCurta;
-    private String descricaoCompleta;
+    private String descricao;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
