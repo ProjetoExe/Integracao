@@ -33,11 +33,14 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
+    private Instant dataLancamento;
     private Integer estoqueTotal;
+    private Integer qtdVendida;
     private BigDecimal preco;
     private BigDecimal precoPromocional;
     private String tempoGarantia;
-    private String mensagemGarantia;
+    private String msgGarantia;
     private Double comprimento;
     private Double largura;
     private Double altura;

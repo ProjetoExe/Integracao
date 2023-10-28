@@ -14,7 +14,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@JsonPropertyOrder({"produtoId", "nome", "ncm", "referencia", "descricaoCurta", "descricao", "ativo", "dataCadastro", "dataAtualizacao", "classe", "marca", "categorias", "imgUrl", "grade"})
+@JsonPropertyOrder({"produtoId", "nome", "ncm", "referencia", "descricaoCurta", "descricao", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
+        "qtdVendida", "preco", "precoPromocional", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "marca", "categorias",
+        "imgUrl", "grade", "ativo",})
 @Getter
 @Setter
 public class ProdutoDTO implements Serializable {
@@ -30,11 +32,14 @@ public class ProdutoDTO implements Serializable {
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
+    private Instant dataLancamento;
     private Integer estoqueTotal;
+    private Integer qtdVendida;
     private BigDecimal preco;
     private BigDecimal precoPromocional;
     private String tempoGarantia;
-    private String mensagemGarantia;
+    private String msgGarantia;
     private Double comprimento;
     private Double largura;
     private Double altura;
@@ -60,5 +65,7 @@ public class ProdutoDTO implements Serializable {
     private Set<VendaItens> itens = new HashSet<>();
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
-    public ProdutoDTO(Produto entidade){ BeanUtils.copyProperties(entidade, this); }
+    public ProdutoDTO(Produto entidade) {
+        BeanUtils.copyProperties(entidade, this);
+    }
 }

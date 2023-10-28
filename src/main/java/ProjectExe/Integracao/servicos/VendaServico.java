@@ -133,6 +133,7 @@ public class VendaServico {
         for (VendaItensInsereDTO itemDTO : itensDTO) {
             Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
                     .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProduto().getProdutoId() + " não encontrado"));
+            produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQuantidade());
             VendaItens item = converterParaVendaItens(itemDTO, entidade, produto);
             itens.add(item);
             Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());

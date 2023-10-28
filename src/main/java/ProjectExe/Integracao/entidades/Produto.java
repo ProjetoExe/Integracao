@@ -33,11 +33,13 @@ public class Produto implements Serializable{
     private String descricao;
     private Instant dataCadastro;
     private Instant dataAtualizacao;
+    private Instant dataLancamento;
     private Integer estoqueTotal;
+    private Integer qtdVendida;
     private BigDecimal preco;
     private BigDecimal precoPromocional;
     private String tempoGarantia;
-    private String mensagemGarantia;
+    private String msgGarantia;
     private Double comprimento;
     private Double largura;
     private Double altura;

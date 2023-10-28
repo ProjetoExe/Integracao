@@ -76,7 +76,7 @@ public class MarcaServico {
     }
 
     //Método para inserir ou atualizar dados
-    private void atualizarDados(Marca entidade, MarcaDTO obj) {
-        entidade.setNome(obj.getNome());
+    private void atualizarDados(Marca entidade, MarcaDTO dto) {
+        entidade.setNome(dto.getNome());
     }
 }

@@ -115,8 +115,11 @@ public class ProdutoServico {
     private void atualizarDadosProduto(Produto entidade, ProdutoInsereAtualizaDTO dto) {
         if (entidade.getProdutoId() == null) {
             entidade.setDataCadastro(Instant.now());
+            entidade.setQtdVendida(0);
+            entidade.setAtivo('N');
         } else {
             entidade.setDataAtualizacao(Instant.now());
+            entidade.setAtivo(dto.getAtivo());
         }
         entidade.setNome(dto.getNome());
         String ncmFormatado = Formatador.formatarNCM(dto.getNcm());
@@ -124,11 +127,12 @@ public class ProdutoServico {
         entidade.setReferencia(dto.getReferencia());
         entidade.setDescricaoCurta(dto.getDescricaoCurta());
         entidade.setDescricao(dto.getDescricao());
+        entidade.setDataLancamento(dto.getDataLancamento());
         entidade.setEstoqueTotal(dto.getEstoqueTotal());
         entidade.setPreco(dto.getPreco());
         entidade.setPrecoPromocional(dto.getPrecoPromocional());
         entidade.setTempoGarantia(dto.getTempoGarantia());
-        entidade.setMensagemGarantia(dto.getMensagemGarantia());
+        entidade.setMsgGarantia(dto.getMsgGarantia());
         entidade.setComprimento(dto.getComprimento());
         entidade.setLargura(dto.getLargura());
         entidade.setAltura(dto.getAltura());

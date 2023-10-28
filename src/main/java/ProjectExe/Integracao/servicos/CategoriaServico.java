@@ -77,7 +77,7 @@ public class CategoriaServico {
     }
 
     //Método para criar ou atualizar dados
-    private void atualizarDados(Categoria entidade, CategoriaDTO obj) {
-        entidade.setNome(obj.getNome());
+    private void atualizarDados(Categoria entidade, CategoriaDTO dto) {
+        entidade.setNome(dto.getNome());
     }
 }
