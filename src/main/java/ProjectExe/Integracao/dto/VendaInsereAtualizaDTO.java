@@ -1,10 +1,13 @@
 package ProjectExe.Integracao.dto;
 
+import ProjectExe.Integracao.entidades.Endereco;
 import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
@@ -12,6 +15,7 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,18 +38,14 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String cpf;
     private String celular;
     private String email;
-    private String cep;
-    private String endereco;
-    private String numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
-    private String pais;
 
-    @JsonIgnoreProperties({"vendaId"})
+    @JsonIgnoreProperties({"id", "venda_id"})
+    private List<Endereco> enderecos = new ArrayList<>();
+
+    @JsonIgnoreProperties("vendaId")
     private Set<VendaItensInsereDTO> itens = new HashSet<>();
 
-    @JsonIgnoreProperties("id")
+    @JsonIgnoreProperties({"id", "venda_id"})
     private List<Pagamento> pagamentos;
 
     public VendaInsereAtualizaDTO(){

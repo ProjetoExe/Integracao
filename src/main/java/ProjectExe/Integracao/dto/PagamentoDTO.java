@@ -20,13 +20,13 @@ public class PagamentoDTO implements Serializable {
 
     private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
-    private Instant dataPagamento;
+    private Instant data;
     @NotBlank
-    private String tipoPagamento;
+    private String tipo;
     @NotBlank
-    private BigDecimal valorPagamento;
+    private BigDecimal valor;
     @NotBlank
-    private Integer quantidadeParcelas;
+    private Integer qtdParcelas;
     @NotNull
     private Venda venda;
 

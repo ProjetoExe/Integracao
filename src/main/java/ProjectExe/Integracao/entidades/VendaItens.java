@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
+import ProjectExe.Integracao.dto.VendaItensInsereDTO;
 import ProjectExe.Integracao.entidades.pk.VendaItemPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -57,4 +58,18 @@ public class VendaItens implements Serializable {
     public Produto getProduto(){ return id.getProduto(); }
 
     public void setProduto(Produto produto){ id.setProduto(produto); }
+
+    //Converte de VendaItensInsereDTO para VendaItens para salvar no banco de dados
+    public static VendaItens converterParaVendaItens(VendaItensInsereDTO itemDTO, Venda venda, Produto produto) {
+        VendaItens item = new VendaItens();
+        item.setVenda(venda);
+        item.setProduto(produto);
+        item.setNomeProduto(produto.getNome());
+        item.setTamanho(itemDTO.getTamanho());
+        item.setQuantidade(itemDTO.getQuantidade());
+        item.setPreco(itemDTO.getPreco());
+        item.setDesconto(itemDTO.getDesconto());
+        item.setTotal(itemDTO.getTotal());
+        return item;
+    }
 }

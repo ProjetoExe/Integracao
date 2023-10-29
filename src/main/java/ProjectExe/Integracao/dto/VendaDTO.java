@@ -38,13 +38,6 @@ public class VendaDTO implements Serializable {
     private String cpf;
     private String celular;
     private String email;
-    private String cep;
-    private String endereco;
-    private String numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
-    private String pais;
 
     private Set<VendaItensDTO> itens = new HashSet<>();
 

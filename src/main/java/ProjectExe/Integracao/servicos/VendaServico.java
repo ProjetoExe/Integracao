@@ -1,9 +1,6 @@
 package ProjectExe.Integracao.servicos;
 
-import ProjectExe.Integracao.dto.VendaDTO;
-import ProjectExe.Integracao.dto.VendaInsereAtualizaDTO;
-import ProjectExe.Integracao.dto.VendaItensInsereDTO;
-import ProjectExe.Integracao.dto.VendaResumidaDTO;
+import ProjectExe.Integracao.dto.*;
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
@@ -25,6 +22,7 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class VendaServico {
@@ -114,17 +112,19 @@ public class VendaServico {
         String celularFormatado = Formatador.formatarCelular(dto.getCelular());
         entidade.setCelular(celularFormatado);
         entidade.setEmail(dto.getEmail());
-        entidade.setCep(dto.getCep());
-        entidade.setEndereco(dto.getEndereco());
-        entidade.setNumero(dto.getNumero());
-        entidade.setBairro(dto.getBairro());
-        entidade.setCidade(dto.getCidade());
-        entidade.setEstado(dto.getEstado());
-        entidade.setPais(dto.getPais());
         vendaRepositorio.save(entidade);
 
+        atualizarEnderecosDaVenda(entidade, dto.getEnderecos());
         atualizarItensDaVenda(entidade, dto.getItens());
         atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
+    }
+
+    //inserir ou atualizar endere~ços da venda
+    private void atualizarEnderecosDaVenda(Venda entidade, List<Endereco> enderecos){
+        List<Endereco> novosEnderecos = enderecos.stream()
+                .peek(endereco -> endereco.setVenda(entidade))
+                .toList();
+        entidade.getEnderecos().addAll(novosEnderecos);
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
@@ -134,7 +134,7 @@ public class VendaServico {
             Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
                     .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProduto().getProdutoId() + " não encontrado"));
             produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQuantidade());
-            VendaItens item = converterParaVendaItens(itemDTO, entidade, produto);
+            VendaItens item = VendaItens.converterParaVendaItens(itemDTO, entidade, produto);
             itens.add(item);
             Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
             produtoGrade.ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQuantidade()));
@@ -144,23 +144,9 @@ public class VendaServico {
 
     //inserir ou atualizar pagamentos da venda (atualmente só inserir)
     private void atualizarPagamentosDaVenda(Venda entidade, List<Pagamento> pagamentos) {
-        List<Pagamento> novosPagamentos = pagamentos.stream()
+        List<Pagamento> novosPagamentos = pagamentos.stream() // Cria um Pagamento a partir de um PagamentoDTO
                 .peek(pagamento -> pagamento.setVenda(entidade))
                 .toList();
         entidade.getPagamentos().addAll(novosPagamentos);
-    }
-
-    //Converte de VendaItensInsereDTO para VendaItens para salvar no banco de dados
-    private VendaItens converterParaVendaItens(VendaItensInsereDTO itemDTO, Venda venda, Produto produto) {
-        VendaItens item = new VendaItens();
-        item.setVenda(venda);
-        item.setProduto(produto);
-        item.setNomeProduto(produto.getNome());
-        item.setTamanho(itemDTO.getTamanho());
-        item.setQuantidade(itemDTO.getQuantidade());
-        item.setPreco(itemDTO.getPreco());
-        item.setDesconto(itemDTO.getDesconto());
-        item.setTotal(itemDTO.getTotal());
-        return item;
     }
 }

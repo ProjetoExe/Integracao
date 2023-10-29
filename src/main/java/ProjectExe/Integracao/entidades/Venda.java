@@ -35,13 +35,9 @@ public class Venda implements Serializable {
     private String cpf;
     private String celular;
     private String email;
-    private String cep;
-    private String endereco;
-    private String numero;
-    private String bairro;
-    private String cidade;
-    private String estado;
-    private String pais;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
+    private List<Endereco> enderecos = new ArrayList<>();
 
     @OneToMany(mappedBy = "id.venda", cascade = CascadeType.ALL)
     private Set<VendaItens> itens = new HashSet<>();
