@@ -3,6 +3,7 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.Marca;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -10,6 +11,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class MarcaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

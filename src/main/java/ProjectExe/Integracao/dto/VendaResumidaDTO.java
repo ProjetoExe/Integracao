@@ -5,6 +5,7 @@ import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -15,6 +16,7 @@ import java.time.Instant;
 @JsonPropertyOrder({"vendaId", "nomeCliente", "vendaStatus", "dataVenda", "total"})
 @Getter
 @Setter
+@NoArgsConstructor
 public class VendaResumidaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

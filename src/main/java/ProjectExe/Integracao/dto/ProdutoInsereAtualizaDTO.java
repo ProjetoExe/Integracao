@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ProdutoInsereAtualizaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -63,9 +65,6 @@ public class ProdutoInsereAtualizaDTO implements Serializable {
     private List<ProdutoGrade> grade = new ArrayList<>();
 
     private List<ProdutoImagem> imagens = new ArrayList<>();
-
-    public ProdutoInsereAtualizaDTO() {
-    }
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
     public ProdutoInsereAtualizaDTO(Produto entidade){ BeanUtils.copyProperties(entidade, this);

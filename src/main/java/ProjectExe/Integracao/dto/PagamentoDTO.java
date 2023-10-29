@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -15,23 +16,20 @@ import java.time.Instant;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class PagamentoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long id;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant data;
-    @NotBlank
+    @NotBlank(message = "Obrigatório especificar tipo de pagamento")
     private String tipo;
-    @NotBlank
+    @NotNull(message = "Valor de pagamento não pode ser nulo")
     private BigDecimal valor;
-    @NotBlank
+    @NotNull(message = "Quantidade de parcelas não pode ser nulo")
     private Integer qtdParcelas;
-    @NotNull
+    //@NotNull
     private Venda venda;
-
-    public PagamentoDTO(){
-    }
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
     public PagamentoDTO(Pagamento pagamento){ BeanUtils.copyProperties(pagamento, this);

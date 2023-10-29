@@ -1,9 +1,11 @@
 package ProjectExe.Integracao.entidades;
 
+import ProjectExe.Integracao.dto.PagamentoDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.security.core.parameters.P;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,7 +24,6 @@ public class Pagamento implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT") //retirar depois para atualizar somente na ProdutoDTO
     private Instant data;
     private String tipo;
     private BigDecimal valor;
@@ -32,4 +33,14 @@ public class Pagamento implements Serializable {
     @ManyToOne
     @JoinColumn(name = "venda_id")
     private Venda venda;
+
+    public static Pagamento converterParaPagamento(PagamentoDTO dto, Venda entidade) {
+        Pagamento pagamento = new Pagamento();
+        pagamento.setData(dto.getData());
+        pagamento.setTipo(dto.getTipo());
+        pagamento.setValor(dto.getValor());
+        pagamento.setQtdParcelas(dto.getQtdParcelas());
+        pagamento.setVenda(entidade);
+        return pagamento;
+    }
 }

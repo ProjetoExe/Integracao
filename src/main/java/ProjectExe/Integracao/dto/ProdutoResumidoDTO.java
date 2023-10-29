@@ -3,6 +3,7 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.Produto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -12,6 +13,7 @@ import java.math.BigDecimal;
 @JsonPropertyOrder({"produtoId", "nome", "estoqueTotal", "preco", "precoPromocional", "ativo"})
 @Getter
 @Setter
+@NoArgsConstructor
 public class ProdutoResumidoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

@@ -40,14 +40,6 @@ public class VendaControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //atualizar registro
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody VendaInsereAtualizaDTO dto){
-        VendaInsereAtualizaDTO entidade = vendaServico.atualizar(id, dto);
-        String msg = "Venda atualizada com sucesso";
-        return ResponseEntity.ok().body(msg);
-    }
-
     //inserir novo registro
     @PostMapping
     public ResponseEntity<String> inserir(@Valid @RequestBody VendaInsereAtualizaDTO obj){
@@ -56,6 +48,14 @@ public class VendaControle {
                 .buildAndExpand(entidade.getVendaId()).toUri();
         String msg = "Venda inserida com sucesso";
         return ResponseEntity.created(uri).body(msg);
+    }
+
+    //atualizar registro
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody VendaInsereAtualizaDTO dto){
+        VendaInsereAtualizaDTO entidade = vendaServico.atualizar(id, dto);
+        String msg = "Venda atualizada com sucesso";
+        return ResponseEntity.ok().body(msg);
     }
 
     //excluir um registro

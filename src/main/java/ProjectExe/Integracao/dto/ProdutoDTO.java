@@ -3,6 +3,7 @@ package ProjectExe.Integracao.dto;
 import ProjectExe.Integracao.entidades.*;
 import com.fasterxml.jackson.annotation.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -19,6 +20,7 @@ import java.util.Set;
         "imgUrl", "grade", "ativo",})
 @Getter
 @Setter
+@NoArgsConstructor
 public class ProdutoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 

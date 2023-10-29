@@ -8,7 +8,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
+import jakarta.validation.Valid;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -22,6 +24,7 @@ import java.util.Set;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class VendaInsereAtualizaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -40,16 +43,15 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String email;
 
     @JsonIgnoreProperties({"id", "venda_id"})
-    private List<Endereco> enderecos = new ArrayList<>();
+    @Valid
+    private List<EnderecoDTO> enderecos = new ArrayList<>();
 
     @JsonIgnoreProperties("vendaId")
     private Set<VendaItensInsereDTO> itens = new HashSet<>();
 
     @JsonIgnoreProperties({"id", "venda_id"})
-    private List<Pagamento> pagamentos;
-
-    public VendaInsereAtualizaDTO(){
-    }
+    @Valid
+    private List<PagamentoDTO> pagamentos;
 
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO
     public VendaInsereAtualizaDTO(Venda entidade) { BeanUtils.copyProperties(entidade, this);

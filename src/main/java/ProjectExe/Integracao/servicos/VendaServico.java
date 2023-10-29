@@ -7,6 +7,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -119,12 +120,14 @@ public class VendaServico {
         atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
     }
 
-    //inserir ou atualizar endere~ços da venda
-    private void atualizarEnderecosDaVenda(Venda entidade, List<Endereco> enderecos){
-        List<Endereco> novosEnderecos = enderecos.stream()
-                .peek(endereco -> endereco.setVenda(entidade))
-                .toList();
-        entidade.getEnderecos().addAll(novosEnderecos);
+    //inserir ou atualizar endereços da venda
+    private void atualizarEnderecosDaVenda(Venda entidade, List<EnderecoDTO> enderecosDTO){
+        List<Endereco> enderecos = new ArrayList<>();
+        for (EnderecoDTO dto : enderecosDTO){
+            Endereco endereco = Endereco.converterParaEndereco(dto, entidade);
+            enderecos.add(endereco);
+        }
+        entidade.getEnderecos().addAll(enderecos);
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
@@ -143,10 +146,12 @@ public class VendaServico {
     }
 
     //inserir ou atualizar pagamentos da venda (atualmente só inserir)
-    private void atualizarPagamentosDaVenda(Venda entidade, List<Pagamento> pagamentos) {
-        List<Pagamento> novosPagamentos = pagamentos.stream() // Cria um Pagamento a partir de um PagamentoDTO
-                .peek(pagamento -> pagamento.setVenda(entidade))
-                .toList();
-        entidade.getPagamentos().addAll(novosPagamentos);
+    private void atualizarPagamentosDaVenda(Venda entidade, List<PagamentoDTO> pagamentosDTO) {
+        List<Pagamento> pagamentos = new ArrayList<>();
+        for (PagamentoDTO dto : pagamentosDTO){
+            Pagamento pagamento = Pagamento.converterParaPagamento(dto, entidade);
+            pagamentos.add(pagamento);
+        }
+        entidade.getPagamentos().addAll(pagamentos);
     }
 }

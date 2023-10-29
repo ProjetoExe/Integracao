@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 
@@ -15,6 +16,7 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class UsuarioCadastroDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -30,9 +32,6 @@ public class UsuarioCadastroDTO implements Serializable {
     @NotNull(message = "Loja não pode ser nulo ou vazio")
     @JsonUnwrapped
     private Loja loja;
-
-    public UsuarioCadastroDTO(){
-    }
 
     public UsuarioCadastroDTO(Usuario entidade){ BeanUtils.copyProperties(entidade, this); }
 }
