@@ -49,6 +49,14 @@ public class VendaItens implements Serializable {
         this.total = total;
     }
 
+    public VendaItens(VendaItensInsereDTO itemDTO) {
+        this.setTamanho(itemDTO.getTamanho());
+        this.setQuantidade(itemDTO.getQuantidade());
+        this.setPreco(itemDTO.getPreco());
+        this.setDesconto(itemDTO.getDesconto());
+        this.setTotal(itemDTO.getTotal());
+    }
+
     @JsonIgnore
     public Venda getVenda(){ return id.getVenda(); }
 

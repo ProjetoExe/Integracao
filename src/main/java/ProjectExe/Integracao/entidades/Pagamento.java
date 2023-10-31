@@ -34,13 +34,10 @@ public class Pagamento implements Serializable {
     @JoinColumn(name = "venda_id")
     private Venda venda;
 
-    public static Pagamento converterParaPagamento(PagamentoDTO dto, Venda entidade) {
-        Pagamento pagamento = new Pagamento();
-        pagamento.setData(dto.getData());
-        pagamento.setTipo(dto.getTipo());
-        pagamento.setValor(dto.getValor());
-        pagamento.setQtdParcelas(dto.getQtdParcelas());
-        pagamento.setVenda(entidade);
-        return pagamento;
+    public Pagamento(PagamentoDTO dto) {
+        this.setData(dto.getData());
+        this.setTipo(dto.getTipo());
+        this.setValor(dto.getValor());
+        this.setQtdParcelas(dto.getQtdParcelas());
     }
 }

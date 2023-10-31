@@ -124,7 +124,8 @@ public class VendaServico {
     private void atualizarEnderecosDaVenda(Venda entidade, List<EnderecoDTO> enderecosDTO){
         List<Endereco> enderecos = new ArrayList<>();
         for (EnderecoDTO dto : enderecosDTO){
-            Endereco endereco = Endereco.converterParaEndereco(dto, entidade);
+            Endereco endereco = new Endereco(dto);
+            endereco.setVenda(entidade);
             enderecos.add(endereco);
         }
         entidade.getEnderecos().addAll(enderecos);
@@ -137,7 +138,10 @@ public class VendaServico {
             Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
                     .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProduto().getProdutoId() + " não encontrado"));
             produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQuantidade());
-            VendaItens item = VendaItens.converterParaVendaItens(itemDTO, entidade, produto);
+            VendaItens item = new VendaItens(itemDTO);
+            item.setVenda(entidade);
+            item.setProduto(produto);
+            item.setNomeProduto(produto.getNome());
             itens.add(item);
             Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
             produtoGrade.ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQuantidade()));
@@ -149,7 +153,8 @@ public class VendaServico {
     private void atualizarPagamentosDaVenda(Venda entidade, List<PagamentoDTO> pagamentosDTO) {
         List<Pagamento> pagamentos = new ArrayList<>();
         for (PagamentoDTO dto : pagamentosDTO){
-            Pagamento pagamento = Pagamento.converterParaPagamento(dto, entidade);
+            Pagamento pagamento = new Pagamento(dto);
+            pagamento.setVenda(entidade);
             pagamentos.add(pagamento);
         }
         entidade.getPagamentos().addAll(pagamentos);

@@ -37,21 +37,18 @@ public class Endereco implements Serializable {
     @JoinColumn(name = "venda_id")
     private Venda venda;
 
+    public Endereco(EnderecoDTO dto) {
+        this.setCep(dto.getCep());
+        this.setEndereco(dto.getEndereco());
+        this.setNumero(dto.getNumero());
+        this.setComplemento(dto.getComplemento());
+        this.setBairro(dto.getBairro());
+        this.setCidade(dto.getCidade());
+        this.setEstado(dto.getEstado());
+        this.setPais(dto.getPais());
+    }
+
     public void setEstado(String estado) { this.estado = estado.substring(0,2); }
 
     public void setPais(String pais) { this.pais = pais.substring(0,3); }
-
-    public static Endereco converterParaEndereco(EnderecoDTO dto, Venda entidade) {
-        Endereco endereco = new Endereco();
-        endereco.setCep(dto.getCep());
-        endereco.setEndereco(dto.getEndereco());
-        endereco.setNumero(dto.getNumero());
-        endereco.setComplemento(dto.getComplemento());
-        endereco.setBairro(dto.getBairro());
-        endereco.setCidade(dto.getCidade());
-        endereco.setEstado(dto.getEstado());
-        endereco.setPais(dto.getPais());
-        endereco.setVenda(entidade);
-        return endereco;
-    }
 }
