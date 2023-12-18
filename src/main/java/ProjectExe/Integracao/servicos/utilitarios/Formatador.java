@@ -18,6 +18,12 @@ public class Formatador {
                 numerico.substring(2, 7) + "-" + numerico.substring(7);
     }
 
+    public static String formatarCep(String cep) {
+        String numerico = cep.replaceAll("[^0-9]", "");
+        return numerico.substring(0, 5) + "-" +
+                numerico.substring(6);
+    }
+
     public static String formatarNCM(String ncm) {
         String numerico = ncm.replaceAll("[^0-9]", "");
         return numerico.substring(0, 4) + "." +
