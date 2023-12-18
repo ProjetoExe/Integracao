@@ -7,13 +7,10 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
-@Table(name = "venda")
+@Table(name = "Venda")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,21 +20,35 @@ public class Venda implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long vendaId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID vendaId;
+    private String localVenda;
     private Instant dataVenda;
+    private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal frete;
+    private BigDecimal taxa;
     private BigDecimal desconto;
     private BigDecimal subTotal;
+    private String tipoEnvio;
+    private BigDecimal frete;
+    private String cupomDesconto;
     private BigDecimal total;
-    private String nomeCliente;
-    private String cpf;
-    private String celular;
-    private String email;
+    private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
+    private Instant dataEnvio;
+    private Integer numeroNotaFiscal;
+    private String chaveNotaFiscal;
+    private Integer tempoEntrega;
+    private Instant dataEntrega;
+    private String codigoEnvio;
+    private String localRetirada;
 
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL)
-    private List<Endereco> enderecos = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente clienteId;
+
+    @ManyToOne
+    @JoinColumn(name = "endereco_id")
+    private Endereco enderecoId;
 
     @OneToMany(mappedBy = "id.venda", cascade = CascadeType.ALL)
     private Set<VendaItens> itens = new HashSet<>();

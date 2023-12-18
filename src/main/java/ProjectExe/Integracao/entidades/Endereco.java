@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "Endereco")
@@ -34,19 +36,12 @@ public class Endereco implements Serializable {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "venda_id")
-    private Venda venda;
+    @JoinColumn(name = "cliente_id")
+    private Cliente clienteId;
 
-    public Endereco(EnderecoDTO dto) {
-        this.setCep(dto.getCep());
-        this.setEndereco(dto.getEndereco());
-        this.setNumero(dto.getNumero());
-        this.setComplemento(dto.getComplemento());
-        this.setBairro(dto.getBairro());
-        this.setCidade(dto.getCidade());
-        this.setEstado(dto.getEstado());
-        this.setPais(dto.getPais());
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "enderecoId", cascade = CascadeType.ALL)
+    private List<Venda> venda = new ArrayList<>();
 
     public void setEstado(String estado) { this.estado = estado.substring(0,2); }
 

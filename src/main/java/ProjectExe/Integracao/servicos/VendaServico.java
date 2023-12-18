@@ -49,7 +49,7 @@ public class VendaServico {
     //buscar todos os registros com filtro de id, data e cliente
     @Transactional(readOnly = true)
     @Cacheable("vendas")
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, String nomeCliente, Pageable pageable) {
+    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, Pageable pageable) {
         Instant dataInicial = minData.isBlank() ? LocalDate.now().minusDays(180).atStartOfDay().toInstant(ZoneOffset.UTC) :
                 LocalDate.parse(minData, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant dataFinal = maxData.isBlank() ? LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC) :
@@ -62,7 +62,7 @@ public class VendaServico {
                 resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
             }
         } else {
-            resultado = vendaRepositorio.buscarVendasClienteEData(dataInicial, dataFinal, nomeCliente, pageable);
+            resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
         }
         return resultado.map(VendaResumidaDTO::new);
     }
@@ -107,28 +107,11 @@ public class VendaServico {
         entidade.setDesconto(dto.getDesconto());
         entidade.setSubTotal(dto.getSubTotal());
         entidade.setTotal(dto.getTotal());
-        entidade.setNomeCliente(dto.getNomeCliente().toUpperCase());
         String cpfFormatado = Formatador.formatarCPF(dto.getCpf());
-        entidade.setCpf(cpfFormatado);
-        String celularFormatado = Formatador.formatarCelular(dto.getCelular());
-        entidade.setCelular(celularFormatado);
-        entidade.setEmail(dto.getEmail());
         vendaRepositorio.save(entidade);
 
-        atualizarEnderecosDaVenda(entidade, dto.getEnderecos());
         atualizarItensDaVenda(entidade, dto.getItens());
         atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
-    }
-
-    //inserir ou atualizar endereços da venda
-    private void atualizarEnderecosDaVenda(Venda entidade, List<EnderecoDTO> enderecosDTO){
-        List<Endereco> enderecos = new ArrayList<>();
-        for (EnderecoDTO dto : enderecosDTO){
-            Endereco endereco = new Endereco(dto);
-            endereco.setVenda(entidade);
-            enderecos.add(endereco);
-        }
-        entidade.getEnderecos().addAll(enderecos);
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
