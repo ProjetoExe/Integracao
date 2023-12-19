@@ -101,12 +101,33 @@ public class VendaServico {
 
     //inserir ou atualizar (no caso apenas o status da venda) dados das Vendas
     private void atualizarDados(Venda entidade, VendaInsereAtualizaDTO dto) {
-        entidade.setDataVenda(dto.getDataVenda());
+        if (entidade.getVendaId() == null){
+            entidade.setDataVenda(dto.getDataVenda());
+            entidade.setLocalVenda(dto.getLocalVenda());
+        }else {
+            entidade.setDataAlteracao(Instant.now());
+        }
         entidade.setVendaStatus(dto.getVendaStatus());
+        entidade.setTaxa(dto.getTaxa());
         entidade.setFrete(dto.getFrete());
         entidade.setDesconto(dto.getDesconto());
         entidade.setSubTotal(dto.getSubTotal());
         entidade.setTotal(dto.getTotal());
+        entidade.setTipoEnvio(dto.getTipoEnvio());
+        entidade.setCupomDesconto(dto.getCupomDesconto());
+        //entidade.setDataPagamento();
+        entidade.setTempoEntrega(dto.getTempoEntrega());
+        entidade.setCodigoEnvio(dto.getCodigoEnvio());
+        entidade.setLocalRetirada(dto.getLocalRetirada());
+        entidade.setDataEnvio(dto.getDataEnvio());
+        entidade.setDataEntrega(dto.getDataEntrega());
+        entidade.setNumeroNotaFiscal(dto.getNumeroNotaFiscal());
+        entidade.setChaveNotaFiscal(dto.getChaveNotaFiscal());
+        entidade.setXmlNotaFiscal(dto.getXmlNotaFiscal());
+
+        entidade.setClienteId(dto.getClienteId());
+        entidade.setEnderecoId(dto.getEnderecoId());
+
         vendaRepositorio.save(entidade);
 
         atualizarItensDaVenda(entidade, dto.getItens());

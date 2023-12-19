@@ -42,6 +42,10 @@ public class Venda implements Serializable {
     private String codigoEnvio;
     private String localRetirada;
 
+    @Lob
+    @Column(name = "xml_nota_fiscal", columnDefinition = "VARCHAR(MAX)")
+    private String xmlNotaFiscal;
+
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente clienteId;

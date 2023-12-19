@@ -52,10 +52,11 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private Instant dataEntrega;
     private String codigoEnvio;
     private String localRetirada;
+    private String xmlNotaFiscal;
 
-    private Cliente cliente;
+    private Cliente clienteId;
 
-    private Endereco endereco;
+    private Endereco enderecoId;
 
     @JsonIgnoreProperties("vendaId")
     private Set<VendaItensInsereDTO> itens = new HashSet<>();
