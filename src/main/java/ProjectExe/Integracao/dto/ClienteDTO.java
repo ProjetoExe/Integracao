@@ -1,26 +1,21 @@
-package ProjectExe.Integracao.entidades;
+package ProjectExe.Integracao.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
+import ProjectExe.Integracao.entidades.Cliente;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.beans.BeanUtils;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
-@Entity
-@Table(name = "Cliente")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode(of="clienteId")
-public class Cliente implements Serializable {
+public class ClienteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clienteId;
     private String nomeCliente;
     private Date dataNascimento;
@@ -39,9 +34,6 @@ public class Cliente implements Serializable {
     private Integer totalPedidos;
     private char ativo;
 
-    @OneToMany(mappedBy = "clienteId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Endereco> enderecos = new ArrayList<>();
-
-    @OneToMany(mappedBy = "clienteId", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Venda> vendas = new ArrayList<>();
+    public ClienteDTO(Cliente cliente) {BeanUtils.copyProperties(cliente, this);
+    }
 }

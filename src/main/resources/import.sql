@@ -54,3 +54,6 @@ INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (6,1);
 
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www.site.com.br/teste1.jpg', 'Imagem do Produto tamanho U')
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www.site.com.br/teste2.jpg', 'Imagem do Produto tamanho U2')
+
+INSERT INTO cliente (nome_cliente, data_nascimento, cpf, celular, ativo) VALUES ('Gustavo', '2001-10-04', '000.000.000-00', '16 99723 4150', 'S')
+INSERT INTO endereco (cep, endereco, numero, complemento, bairro, cidade, estado, pais, cliente_id) VALUES ('1480000', 'Rua Teste', '100', 'Teste', 'Bairro Teste', 'Arapica', 'SP', 'BRA', 1)

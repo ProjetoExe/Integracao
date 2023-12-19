@@ -107,7 +107,6 @@ public class VendaServico {
         entidade.setDesconto(dto.getDesconto());
         entidade.setSubTotal(dto.getSubTotal());
         entidade.setTotal(dto.getTotal());
-        String cpfFormatado = Formatador.formatarCPF(dto.getCpf());
         vendaRepositorio.save(entidade);
 
         atualizarItensDaVenda(entidade, dto.getItens());
