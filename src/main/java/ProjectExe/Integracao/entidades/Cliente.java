@@ -15,7 +15,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of="clienteId")
+@EqualsAndHashCode(of = "clienteId")
 public class Cliente implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -24,10 +24,13 @@ public class Cliente implements Serializable {
     private Long clienteId;
     private String nomeCliente;
     private Date dataNascimento;
+    @Column(unique = true)
     private String cpf;
+    @Column(unique = true)
     private String rg;
     private String telefone;
     private String celular;
+    @Column(unique = true)
     private String email;
     private String observacao;
     private String cnpj;

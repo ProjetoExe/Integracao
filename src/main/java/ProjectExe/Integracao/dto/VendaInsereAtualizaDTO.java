@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,8 +53,10 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String xmlNotaFiscal;
 
     //variáveis para cadastrar cliente novo
+    @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nomeCliente;
     private Date dataNascimento;
+    @NotBlank(message = "CPF não pode ser nulo ou vazio")
     private String cpf;
     private String rg;
     private String telefone;

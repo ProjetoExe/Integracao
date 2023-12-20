@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Cliente;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,8 +18,10 @@ public class ClienteDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long clienteId;
+    @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nomeCliente;
     private Date dataNascimento;
+    @NotBlank(message = "CPF não pode ser nulo ou vazio")
     private String cpf;
     private String rg;
     private String telefone;
@@ -30,7 +33,7 @@ public class ClienteDTO implements Serializable {
     private String inscricaoEstadual;
     private Instant dataRegistro;
     private Instant dataModificacao;
-    private Date dataUltimaCompra;
+    private Instant dataUltimaCompra;
     private Integer totalPedidos;
     private char ativo;
 
