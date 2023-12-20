@@ -5,9 +5,7 @@ import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
-import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,13 +21,16 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class VendaServico {
 
     @Autowired
     private VendaRepositorio vendaRepositorio;
+    @Autowired
+    private ClienteRepositorio clienteRepositorio;
+    @Autowired
+    private ClienteServico clienteServico;
     @Autowired
     private ProdutoRepositorio produtoRepositorio;
     @Autowired
@@ -115,7 +116,6 @@ public class VendaServico {
         entidade.setTotal(dto.getTotal());
         entidade.setTipoEnvio(dto.getTipoEnvio());
         entidade.setCupomDesconto(dto.getCupomDesconto());
-        //entidade.setDataPagamento();
         entidade.setTempoEntrega(dto.getTempoEntrega());
         entidade.setCodigoEnvio(dto.getCodigoEnvio());
         entidade.setLocalRetirada(dto.getLocalRetirada());
@@ -125,13 +125,40 @@ public class VendaServico {
         entidade.setChaveNotaFiscal(dto.getChaveNotaFiscal());
         entidade.setXmlNotaFiscal(dto.getXmlNotaFiscal());
 
-        entidade.setClienteId(dto.getClienteId());
-        entidade.setEnderecoId(dto.getEnderecoId());
+        inserirCliente(entidade, dto);
+        entidade.setEndereco(dto.getEnderecoId());
 
         vendaRepositorio.save(entidade);
 
         atualizarItensDaVenda(entidade, dto.getItens());
         atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
+
+        Pagamento pagamento = pagamentoRepositorio.findFirstByVenda_VendaIdOrderByDataDesc(entidade.getVendaId());
+        entidade.setDataPagamento(pagamento.getData());
+    }
+
+    //insere cliente na venda
+    private void inserirCliente(Venda entidade, VendaInsereAtualizaDTO dto){
+        Optional<Cliente> clienteExistente = clienteRepositorio.findByCpf(dto.getCpf());
+        Cliente cliente = clienteExistente.orElseGet(() -> {
+            Cliente clienteDTO = new Cliente();
+            clienteDTO.setNomeCliente(dto.getNomeCliente());
+            clienteDTO.setDataNascimento(dto.getDataNascimento());
+            clienteDTO.setCpf(dto.getCpf());
+            clienteDTO.setRg(dto.getRg());
+            clienteDTO.setTelefone(dto.getTelefone());
+            clienteDTO.setCelular(dto.getCelular());
+            clienteDTO.setEmail(dto.getEmail());
+            clienteDTO.setObservacao(dto.getObservacao());
+            clienteDTO.setCnpj(dto.getCnpj());
+            clienteDTO.setRazaoSocial(dto.getRazaoSocial());
+            clienteDTO.setInscricaoEstadual(dto.getInscricaoEstadual());
+            clienteDTO.setTotalPedidos(0);
+            return clienteDTO;
+        });
+        cliente.setTotalPedidos(cliente.getTotalPedidos() + 1);
+        cliente.setDataUltimaCompra(entidade.getDataVenda());
+        entidade.setCliente(cliente);
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
