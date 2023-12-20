@@ -20,10 +20,7 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 @Setter
@@ -53,6 +50,19 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String codigoEnvio;
     private String localRetirada;
     private String xmlNotaFiscal;
+
+    //variáveis para cadastrar cliente novo
+    private String nomeCliente;
+    private Date dataNascimento;
+    private String cpf;
+    private String rg;
+    private String telefone;
+    private String celular;
+    private String email;
+    private String observacao;
+    private String cnpj;
+    private String razaoSocial;
+    private String inscricaoEstadual;
 
     private Cliente clienteId;
 
