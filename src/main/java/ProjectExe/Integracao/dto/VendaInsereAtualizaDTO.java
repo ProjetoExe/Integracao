@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.dto;
 
+import ProjectExe.Integracao.entidades.Cliente;
 import ProjectExe.Integracao.entidades.Endereco;
 import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
@@ -7,6 +8,8 @@ import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -29,22 +32,31 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long vendaId;
-
+    private String localVenda;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
+    private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal frete;
+    private BigDecimal taxa;
     private BigDecimal desconto;
     private BigDecimal subTotal;
+    private String tipoEnvio;
+    private BigDecimal frete;
+    private String cupomDesconto;
     private BigDecimal total;
-    private String nomeCliente;
-    private String cpf;
-    private String celular;
-    private String email;
+    private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
+    private Instant dataEnvio;
+    private Integer numeroNotaFiscal;
+    private String chaveNotaFiscal;
+    private Integer tempoEntrega;
+    private Instant dataEntrega;
+    private String codigoEnvio;
+    private String localRetirada;
+    private String xmlNotaFiscal;
 
-    @JsonIgnoreProperties({"id", "venda_id"})
-    @Valid
-    private List<EnderecoDTO> enderecos = new ArrayList<>();
+    private Cliente clienteId;
+
+    private Endereco enderecoId;
 
     @JsonIgnoreProperties("vendaId")
     private Set<VendaItensInsereDTO> itens = new HashSet<>();
