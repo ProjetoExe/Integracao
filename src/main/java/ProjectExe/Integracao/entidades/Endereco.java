@@ -37,10 +37,10 @@ public class Endereco implements Serializable {
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "cliente_id")
-    private Cliente clienteId;
+    private Cliente cliente;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "enderecoId", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "endereco", cascade = CascadeType.ALL)
     private List<Venda> venda = new ArrayList<>();
 
     public void setEstado(String estado) { this.estado = estado.substring(0,2); }

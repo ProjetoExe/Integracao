@@ -52,6 +52,7 @@ public class VendaDTO implements Serializable {
     private Instant dataEntrega;
     private String codigoEnvio;
     private String localRetirada;
+    private String xmlNotaFiscal;
 
     private Cliente clienteId;
 

@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
+import ProjectExe.Integracao.dto.ClienteDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,11 +38,10 @@ public class Cliente implements Serializable {
     private Instant dataModificacao;
     private Date dataUltimaCompra;
     private Integer totalPedidos;
-    private char ativo;
 
-    @OneToMany(mappedBy = "clienteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecos = new ArrayList<>();
 
-    @OneToMany(mappedBy = "clienteId", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Venda> vendas = new ArrayList<>();
 }

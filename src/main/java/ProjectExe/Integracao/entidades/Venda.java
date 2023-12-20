@@ -46,13 +46,13 @@ public class Venda implements Serializable {
     @Column(name = "xml_nota_fiscal", columnDefinition = "VARCHAR(MAX)")
     private String xmlNotaFiscal;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id")
-    private Cliente clienteId;
+    private Cliente cliente;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id")
-    private Endereco enderecoId;
+    private Endereco endereco;
 
     @OneToMany(mappedBy = "id.venda", cascade = CascadeType.ALL)
     private Set<VendaItens> itens = new HashSet<>();
