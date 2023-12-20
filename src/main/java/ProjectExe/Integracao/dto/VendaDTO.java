@@ -1,11 +1,15 @@
 package ProjectExe.Integracao.dto;
 
+import ProjectExe.Integracao.entidades.Cliente;
+import ProjectExe.Integracao.entidades.Endereco;
 import ProjectExe.Integracao.entidades.Pagamento;
 import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,29 +21,41 @@ import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "nomeCliente", "cpf", "celular", "email", "cep", "endereco",
-                    "numero", "bairro", "cidade", "estado", "pais", "itens", "pagamentos"})
+@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "pagamentos"})
 @Getter
 @Setter
 @NoArgsConstructor
 public class VendaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long vendaId;
-
+    private UUID vendaId;
+    private String localVenda;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
+    private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal frete;
+    private BigDecimal taxa;
     private BigDecimal desconto;
     private BigDecimal subTotal;
+    private String tipoEnvio;
+    private BigDecimal frete;
+    private String cupomDesconto;
     private BigDecimal total;
-    private String nomeCliente;
-    private String cpf;
-    private String celular;
-    private String email;
+    private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
+    private Instant dataEnvio;
+    private Integer numeroNotaFiscal;
+    private String chaveNotaFiscal;
+    private Integer tempoEntrega;
+    private Instant dataEntrega;
+    private String codigoEnvio;
+    private String localRetirada;
+
+    private Cliente clienteId;
+
+    private Endereco enderecoId;
 
     private Set<VendaItensDTO> itens = new HashSet<>();
 
