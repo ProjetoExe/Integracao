@@ -56,18 +56,18 @@ public class LojaServico {
     //inserir novo registro
     @Transactional
     public LojaDTO inserir(LojaDTO obj) {
-        Loja entidade = new Loja();
-        atualizarDados(entidade, obj);
-        return new LojaDTO(lojaRepositorio.save(entidade));
+        Loja loja = new Loja();
+        atualizarDados(loja, obj);
+        return new LojaDTO(lojaRepositorio.save(loja));
     }
 
     //atualizar um registro
     @Transactional
     public LojaDTO atualizar(Long lojaId, LojaDTO obj) {
         try {
-            Loja entidade = lojaRepositorio.getReferenceById(lojaId);
-            atualizarDados(entidade, obj);
-            return new LojaDTO(lojaRepositorio.save(entidade));
+            Loja loja = lojaRepositorio.getReferenceById(lojaId);
+            atualizarDados(loja, obj);
+            return new LojaDTO(lojaRepositorio.save(loja));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada");
         }

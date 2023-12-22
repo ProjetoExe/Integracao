@@ -46,18 +46,18 @@ public class MarcaServico {
     //inserir novo registro
     @Transactional
     public MarcaDTO inserir(MarcaDTO obj) {
-        Marca entidade = new Marca();
-        atualizarDados(entidade, obj);
-        return new MarcaDTO(marcaRepositorio.save(entidade));
+        Marca marca = new Marca();
+        atualizarDados(marca, obj);
+        return new MarcaDTO(marcaRepositorio.save(marca));
     }
 
     //atualizar um registro
     @Transactional
     public MarcaDTO atualizar(Long marcaId, MarcaDTO obj) {
         try {
-            Marca entidade = marcaRepositorio.getReferenceById(marcaId);
-            atualizarDados(entidade, obj);
-            return new MarcaDTO(marcaRepositorio.save(entidade));
+            Marca marca = marcaRepositorio.getReferenceById(marcaId);
+            atualizarDados(marca, obj);
+            return new MarcaDTO(marcaRepositorio.save(marca));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Marca " + marcaId + " não encontrada");
         }

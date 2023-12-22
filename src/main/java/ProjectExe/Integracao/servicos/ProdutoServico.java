@@ -72,19 +72,19 @@ public class ProdutoServico {
     //inserir novo registro
     @Transactional
     public ProdutoInsereAtualizaDTO inserir(ProdutoInsereAtualizaDTO obj) {
-        Produto entidade = new Produto();
-        atualizarDadosProduto(entidade, obj);
-        entidade.setAtivo('N');
-        return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
+        Produto produto = new Produto();
+        atualizarDadosProduto(produto, obj);
+        produto.setAtivo('N');
+        return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(produto));
     }
 
     //atualizar registro
     @Transactional
     public ProdutoInsereAtualizaDTO atualizar(Long produtoId, ProdutoInsereAtualizaDTO obj) {
         try {
-            Produto entidade = produtoRepositorio.getReferenceById(produtoId);
-            atualizarDadosProduto(entidade, obj);
-            return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(entidade));
+            Produto produto = produtoRepositorio.getReferenceById(produtoId);
+            atualizarDadosProduto(produto, obj);
+            return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(produto));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
         }
@@ -105,10 +105,10 @@ public class ProdutoServico {
     //remover tamanho do produto
     @Transactional
     public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
-        Produto entidade = produtoRepositorio.findById(produtoId)
+        Produto produto = produtoRepositorio.findById(produtoId)
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + "  encontrado"));
-        entidade.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
-        return new ProdutoDTO(produtoRepositorio.save(entidade));
+        produto.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
+        return new ProdutoDTO(produtoRepositorio.save(produto));
     }
 
     //Método utilizado no método de inserir e atualizar dados

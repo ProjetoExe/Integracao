@@ -137,7 +137,7 @@ public class VendaServico {
         entidade.setDataPagamento(pagamento.getData());
     }
 
-    //insere cliente na venda
+    //insere cliente na venda a partir dos dados da venda recebidos
     private void inserirCliente(Venda entidade, VendaInsereAtualizaDTO dto){
         Optional<Cliente> clienteExistente = clienteRepositorio.findByCpf(dto.getCpf());
         Cliente cliente = clienteExistente.orElseGet(() -> {

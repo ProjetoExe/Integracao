@@ -44,24 +44,24 @@ public class CategoriaServico {
         return resultado.map(CategoriaDTO::new);
     }
 
+    //inserir novo registro
+    @Transactional
+    public CategoriaDTO inserir(CategoriaDTO obj) {
+        Categoria categoria = new Categoria();
+        atualizarDados(categoria, obj);
+        return new CategoriaDTO(categoriaRepositorio.save(categoria));
+    }
+
     //atualizar um registro
     @Transactional
     public CategoriaDTO atualizar(Long categoriaId, CategoriaDTO obj) {
         try {
-            Categoria entidade = categoriaRepositorio.getReferenceById(categoriaId);
-            atualizarDados(entidade, obj);
-            return new CategoriaDTO(categoriaRepositorio.save(entidade));
+            Categoria categoria = categoriaRepositorio.getReferenceById(categoriaId);
+            atualizarDados(categoria, obj);
+            return new CategoriaDTO(categoriaRepositorio.save(categoria));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Categoria " + categoriaId + " não encontrada");
         }
-    }
-
-    //inserir novo registro
-    @Transactional
-    public CategoriaDTO inserir(CategoriaDTO obj) {
-        Categoria entidade = new Categoria();
-        atualizarDados(entidade, obj);
-        return new CategoriaDTO(categoriaRepositorio.save(entidade));
     }
 
     //deletar um registro
