@@ -7,10 +7,7 @@ import ProjectExe.Integracao.entidades.Venda;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -52,7 +49,7 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String localRetirada;
     private String xmlNotaFiscal;
 
-    //variáveis para cadastrar cliente novo
+    //variáveis para verificar e cadastrar cliente novo caso precise
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nomeCliente;
     private Date dataNascimento;
@@ -60,16 +57,27 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String cpf;
     private String rg;
     private String telefone;
+    @NotBlank(message = "Celular não pode ser nulo ou vazio")
     private String celular;
+    @NotBlank(message = "Email não pode ser nulo ou vazio")
     private String email;
     private String observacao;
     private String cnpj;
     private String razaoSocial;
     private String inscricaoEstadual;
 
-    private Cliente clienteId;
-
-    private Endereco enderecoId;
+    //variáveis para verificar e cadastrar endereço novo caso precise
+    @NotBlank(message = "CEP não pode ser nulo ou vazio")
+    private String cep;
+    @NotBlank(message = "Endereço não pode ser nulo ou vazio")
+    private String endereco;
+    @NotBlank(message = "Número não pode ser nulo ou vazio")
+    private String numero;
+    private String complemento;
+    private String bairro;
+    private String cidade;
+    private String estado;
+    private String pais;
 
     @JsonIgnoreProperties("vendaId")
     private Set<VendaItensInsereDTO> itens = new HashSet<>();
@@ -87,6 +95,12 @@ public class VendaInsereAtualizaDTO implements Serializable {
     public void setVendaStatus(VendaStatus vendaStatus) {
         if (vendaStatus != null){
             this.vendaStatus = vendaStatus.getCodigo();
+        }
+    }
+
+    public void validarCpfCnpj() {
+        if (Objects.isNull(cpf) && Objects.isNull(cnpj)) {
+            throw new IllegalArgumentException("CPF ou CNPJ deve ser preenchido");
         }
     }
 }

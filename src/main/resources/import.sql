@@ -56,4 +56,4 @@ INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www.site.com.br/teste2.jpg', 'Imagem do Produto tamanho U2')
 
 INSERT INTO cliente (nome_cliente, data_nascimento, cpf, celular, total_pedidos) VALUES ('Gustavo', '2001-10-04', '000.000.000-00', '16 99723 4150', 0)
-INSERT INTO endereco (cep, endereco, numero, complemento, bairro, cidade, estado, pais, cliente_id) VALUES ('1480000', 'Rua Teste', '100', 'Teste', 'Bairro Teste', 'Arapica', 'SP', 'BRA', 1)
+INSERT INTO endereco (cep, endereco, numero, complemento, bairro, cidade, estado, pais, cliente_id) VALUES ('14800111', 'Rua Teste', '100', 'Teste', 'Bairro Teste', 'Arapica', 'SP', 'BRA', 1)

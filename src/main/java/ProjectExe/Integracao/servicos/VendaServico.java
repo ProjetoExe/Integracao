@@ -30,7 +30,7 @@ public class VendaServico {
     @Autowired
     private ClienteRepositorio clienteRepositorio;
     @Autowired
-    private ClienteServico clienteServico;
+    private EnderecoRepositorio enderecoRepositorio;
     @Autowired
     private ProdutoRepositorio produtoRepositorio;
     @Autowired
@@ -126,13 +126,14 @@ public class VendaServico {
         entidade.setXmlNotaFiscal(dto.getXmlNotaFiscal());
 
         inserirCliente(entidade, dto);
-        entidade.setEndereco(dto.getEnderecoId());
+        inserirEndereco(entidade, dto);
 
         vendaRepositorio.save(entidade);
 
         atualizarItensDaVenda(entidade, dto.getItens());
         atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
 
+        //define data de pagamento da venda pegando último registro de pagamento em relação ao id da venda
         Pagamento pagamento = pagamentoRepositorio.findFirstByVenda_VendaIdOrderByDataDesc(entidade.getVendaId());
         entidade.setDataPagamento(pagamento.getData());
     }
@@ -141,24 +142,43 @@ public class VendaServico {
     private void inserirCliente(Venda entidade, VendaInsereAtualizaDTO dto){
         Optional<Cliente> clienteExistente = clienteRepositorio.findByCpf(dto.getCpf());
         Cliente cliente = clienteExistente.orElseGet(() -> {
-            Cliente clienteDTO = new Cliente();
-            clienteDTO.setNomeCliente(dto.getNomeCliente());
-            clienteDTO.setDataNascimento(dto.getDataNascimento());
-            clienteDTO.setCpf(dto.getCpf());
-            clienteDTO.setRg(dto.getRg());
-            clienteDTO.setTelefone(dto.getTelefone());
-            clienteDTO.setCelular(dto.getCelular());
-            clienteDTO.setEmail(dto.getEmail());
-            clienteDTO.setObservacao(dto.getObservacao());
-            clienteDTO.setCnpj(dto.getCnpj());
-            clienteDTO.setRazaoSocial(dto.getRazaoSocial());
-            clienteDTO.setInscricaoEstadual(dto.getInscricaoEstadual());
-            clienteDTO.setTotalPedidos(0);
-            return clienteDTO;
+            Cliente clienteNovo = new Cliente();
+            clienteNovo.setNomeCliente(dto.getNomeCliente());
+            clienteNovo.setDataNascimento(dto.getDataNascimento());
+            clienteNovo.setCpf(dto.getCpf());
+            clienteNovo.setRg(dto.getRg());
+            clienteNovo.setTelefone(dto.getTelefone());
+            clienteNovo.setCelular(dto.getCelular());
+            clienteNovo.setEmail(dto.getEmail());
+            clienteNovo.setObservacao(dto.getObservacao());
+            clienteNovo.setCnpj(dto.getCnpj());
+            clienteNovo.setRazaoSocial(dto.getRazaoSocial());
+            clienteNovo.setInscricaoEstadual(dto.getInscricaoEstadual());
+            clienteNovo.setTotalPedidos(0);
+            return clienteNovo;
         });
         cliente.setTotalPedidos(cliente.getTotalPedidos() + 1);
         cliente.setDataUltimaCompra(entidade.getDataVenda());
         entidade.setCliente(cliente);
+    }
+
+    //insere endereço na venda a partir dos dados da venda recebidos
+    private void inserirEndereco(Venda entidade, VendaInsereAtualizaDTO dto) {
+        Optional<Endereco> enderecoExistente = enderecoRepositorio.findByCepAndNumeroAndCliente_ClienteId(dto.getCep(), dto.getNumero(), entidade.getCliente().getClienteId());
+        Endereco endereco = enderecoExistente.orElseGet(() -> {
+           Endereco enderecoNovo = new Endereco();
+           enderecoNovo.setCep(dto.getCep());
+           enderecoNovo.setEndereco(dto.getEndereco());
+           enderecoNovo.setNumero(dto.getNumero());
+           enderecoNovo.setComplemento(dto.getComplemento());
+           enderecoNovo.setBairro(dto.getBairro());
+           enderecoNovo.setCidade(dto.getCidade());
+           enderecoNovo.setEstado(dto.getEstado());
+           enderecoNovo.setPais(dto.getPais());
+           enderecoNovo.setCliente(entidade.getCliente());
+           return enderecoNovo;
+        });
+        entidade.setEndereco(endereco);
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)

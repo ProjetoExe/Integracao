@@ -43,7 +43,15 @@ public class Endereco implements Serializable {
     @OneToMany(mappedBy = "endereco", cascade = CascadeType.ALL)
     private List<Venda> venda = new ArrayList<>();
 
-    public void setEstado(String estado) { this.estado = estado.substring(0,2); }
+//    public void setEstado(String estado) { this.estado = estado.substring(0,2); }
+//
+//    public void setPais(String pais) { this.pais = pais.substring(0,3); }
 
-    public void setPais(String pais) { this.pais = pais.substring(0,3); }
+    public void setEstado(String estado) {
+        this.estado = (estado != null) ? estado.substring(0, Math.min(estado.length(), 2)) : null;
+    }
+
+    public void setPais(String pais) {
+        this.pais = (pais != null) ? pais.substring(0, Math.min(pais.length(), 3)) : null;
+    }
 }
