@@ -21,7 +21,7 @@ public class Venda implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID vendaId;
+    private Long vendaId;
     private String localVenda;
     private Instant dataVenda;
     private Instant dataAlteracao;
