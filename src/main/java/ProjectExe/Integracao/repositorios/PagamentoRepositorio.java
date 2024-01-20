@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface PagamentoRepositorio extends JpaRepository<Pagamento, Long> {
 
-    Pagamento findFirstByVenda_VendaIdOrderByDataDesc(UUID vendaId);
+    Pagamento findFirstByVenda_VendaIdOrderByDataDesc(Long vendaId);
 }

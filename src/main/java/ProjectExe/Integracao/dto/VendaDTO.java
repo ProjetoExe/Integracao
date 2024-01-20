@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class VendaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private UUID vendaId;
+    private Long vendaId;
     private String localVenda;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
