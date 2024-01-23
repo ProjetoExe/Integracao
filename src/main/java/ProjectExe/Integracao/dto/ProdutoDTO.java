@@ -2,6 +2,7 @@ package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.*;
 import com.fasterxml.jackson.annotation.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class ProdutoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long produtoId;
+    @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
     private String ncm;
     private String referencia;
