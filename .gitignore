@@ -31,3 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Ignorar conteúdo da pasta resources ###
+Integracao/src/main/resources/*
+Integracao/src/main/resources
