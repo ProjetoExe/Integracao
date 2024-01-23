@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
-import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.*;
@@ -71,20 +70,20 @@ public class ProdutoServico {
 
     //inserir novo registro
     @Transactional
-    public ProdutoInsereAtualizaDTO inserir(ProdutoInsereAtualizaDTO obj) {
+    public ProdutoDTO inserir(ProdutoDTO obj) {
         Produto produto = new Produto();
         atualizarDadosProduto(produto, obj);
         produto.setAtivo('N');
-        return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(produto));
+        return new ProdutoDTO(produtoRepositorio.save(produto));
     }
 
     //atualizar registro
     @Transactional
-    public ProdutoInsereAtualizaDTO atualizar(Long produtoId, ProdutoInsereAtualizaDTO obj) {
+    public ProdutoDTO atualizar(Long produtoId, ProdutoDTO obj) {
         try {
             Produto produto = produtoRepositorio.getReferenceById(produtoId);
             atualizarDadosProduto(produto, obj);
-            return new ProdutoInsereAtualizaDTO(produtoRepositorio.save(produto));
+            return new ProdutoDTO(produtoRepositorio.save(produto));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
         }
@@ -112,7 +111,7 @@ public class ProdutoServico {
     }
 
     //Método utilizado no método de inserir e atualizar dados
-    private void atualizarDadosProduto(Produto entidade, ProdutoInsereAtualizaDTO dto) {
+    private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto) {
         if (entidade.getProdutoId() == null) {
             entidade.setDataCadastro(Instant.now());
             entidade.setQtdVendida(0);
@@ -174,7 +173,7 @@ public class ProdutoServico {
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
     //Não está retornando no JSON ainda as categorias ao incluir, listagem sendo exibida vazia
-    private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categoriasDTO) {
+    private Set<Categoria> atualizarOuCadastrarCategorias(Set<Categoria> categoriasDTO) {
         Set<Categoria> categorias = new HashSet<>();
         for (Categoria categoriaDTO : categoriasDTO) {
             Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome())

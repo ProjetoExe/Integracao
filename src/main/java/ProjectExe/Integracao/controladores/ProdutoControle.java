@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
-import ProjectExe.Integracao.dto.ProdutoInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.servicos.ProdutoServico;
 import jakarta.validation.Valid;
@@ -42,16 +41,16 @@ public class ProdutoControle {
 
     //atualizar dados
     @PutMapping(value = "/{id}")
-    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoInsereAtualizaDTO dto){
-        ProdutoInsereAtualizaDTO entidade = produtoServico.atualizar(id, dto);
+    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
+        ProdutoDTO entidade = produtoServico.atualizar(id, dto);
         String msg = "Produto " + id + " atualizado com Sucesso";
         return ResponseEntity.ok().body(msg);
     }
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<String> inserir(@Valid @RequestBody ProdutoInsereAtualizaDTO obj){
-        ProdutoInsereAtualizaDTO entidade = produtoServico.inserir(obj);
+    public ResponseEntity<String> inserir(@Valid @RequestBody ProdutoDTO obj){
+        ProdutoDTO entidade = produtoServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getProdutoId()).toUri();
         String msg = "Produto " + entidade.getProdutoId() + " cadastrado com Sucesso";
