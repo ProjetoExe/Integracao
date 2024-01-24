@@ -12,6 +12,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Service
 public class AutenticacaoServico {
 
@@ -36,7 +38,8 @@ public class AutenticacaoServico {
             throw new ExcecaoRegistroExistente("Login informado já existe");
         } else {
             String senhaCriptografada = new BCryptPasswordEncoder().encode(dto.getPassword());
-            Usuario novoUsuario = new Usuario(dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao(), dto.getLoja());
+            Usuario novoUsuario = new Usuario(dto.getNomeCompleto(), dto.getCpf(), dto.getLogin(), senhaCriptografada, dto.getEmail(), dto.getPermissao(), dto.getLoja());
+            novoUsuario.setDataCadastro(Instant.now());
             this.usuarioRepositorio.save(novoUsuario);
         }
     }

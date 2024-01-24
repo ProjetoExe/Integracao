@@ -20,6 +20,10 @@ import java.io.Serializable;
 public class UsuarioCadastroDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    @NotBlank(message = "Nome não pode ser nulo ou vazio")
+    private String nomeCompleto;
+    @NotBlank(message = "CPF não pode ser nulo ou vazio")
+    private String cpf;
     @NotBlank(message = "Login não pode ser nulo ou vazio")
     private String login;
     @NotBlank(message = "Senha não pode ser nulo ou vazio")

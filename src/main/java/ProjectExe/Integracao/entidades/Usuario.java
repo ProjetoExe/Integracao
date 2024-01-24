@@ -8,6 +8,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 
@@ -24,19 +25,27 @@ public class Usuario implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long usuarioId;
+    private String cpf;
+    private String nomeCompleto;
+    @Column(unique = true)
+    private String email;
     @Column(unique = true)
     private String login;
     private String password;
     private UsuarioPermissao permissao;
-    @Column(unique = true)
-    private String email;
+    private String imagem;
+    private Instant dataCadastro;
+    private Instant atualizacaoSenha;
+    private Instant ultimoLogin;
     private char ativo;
 
     @ManyToOne
     @JoinColumn(name = "loja_id")
     private Loja loja;
 
-    public Usuario(String login, String password, String email, UsuarioPermissao role, Loja loja) {
+    public Usuario(String nomeCompleto, String cpf, String login, String password, String email, UsuarioPermissao role, Loja loja) {
+        this.nomeCompleto = nomeCompleto;
+        this.cpf = cpf;
         this.login = login;
         this.password = password;
         this.email = email;
