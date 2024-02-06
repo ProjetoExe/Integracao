@@ -4,6 +4,7 @@ import ProjectExe.Integracao.dto.VendaDTO;
 import ProjectExe.Integracao.dto.VendaInsereAtualizaDTO;
 import ProjectExe.Integracao.dto.VendaResumidaDTO;
 import ProjectExe.Integracao.servicos.VendaServico;
+import ProjectExe.Integracao.servicos.utilitarios.Mensagem;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -41,20 +42,18 @@ public class VendaControle {
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<String> inserir(@Valid @RequestBody VendaInsereAtualizaDTO obj){
+    public ResponseEntity<Mensagem> inserir(@Valid @RequestBody VendaInsereAtualizaDTO obj){
         VendaInsereAtualizaDTO entidade = vendaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getVendaId()).toUri();
-        String msg = "Venda inserida com sucesso";
-        return ResponseEntity.created(uri).body(msg);
+        return ResponseEntity.created(uri).body(Mensagem.of("Venda " + entidade.getVendaId() + " inserida com sucesso!"));
     }
 
     //atualizar registro
     @PutMapping(value = "/{id}")
-    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody VendaInsereAtualizaDTO dto){
+    public ResponseEntity<Mensagem> atualizar(@PathVariable Long id, @Valid @RequestBody VendaInsereAtualizaDTO dto){
         VendaInsereAtualizaDTO entidade = vendaServico.atualizar(id, dto);
-        String msg = "Venda atualizada com sucesso";
-        return ResponseEntity.ok().body(msg);
+        return ResponseEntity.ok().body(Mensagem.of("Venda " + id + "atualizada com sucesso!"));
     }
 
     //excluir um registro

@@ -3,6 +3,7 @@ package ProjectExe.Integracao.controladores;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.servicos.ProdutoServico;
+import ProjectExe.Integracao.servicos.utilitarios.Mensagem;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,22 +40,20 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //atualizar dados
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<String> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
-        ProdutoDTO entidade = produtoServico.atualizar(id, dto);
-        String msg = "Produto " + id + " atualizado com Sucesso";
-        return ResponseEntity.ok().body(msg);
-    }
-
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<String> inserir(@Valid @RequestBody ProdutoDTO obj){
+    public ResponseEntity<Mensagem> inserir(@Valid @RequestBody ProdutoDTO obj){
         ProdutoDTO entidade = produtoServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getProdutoId()).toUri();
-        String msg = "Produto " + entidade.getProdutoId() + " cadastrado com Sucesso";
-        return ResponseEntity.created(uri).body(msg);
+        return ResponseEntity.created(uri).body(Mensagem.of("Produto " + entidade.getProdutoId() + " cadastrado com sucesso!"));
+    }
+
+    //atualizar dados
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Mensagem> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
+        ProdutoDTO entidade = produtoServico.atualizar(id, dto);
+        return ResponseEntity.ok().body(Mensagem.of("Produto " + id + " atualizado com sucesso!"));
     }
 
     //exclui um registro

@@ -2,6 +2,7 @@ package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.MarcaDTO;
 import ProjectExe.Integracao.servicos.MarcaServico;
+import ProjectExe.Integracao.servicos.utilitarios.Mensagem;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,18 +32,18 @@ public class MarcaControle {
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<MarcaDTO> inserir(@Valid @RequestBody MarcaDTO obj){
+    public ResponseEntity<Mensagem> inserir(@Valid @RequestBody MarcaDTO obj){
         MarcaDTO entidade = marcaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getMarcaId()).toUri();
-        return ResponseEntity.created(uri).body(entidade);
+        return ResponseEntity.created(uri).body(Mensagem.of("Marca " + entidade.getMarcaId() + " cadastrada com sucesso!"));
     }
 
     //atualizar um registro
     @PutMapping(value = "/{id}")
-    public ResponseEntity<MarcaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody MarcaDTO obj){
+    public ResponseEntity<Mensagem> atualizar(@PathVariable Long id, @Valid @RequestBody MarcaDTO obj){
         MarcaDTO entidade = marcaServico.atualizar(id, obj);
-        return ResponseEntity.ok().body(entidade);
+        return ResponseEntity.ok().body(Mensagem.of("Marca " + id + " atualizada com sucesso!"));
     }
 
     //excluir um registro
