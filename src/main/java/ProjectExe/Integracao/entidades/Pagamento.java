@@ -13,10 +13,10 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "pagamento")
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of="id")
 public class Pagamento implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -58,7 +58,7 @@ public class Usuario implements UserDetails, Serializable {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.permissao == UsuarioPermissao.DEV)
             return List.of(new SimpleGrantedAuthority("ROLE_DEV"), new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
-        else if (this.permissao == UsuarioPermissao.ADMIN)
+        else if (this.permissao == UsuarioPermissao.ADMIN || this.permissao == UsuarioPermissao.PROD)
             return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
