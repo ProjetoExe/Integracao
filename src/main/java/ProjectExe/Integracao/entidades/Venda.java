@@ -31,7 +31,6 @@ public class Venda implements Serializable {
     private BigDecimal subTotal;
     private String tipoEnvio;
     private BigDecimal frete;
-    private String cupomDesconto;
     private BigDecimal total;
     private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
     private Instant dataEnvio;
@@ -41,6 +40,9 @@ public class Venda implements Serializable {
     private Instant dataEntrega;
     private String codigoEnvio;
     private String localRetirada;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CupomVenda> cupons = new ArrayList<>();
 
     @Lob
     @Column(name = "xml_nota_fiscal", columnDefinition = "VARCHAR(MAX)")

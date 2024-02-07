@@ -28,7 +28,6 @@ public class PagamentoDTO implements Serializable {
     private BigDecimal valor;
     @NotNull(message = "Quantidade de parcelas não pode ser nulo")
     private Integer qtdParcelas;
-    //@NotNull
     private Venda venda;
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO

@@ -1,9 +1,6 @@
 package ProjectExe.Integracao.dto;
 
-import ProjectExe.Integracao.entidades.Cliente;
-import ProjectExe.Integracao.entidades.Endereco;
-import ProjectExe.Integracao.entidades.Pagamento;
-import ProjectExe.Integracao.entidades.Venda;
+import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -79,11 +76,15 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String estado;
     private String pais;
 
+    @Valid
+    @JsonIgnoreProperties({"id", "venda_id"})
+    private List<CupomVendaDTO> cupons = new ArrayList<>();
+
     @JsonIgnoreProperties("vendaId")
     private Set<VendaItensInsereDTO> itens = new HashSet<>();
 
-    @JsonIgnoreProperties({"id", "venda_id"})
     @Valid
+    @JsonIgnoreProperties({"id", "venda_id"})
     private List<PagamentoDTO> pagamentos;
 
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO

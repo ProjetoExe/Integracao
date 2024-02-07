@@ -2,6 +2,7 @@ package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.CategoriaDTO;
 import ProjectExe.Integracao.servicos.CategoriaServico;
+import ProjectExe.Integracao.servicos.utilitarios.Mensagem;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,18 +32,18 @@ public class CategoriaControle {
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<CategoriaDTO> inserir(@Valid @RequestBody CategoriaDTO obj){
+    public ResponseEntity<Mensagem> inserir(@Valid @RequestBody CategoriaDTO obj){
         CategoriaDTO entidade = categoriaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getCategoriaId()).toUri();
-        return ResponseEntity.created(uri).body(entidade);
+        return ResponseEntity.created(uri).body(Mensagem.of("Categoria " + entidade.getCategoriaId()+ " cadastrada com sucesso!"));
     }
 
     //atualizar um registro
     @PutMapping(value = "/{id}")
-    public ResponseEntity<CategoriaDTO> atualizar(@PathVariable Long id, @Valid @RequestBody CategoriaDTO dto){
+    public ResponseEntity<Mensagem> atualizar(@PathVariable Long id, @Valid @RequestBody CategoriaDTO dto){
         CategoriaDTO entidade = categoriaServico.atualizar(id, dto);
-        return ResponseEntity.ok().body(entidade);
+        return ResponseEntity.ok().body(Mensagem.of("Categoria " + id + " atualizada com sucesso!"));
     }
 
     //exclui um registro
