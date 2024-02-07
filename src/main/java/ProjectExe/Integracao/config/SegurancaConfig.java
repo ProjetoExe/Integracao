@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,11 +22,11 @@ public class SegurancaConfig {
     @Autowired
     SegurancaFiltro segurancaFiltro;
 
-    //Filtros de segurança as URLs
+    //Filtros de segurança as URLs  --Necessário futuramente tratar sessão STATEFUL para usuários USER, ADMIN e DEV *
     @Bean
     SecurityFilterChain cadeiaFiltrosSeguranca(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
@@ -64,6 +65,11 @@ public class SegurancaConfig {
                         .requestMatchers(HttpMethod.POST, "/marcas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/marcas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/marcas/**").hasRole("ADMIN")
+                        //cupons
+                        .requestMatchers(HttpMethod.GET, "/cupons/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/cupons/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/cupons/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/cupons/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(segurancaFiltro, UsernamePasswordAuthenticationFilter.class)
@@ -78,5 +84,5 @@ public class SegurancaConfig {
 
     //Faz a criptografia da senha para salvá-la
     @Bean
-    public PasswordEncoder criptografarSenha(){ return new BCryptPasswordEncoder(); }
+    public PasswordEncoder criptografarSenha() { return new BCryptPasswordEncoder(); }
 }

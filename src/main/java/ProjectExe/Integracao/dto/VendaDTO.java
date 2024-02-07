@@ -1,9 +1,6 @@
 package ProjectExe.Integracao.dto;
 
-import ProjectExe.Integracao.entidades.Cliente;
-import ProjectExe.Integracao.entidades.Endereco;
-import ProjectExe.Integracao.entidades.Pagamento;
-import ProjectExe.Integracao.entidades.Venda;
+import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -18,13 +15,12 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"vendaId", "dataVenda", "vendaStatus", "subTotal", "frete", "desconto", "total", "pagamentos"})
+@JsonPropertyOrder({"vendaId", "dataVenda", "localVenda", "vendaStatus", "clienteId", "enderecoId", "taxa", "frete", "desconto", "subTotal", "total", "tipoEnvio",
+                    "dataEnvio", "codigoEnvio", "tempoEntrega", "dataEntrega","numeroNotaFiscal", "chaveNotaFiscal", "dataAlteracao", "itens", "dataPagamento",
+                    "pagamentos"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,7 +29,7 @@ public class VendaDTO implements Serializable {
 
     private Long vendaId;
     private String localVenda;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "GMT")
     private Instant dataVenda;
     private Instant dataAlteracao;
     private Integer vendaStatus;
@@ -54,9 +50,12 @@ public class VendaDTO implements Serializable {
     private String localRetirada;
     private String xmlNotaFiscal;
 
-    private Cliente clienteId;
+    private Cliente clienteId; //trocar para retornar os dados resumido da entidade Cliente
 
-    private Endereco enderecoId;
+    private Endereco enderecoId; //trocar para retornar os dados resumido da entidade Endereco
+
+    @JsonIgnoreProperties({"id", "venda_id"})
+    private List<CupomVenda> cupons = new ArrayList<>();
 
     private Set<VendaItensDTO> itens = new HashSet<>();
 

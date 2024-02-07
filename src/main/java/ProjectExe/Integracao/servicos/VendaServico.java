@@ -39,6 +39,10 @@ public class VendaServico {
     private PagamentoRepositorio pagamentoRepositorio;
     @Autowired
     private ProdutoGradeRepositorio produtoGradeRepositorio;
+    @Autowired
+    private CupomRepositorio cupomRepositorio;
+    @Autowired
+    private CupomVendaRepositorio cupomVendaRepositorio;
 
     //busca vendas por ID detalhadamente
     @Transactional(readOnly = true)
@@ -115,7 +119,6 @@ public class VendaServico {
         entidade.setSubTotal(dto.getSubTotal());
         entidade.setTotal(dto.getTotal());
         entidade.setTipoEnvio(dto.getTipoEnvio());
-        entidade.setCupomDesconto(dto.getCupomDesconto());
         entidade.setTempoEntrega(dto.getTempoEntrega());
         entidade.setCodigoEnvio(dto.getCodigoEnvio());
         entidade.setLocalRetirada(dto.getLocalRetirada());
@@ -125,13 +128,14 @@ public class VendaServico {
         entidade.setChaveNotaFiscal(dto.getChaveNotaFiscal());
         entidade.setXmlNotaFiscal(dto.getXmlNotaFiscal());
 
-        inserirCliente(entidade, dto);
-        inserirEndereco(entidade, dto);
+        carregarCliente(entidade, dto);
+        carregarEndereco(entidade, dto);
 
         vendaRepositorio.save(entidade);
 
-        atualizarItensDaVenda(entidade, dto.getItens());
-        atualizarPagamentosDaVenda(entidade, dto.getPagamentos());
+        carregarCuponsVenda(entidade, dto.getCupons());
+        carregarItensVenda(entidade, dto.getItens());
+        carregarPagamentosVenda(entidade, dto.getPagamentos());
 
         //define data de pagamento da venda pegando último registro de pagamento em relação ao id da venda
         Pagamento pagamento = pagamentoRepositorio.findFirstByVenda_VendaIdOrderByDataDesc(entidade.getVendaId());
@@ -139,7 +143,7 @@ public class VendaServico {
     }
 
     //insere cliente na venda a partir dos dados da venda recebidos
-    private void inserirCliente(Venda entidade, VendaInsereAtualizaDTO dto){
+    private void carregarCliente(Venda entidade, VendaInsereAtualizaDTO dto){
         Optional<Cliente> clienteExistente = clienteRepositorio.findByCpf(dto.getCpf());
         Cliente cliente = clienteExistente.orElseGet(() -> {
             Cliente clienteNovo = new Cliente();
@@ -163,7 +167,7 @@ public class VendaServico {
     }
 
     //insere endereço na venda a partir dos dados da venda recebidos
-    private void inserirEndereco(Venda entidade, VendaInsereAtualizaDTO dto) {
+    private void carregarEndereco(Venda entidade, VendaInsereAtualizaDTO dto) {
         Optional<Endereco> enderecoExistente = enderecoRepositorio.findByCepAndNumeroAndCliente_ClienteId(dto.getCep(), dto.getNumero(), entidade.getCliente().getClienteId());
         Endereco endereco = enderecoExistente.orElseGet(() -> {
            Endereco enderecoNovo = new Endereco();
@@ -182,7 +186,7 @@ public class VendaServico {
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
-    private void atualizarItensDaVenda(Venda entidade, Set<VendaItensInsereDTO> itensDTO) {
+    private void carregarItensVenda(Venda entidade, Set<VendaItensInsereDTO> itensDTO) {
         List<VendaItens> itens = new ArrayList<>();
         for (VendaItensInsereDTO itemDTO : itensDTO) {
             Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
@@ -199,8 +203,24 @@ public class VendaServico {
         entidade.getItens().addAll(itens);
     }
 
+    //inserir ou atualizar cupons da venda (atualmente só inserir)
+    private void carregarCuponsVenda(Venda entidade, List<CupomVendaDTO> cuponsDTO) {
+        List<CupomVenda> cupons = new ArrayList<>();
+        for (CupomVendaDTO dto : cuponsDTO){
+            CupomVenda cupomVenda = new CupomVenda(dto);
+            cupomVenda.setVenda(entidade);
+            Cupom cupom = cupomRepositorio.findByCodigo(dto.getVendaCupom());
+            if (cupom != null){
+                cupomVenda.setCupom(cupom);
+                cupom.setQtdUso(cupom.getQtdUso() + 1);
+            }
+            cupons.add(cupomVenda);
+        }
+        entidade.getCupons().addAll(cupons);
+    }
+
     //inserir ou atualizar pagamentos da venda (atualmente só inserir)
-    private void atualizarPagamentosDaVenda(Venda entidade, List<PagamentoDTO> pagamentosDTO) {
+    private void carregarPagamentosVenda(Venda entidade, List<PagamentoDTO> pagamentosDTO) {
         List<Pagamento> pagamentos = new ArrayList<>();
         for (PagamentoDTO dto : pagamentosDTO){
             Pagamento pagamento = new Pagamento(dto);
