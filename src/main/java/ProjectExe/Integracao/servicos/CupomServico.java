@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Optional;
 
@@ -79,6 +80,7 @@ public class CupomServico {
         if (entidade.getCupomId() == null) {
             entidade.setDataCriacao(Instant.now());
             entidade.setQtdUso(0);
+            entidade.setVlrTotalUso(new BigDecimal("0.00"));
         } else {
             entidade.setDataAlteracao(Instant.now());
         }

@@ -25,7 +25,7 @@ public class Cupom implements Serializable {
     private Long cupomId;
 
     @Column(unique = true)
-    private String codigo; // não deve aceitar espaço e acentuação
+    private String codigo; // adicionar lógica para não aceitar espaço e acentuação
     private String descricao;
     private Instant dataCriacao;
     private Instant dataAlteracao;
