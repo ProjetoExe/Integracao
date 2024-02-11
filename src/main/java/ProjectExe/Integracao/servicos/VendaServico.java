@@ -213,6 +213,7 @@ public class VendaServico {
             if (cupom != null){
                 cupomVenda.setCupom(cupom);
                 cupom.setQtdUso(cupom.getQtdUso() + 1);
+                cupom.setVlrTotalUso(cupom.getVlrTotalUso().add(dto.getVlrDesconto()));
             }
             cupons.add(cupomVenda);
         }

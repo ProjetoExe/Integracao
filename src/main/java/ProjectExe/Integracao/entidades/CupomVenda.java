@@ -1,6 +1,8 @@
 package ProjectExe.Integracao.entidades;
 
 import ProjectExe.Integracao.dto.CupomVendaDTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,10 +27,12 @@ public class CupomVenda implements Serializable {
 
     private String vendaCupom;
 
+    @JsonProperty("cupomId")
     @ManyToOne
     @JoinColumn(name = "cupom_id")
     private Cupom cupom;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "venda_id")
     private Venda venda;

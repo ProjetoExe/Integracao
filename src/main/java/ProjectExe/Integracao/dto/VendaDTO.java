@@ -18,9 +18,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"vendaId", "dataVenda", "localVenda", "vendaStatus", "clienteId", "enderecoId", "taxa", "frete", "desconto", "subTotal", "total", "tipoEnvio",
-                    "dataEnvio", "codigoEnvio", "tempoEntrega", "dataEntrega","numeroNotaFiscal", "chaveNotaFiscal", "dataAlteracao", "itens", "dataPagamento",
-                    "pagamentos"})
+@JsonPropertyOrder({"vendaId", "dataVenda", "localVenda", "vendaStatus", "dataPagamento", "clienteId", "enderecoId", "taxa", "frete", "desconto",
+                    "subTotal", "total", "tipoEnvio", "dataEnvio", "codigoEnvio", "tempoEntrega", "dataEntrega", "localRetirada", "numeroNotaFiscal",
+                    "chaveNotaFiscal", "xmlNotaFiscal", "dataAlteracao", "cupomDesconto", "itens", "cupons", "pagamentos"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -50,9 +50,10 @@ public class VendaDTO implements Serializable {
     private String localRetirada;
     private String xmlNotaFiscal;
 
-    private Cliente clienteId; //trocar para retornar os dados resumido da entidade Cliente
+    @JsonIgnoreProperties("enderecos")
+    private Cliente cliente; //trocar para retornar os dados resumido da entidade Cliente
 
-    private Endereco enderecoId; //trocar para retornar os dados resumido da entidade Endereco
+    private Endereco endereco; //trocar para retornar os dados resumido da entidade Endereco
 
     @JsonIgnoreProperties({"id", "venda_id"})
     private List<CupomVenda> cupons = new ArrayList<>();
