@@ -1,6 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
-import ProjectExe.Integracao.dto.VendaItensInsereDTO;
+import ProjectExe.Integracao.dto.VendaItensDTO;
 import ProjectExe.Integracao.entidades.pk.VendaItemPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -26,35 +26,35 @@ public class VendaItens implements Serializable {
     @EmbeddedId
     private VendaItemPK id = new VendaItemPK();
     @Getter
-    private String nomeProduto;
+    private String nomeProd;
     @Getter
-    private String tamanho;
+    private String variacaoProd;
     @Getter
-    private Integer quantidade;
+    private Integer qtdVendida;
     @Getter
     private BigDecimal preco;
     @Getter
-    private BigDecimal desconto;
+    private BigDecimal vlrDesc;
     @Getter
-    private BigDecimal total;
+    private BigDecimal vlrTotal;
 
     public VendaItens(Venda venda, Produto produto, String nomeProduto, String tamanho, Integer quantidade, BigDecimal preco, BigDecimal desconto, BigDecimal subTotal, BigDecimal total) {
         id.setVenda(venda);
         id.setProduto(produto);
-        this.nomeProduto = nomeProduto;
-        this.tamanho = tamanho;
-        this.quantidade = quantidade;
+        this.nomeProd = nomeProduto;
+        this.variacaoProd = tamanho;
+        this.qtdVendida = quantidade;
         this.preco = preco;
-        this.desconto = desconto;
-        this.total = total;
+        this.vlrDesc = desconto;
+        this.vlrTotal = total;
     }
 
-    public VendaItens(VendaItensInsereDTO itemDTO) {
-        this.setTamanho(itemDTO.getTamanho());
-        this.setQuantidade(itemDTO.getQuantidade());
+    public VendaItens(VendaItensDTO itemDTO) {
+        this.setVariacaoProd(itemDTO.getVariacaoProd());
+        this.setQtdVendida(itemDTO.getQtdVendida());
         this.setPreco(itemDTO.getPreco());
-        this.setDesconto(itemDTO.getDesconto());
-        this.setTotal(itemDTO.getTotal());
+        this.setVlrDesc(itemDTO.getVlrDesc());
+        this.setVlrTotal(itemDTO.getVlrTotal());
     }
 
     @JsonIgnore
@@ -66,18 +66,4 @@ public class VendaItens implements Serializable {
     public Produto getProduto(){ return id.getProduto(); }
 
     public void setProduto(Produto produto){ id.setProduto(produto); }
-
-    //Converte de VendaItensInsereDTO para VendaItens para salvar no banco de dados
-    public static VendaItens converterParaVendaItens(VendaItensInsereDTO itemDTO, Venda venda, Produto produto) {
-        VendaItens item = new VendaItens();
-        item.setVenda(venda);
-        item.setProduto(produto);
-        item.setNomeProduto(produto.getNome());
-        item.setTamanho(itemDTO.getTamanho());
-        item.setQuantidade(itemDTO.getQuantidade());
-        item.setPreco(itemDTO.getPreco());
-        item.setDesconto(itemDTO.getDesconto());
-        item.setTotal(itemDTO.getTotal());
-        return item;
-    }
 }

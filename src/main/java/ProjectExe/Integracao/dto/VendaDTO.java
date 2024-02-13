@@ -33,20 +33,19 @@ public class VendaDTO implements Serializable {
     private Instant dataVenda;
     private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal taxa;
-    private BigDecimal desconto;
-    private BigDecimal subTotal;
+    private BigDecimal vlrTaxa;
+    private BigDecimal vlrDesc;
+    private BigDecimal vlrSubTotal;
     private String tipoEnvio;
-    private BigDecimal frete;
-    private String cupomDesconto;
-    private BigDecimal total;
-    private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
+    private BigDecimal vlrFrete;
+    private BigDecimal vlrTotal;
+    private Instant dataPag;
     private Instant dataEnvio;
-    private Integer numeroNotaFiscal;
+    private Integer numNotaFiscal;
     private String chaveNotaFiscal;
     private Integer tempoEntrega;
     private Instant dataEntrega;
-    private String codigoEnvio;
+    private String codEnvio;
     private String localRetirada;
     private String xmlNotaFiscal;
 
