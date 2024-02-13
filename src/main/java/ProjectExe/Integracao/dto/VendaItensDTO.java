@@ -15,16 +15,16 @@ import java.math.BigDecimal;
 public class VendaItensDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private Long productId;
-    private String nomeProduto;
-    private String tamanho;
-    private Integer quantidade;
+    private Long produtoId;
+    private String nomeProd;
+    private String variacaoProd;
+    private Integer qtdVendida;
     private BigDecimal preco;
-    private BigDecimal desconto;
-    private BigDecimal total;
+    private BigDecimal vlrDesc;
+    private BigDecimal vlrTotal;
 
     //Construtor com parâmetro da classe VendaItens para VendaItensResumidoDTO / BeanUtils necessita de setter além de getter no DTO
     public VendaItensDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this);
-        productId = entidade.getProduto().getProdutoId();
+        produtoId = entidade.getProduto().getProdutoId();
     }
 }

@@ -113,18 +113,18 @@ public class VendaServico {
             entidade.setDataAlteracao(Instant.now());
         }
         entidade.setVendaStatus(dto.getVendaStatus());
-        entidade.setTaxa(dto.getTaxa());
-        entidade.setFrete(dto.getFrete());
-        entidade.setDesconto(dto.getDesconto());
-        entidade.setSubTotal(dto.getSubTotal());
-        entidade.setTotal(dto.getTotal());
+        entidade.setVlrTaxa(dto.getVlrTaxa());
+        entidade.setVlrFrete(dto.getVlrFrete());
+        entidade.setVlrDesc(dto.getVlrDesc());
+        entidade.setVlrSubTotal(dto.getVlrSubTotal());
+        entidade.setVlrTotal(dto.getVlrTotal());
         entidade.setTipoEnvio(dto.getTipoEnvio());
         entidade.setTempoEntrega(dto.getTempoEntrega());
-        entidade.setCodigoEnvio(dto.getCodigoEnvio());
+        entidade.setCodEnvio(dto.getCodEnvio());
         entidade.setLocalRetirada(dto.getLocalRetirada());
         entidade.setDataEnvio(dto.getDataEnvio());
         entidade.setDataEntrega(dto.getDataEntrega());
-        entidade.setNumeroNotaFiscal(dto.getNumeroNotaFiscal());
+        entidade.setNumNotaFiscal(dto.getNumNotaFiscal());
         entidade.setChaveNotaFiscal(dto.getChaveNotaFiscal());
         entidade.setXmlNotaFiscal(dto.getXmlNotaFiscal());
 
@@ -139,7 +139,7 @@ public class VendaServico {
 
         //define data de pagamento da venda pegando último registro de pagamento em relação ao id da venda
         Pagamento pagamento = pagamentoRepositorio.findFirstByVenda_VendaIdOrderByDataDesc(entidade.getVendaId());
-        entidade.setDataPagamento(pagamento.getData());
+        entidade.setDataPag(pagamento.getData());
     }
 
     //insere cliente na venda a partir dos dados da venda recebidos
@@ -186,19 +186,19 @@ public class VendaServico {
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
-    private void carregarItensVenda(Venda entidade, Set<VendaItensInsereDTO> itensDTO) {
+    private void carregarItensVenda(Venda entidade, Set<VendaItensDTO> itensDTO) {
         List<VendaItens> itens = new ArrayList<>();
-        for (VendaItensInsereDTO itemDTO : itensDTO) {
-            Produto produto = produtoRepositorio.findById(itemDTO.getProduto().getProdutoId())
-                    .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProduto().getProdutoId() + " não encontrado"));
-            produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQuantidade());
+        for (VendaItensDTO itemDTO : itensDTO) {
+            Produto produto = produtoRepositorio.findById(itemDTO.getProdutoId())
+                    .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProdutoId() + " não encontrado"));
+            produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQtdVendida());
             VendaItens item = new VendaItens(itemDTO);
             item.setVenda(entidade);
             item.setProduto(produto);
-            item.setNomeProduto(produto.getNome());
+            item.setNomeProd(produto.getNome());
             itens.add(item);
-            Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProduto().getProdutoId(), itemDTO.getTamanho());
-            produtoGrade.ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQuantidade()));
+            Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProdutoId(), itemDTO.getVariacaoProd());
+            produtoGrade.ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQtdVendida()));
         }
         entidade.getItens().addAll(itens);
     }
@@ -213,6 +213,7 @@ public class VendaServico {
             if (cupom != null){
                 cupomVenda.setCupom(cupom);
                 cupom.setQtdUso(cupom.getQtdUso() + 1);
+                cupom.setVlrTotalUso(cupom.getVlrTotalUso().add(dto.getVlrDesconto()));
             }
             cupons.add(cupomVenda);
         }

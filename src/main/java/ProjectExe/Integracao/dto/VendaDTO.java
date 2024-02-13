@@ -18,9 +18,9 @@ import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"vendaId", "dataVenda", "localVenda", "vendaStatus", "clienteId", "enderecoId", "taxa", "frete", "desconto", "subTotal", "total", "tipoEnvio",
-                    "dataEnvio", "codigoEnvio", "tempoEntrega", "dataEntrega","numeroNotaFiscal", "chaveNotaFiscal", "dataAlteracao", "itens", "dataPagamento",
-                    "pagamentos"})
+@JsonPropertyOrder({"vendaId", "dataVenda", "localVenda", "vendaStatus", "dataPagamento", "clienteId", "enderecoId", "taxa", "frete", "desconto",
+                    "subTotal", "total", "tipoEnvio", "dataEnvio", "codigoEnvio", "tempoEntrega", "dataEntrega", "localRetirada", "numeroNotaFiscal",
+                    "chaveNotaFiscal", "xmlNotaFiscal", "dataAlteracao", "cupomDesconto", "itens", "cupons", "pagamentos"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -33,26 +33,26 @@ public class VendaDTO implements Serializable {
     private Instant dataVenda;
     private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal taxa;
-    private BigDecimal desconto;
-    private BigDecimal subTotal;
+    private BigDecimal vlrTaxa;
+    private BigDecimal vlrDesc;
+    private BigDecimal vlrSubTotal;
     private String tipoEnvio;
-    private BigDecimal frete;
-    private String cupomDesconto;
-    private BigDecimal total;
-    private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
+    private BigDecimal vlrFrete;
+    private BigDecimal vlrTotal;
+    private Instant dataPag;
     private Instant dataEnvio;
-    private Integer numeroNotaFiscal;
+    private Integer numNotaFiscal;
     private String chaveNotaFiscal;
     private Integer tempoEntrega;
     private Instant dataEntrega;
-    private String codigoEnvio;
+    private String codEnvio;
     private String localRetirada;
     private String xmlNotaFiscal;
 
-    private Cliente clienteId; //trocar para retornar os dados resumido da entidade Cliente
+    @JsonIgnoreProperties("enderecos")
+    private Cliente cliente; //trocar para retornar os dados resumido da entidade Cliente
 
-    private Endereco enderecoId; //trocar para retornar os dados resumido da entidade Endereco
+    private Endereco endereco; //trocar para retornar os dados resumido da entidade Endereco
 
     @JsonIgnoreProperties({"id", "venda_id"})
     private List<CupomVenda> cupons = new ArrayList<>();

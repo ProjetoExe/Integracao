@@ -29,20 +29,19 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private Instant dataVenda;
     private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal taxa;
-    private BigDecimal desconto;
-    private BigDecimal subTotal;
+    private BigDecimal vlrTaxa;
+    private BigDecimal vlrDesc;
+    private BigDecimal vlrSubTotal;
     private String tipoEnvio;
-    private BigDecimal frete;
-    private String cupomDesconto;
-    private BigDecimal total;
+    private BigDecimal vlrFrete;
+    private BigDecimal vlrTotal;
     private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
     private Instant dataEnvio;
-    private Integer numeroNotaFiscal;
+    private Integer numNotaFiscal;
     private String chaveNotaFiscal;
     private Integer tempoEntrega;
     private Instant dataEntrega;
-    private String codigoEnvio;
+    private String codEnvio;
     private String localRetirada;
     private String xmlNotaFiscal;
 
@@ -81,7 +80,7 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private List<CupomVendaDTO> cupons = new ArrayList<>();
 
     @JsonIgnoreProperties("vendaId")
-    private Set<VendaItensInsereDTO> itens = new HashSet<>();
+    private Set<VendaItensDTO> itens = new HashSet<>();
 
     @Valid
     @JsonIgnoreProperties({"id", "venda_id"})

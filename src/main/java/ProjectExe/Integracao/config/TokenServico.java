@@ -46,7 +46,7 @@ public class TokenServico {
         }
     }
 
-    //Configuração de expiração do token
+    //Configuração de expiração do token (atualmente 3h)
     private Instant gerarExpiracaoToken(){
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }

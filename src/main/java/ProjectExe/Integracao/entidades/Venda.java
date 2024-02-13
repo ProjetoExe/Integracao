@@ -26,27 +26,27 @@ public class Venda implements Serializable {
     private Instant dataVenda;
     private Instant dataAlteracao;
     private Integer vendaStatus;
-    private BigDecimal taxa;
-    private BigDecimal desconto;
-    private BigDecimal subTotal;
+    private BigDecimal vlrTaxa;
+    private BigDecimal vlrDesc;
+    private BigDecimal vlrSubTotal;
     private String tipoEnvio;
-    private BigDecimal frete;
-    private BigDecimal total;
-    private Instant dataPagamento; //campo novo, pegar a data do último pagamento vinculado a venda
+    private BigDecimal vlrFrete;
+    private BigDecimal vlrTotal;
+    private Instant dataPag;
     private Instant dataEnvio;
-    private Integer numeroNotaFiscal;
+    private Integer numNotaFiscal;
     private String chaveNotaFiscal;
     private Integer tempoEntrega;
     private Instant dataEntrega;
-    private String codigoEnvio;
+    private String codEnvio;
     private String localRetirada;
-
-    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CupomVenda> cupons = new ArrayList<>();
 
     @Lob
     @Column(name = "xml_nota_fiscal", columnDefinition = "VARCHAR(MAX)")
     private String xmlNotaFiscal;
+
+    @OneToMany(mappedBy = "venda", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CupomVenda> cupons = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "cliente_id")
