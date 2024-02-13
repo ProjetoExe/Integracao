@@ -31,7 +31,7 @@ public class VendaDTO implements Serializable {
     private String localVenda;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm", timezone = "GMT")
     private Instant dataVenda;
-    private Instant dataAlteracao;
+    private Instant dataAtualizacao;
     private Integer vendaStatus;
     private BigDecimal vlrTaxa;
     private BigDecimal vlrDesc;

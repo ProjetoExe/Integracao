@@ -6,6 +6,7 @@ import lombok.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,16 +29,16 @@ public class Produto implements Serializable{
     private String ncm;
     private String referencia;
     @Column(columnDefinition = "TEXT")
-    private String descricaoCurta;
+    private String descCurta;
     @Column(columnDefinition = "TEXT")
-    private String descricao;
+    private String descLonga;
     private Instant dataCadastro;
     private Instant dataAtualizacao;
-    private Instant dataLancamento;
+    private LocalDate dataLancamento;
     private Integer estoqueTotal;
     private Integer qtdVendida;
     private BigDecimal preco;
-    private BigDecimal precoPromocional;
+    private BigDecimal precoProm;
     private String tempoGarantia;
     private String msgGarantia;
     private Double comprimento;
@@ -50,9 +51,6 @@ public class Produto implements Serializable{
     @JoinColumn(name = "classe_id")
     private Classe classe;
 
-    @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProdutoImagem> imagens = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "marca_id")
     private Marca marca;
@@ -62,7 +60,10 @@ public class Produto implements Serializable{
     private Set<Categoria> categorias = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProdutoGrade> grade = new ArrayList<>();
+    private Set<ProdutoGrade> grade = new HashSet<>();
+
+    @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProdutoImagem> imagens = new ArrayList<>();
 
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();

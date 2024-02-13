@@ -11,14 +11,16 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"produtoId", "nome", "ncm", "referencia", "descricaoCurta", "descricao", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
-        "qtdVendida", "preco", "precoPromocional", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "marca", "categorias",
-        "imgUrl", "grade", "ativo",})
+@JsonPropertyOrder({"produtoId", "nome", "ncm", "referencia", "descCurta", "descLonga", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
+                    "qtdVendida", "preco", "precoProm", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "ativo",
+                    "marca",  "categorias", "imgUrl", "grade"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,18 +32,17 @@ public class ProdutoDTO implements Serializable {
     private String nome;
     private String ncm;
     private String referencia;
-    private String descricaoCurta;
-    private String descricao;
+    private String descCurta;
+    private String descLonga;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
-    private Instant dataLancamento;
+    private LocalDate dataLancamento;
     private Integer estoqueTotal;
     private Integer qtdVendida;
     private BigDecimal preco;
-    private BigDecimal precoPromocional;
+    private BigDecimal precoProm;
     private String tempoGarantia;
     private String msgGarantia;
     private Double comprimento;
@@ -59,9 +60,9 @@ public class ProdutoDTO implements Serializable {
     private Marca marca;
 
     @JsonIgnoreProperties("categoriaId")
-    private Set<Categoria> categorias = new HashSet<>();
+    private List<Categoria> categorias = new ArrayList<>();
 
-    private List<ProdutoGrade> grade = new ArrayList<>();
+    private Set<ProdutoGrade> grade = new HashSet<>();
 
     private List<ProdutoImagem> imagens = new ArrayList<>();
 
@@ -71,5 +72,6 @@ public class ProdutoDTO implements Serializable {
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
     public ProdutoDTO(Produto entidade) {
         BeanUtils.copyProperties(entidade, this);
+        this.categorias = new ArrayList<>(entidade.getCategorias()); //conversão de SET para LIST para poder retornar no GET do JSON
     }
 }

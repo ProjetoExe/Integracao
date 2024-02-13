@@ -24,7 +24,7 @@ public class Venda implements Serializable {
     private Long vendaId;
     private String localVenda;
     private Instant dataVenda;
-    private Instant dataAlteracao;
+    private Instant dataAtualizacao;
     private Integer vendaStatus;
     private BigDecimal vlrTaxa;
     private BigDecimal vlrDesc;

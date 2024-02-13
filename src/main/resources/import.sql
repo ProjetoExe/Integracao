@@ -19,6 +19,7 @@ INSERT INTO classe (nome) VALUES ('NUMERO')
 INSERT INTO classe (nome) VALUES ('KILO')
 
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'U')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'U2')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'P')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'PP')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'M')
@@ -32,12 +33,12 @@ INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '36')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '37')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '38')
 
-INSERT INTO produto (nome, referencia, descricao_Curta, descricao, data_Cadastro, estoque_Total, qtd_vendida, preco, preco_Promocional, ativo, marca_id, classe_id) VALUES ('Geforce RTX 3060', 'RTX30', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '2023-05-25T18:21:47.741', 4, 0, 2900.00, 2400.00, 'S', 1, 1);
-INSERT INTO produto (nome, referencia, descricao_Curta, descricao, data_Cadastro, estoque_Total, qtd_vendida, preco, preco_Promocional, ativo, marca_id, classe_id) VALUES ('Mouse Logitech G403', 'G400', 'Mouse', 'Sensor profissional', '2023-05-26T19:21:47.741', 3, 0, 280.00, 235.50, 'S', 2, 1);
-INSERT INTO produto (nome, referencia, descricao_Curta, descricao, data_Cadastro, estoque_Total, qtd_vendida, preco, preco_Promocional, tempo_Garantia, msg_Garantia, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'PLM', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 2, 0, 1100.00, 1000.00, '12 meses', 'Troca mediante a apresentação de Nota Fiscal', 'S', 3);
-INSERT INTO produto (nome, descricao_Curta, descricao, data_Cadastro, qtd_vendida, ativo, marca_id) VALUES ('Memória RAM Kingston 16GB', 'Memória RAM', 'C16, 3666MHz', '2023-05-27T20:21:47.741', 0, 'S', 6);
-INSERT INTO produto (nome, descricao_Curta, descricao, data_Cadastro, qtd_vendida, ativo, marca_id) VALUES ('SDD Kingston 256GB', 'SSD', 'SSD 500MB/s Leitura / 450MB/s Escrita', '2023-05-27T20:21:47.741', 0, 'S', 6);
-INSERT INTO produto (nome, descricao_Curta, descricao, data_Cadastro, qtd_vendida, ativo, marca_id) VALUES ('Monitor ', 'Monitor Gamer', '144hz 1MS', '2023-05-27T20:21:47.741', 0, 'N', 7);
+INSERT INTO produto (nome, referencia, desc_Curta, desc_Longa, data_Cadastro, estoque_Total, qtd_vendida, preco, preco_Prom, ativo, marca_id, classe_id) VALUES ('Geforce RTX 3060', 'RTX30', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '2023-05-25T18:21:47.741', 4, 0, 2900.00, 2400.00, 'S', 1, 1);
+INSERT INTO produto (nome, referencia, desc_Curta, desc_Longa, data_Cadastro, estoque_Total, qtd_vendida, preco, preco_Prom, ativo, marca_id, classe_id) VALUES ('Mouse Logitech G403', 'G400', 'Mouse', 'Sensor profissional', '2023-05-26T19:21:47.741', 3, 0, 280.00, 235.50, 'S', 2, 1);
+INSERT INTO produto (nome, referencia, desc_Curta, desc_Longa, data_Cadastro, estoque_Total, qtd_vendida, preco, preco_Prom, tempo_Garantia, msg_Garantia, ativo, marca_id) VALUES ('Placa Mãe ASUS', 'PLM', 'Placa Mãe', 'TUF GAMING XXX', '2023-05-27T20:21:47.741', 2, 0, 1100.00, 1000.00, '12 meses', 'Troca mediante a apresentação de Nota Fiscal', 'S', 3);
+INSERT INTO produto (nome, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, ativo, marca_id) VALUES ('Memória RAM Kingston 16GB', 'Memória RAM', 'C16, 3666MHz', '2023-05-27T20:21:47.741', 0, 'S', 6);
+INSERT INTO produto (nome, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, ativo, marca_id) VALUES ('SDD Kingston 256GB', 'SSD', 'SSD 500MB/s Leitura / 450MB/s Escrita', '2023-05-27T20:21:47.741', 0, 'S', 6);
+INSERT INTO produto (nome, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, ativo, marca_id) VALUES ('Monitor ', 'Monitor Gamer', '144hz 1MS', '2023-05-27T20:21:47.741', 0, 'N', 7);
 
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (1, 'U', 7897897897899, 2900.00, 2400.00, 1);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (1, 'U2', 7895553397999, 3000.00, 2500.00, 3);
