@@ -110,7 +110,7 @@ public class VendaServico {
             entidade.setDataVenda(dto.getDataVenda());
             entidade.setLocalVenda(dto.getLocalVenda());
         }else {
-            entidade.setDataAlteracao(Instant.now());
+            entidade.setDataAtualizacao(Instant.now());
         }
         entidade.setVendaStatus(dto.getVendaStatus());
         entidade.setVlrTaxa(dto.getVlrTaxa());

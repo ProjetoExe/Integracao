@@ -27,7 +27,7 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String localVenda;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataVenda;
-    private Instant dataAlteracao;
+    private Instant dataAtualizacao;
     private Integer vendaStatus;
     private BigDecimal vlrTaxa;
     private BigDecimal vlrDesc;
@@ -76,14 +76,12 @@ public class VendaInsereAtualizaDTO implements Serializable {
     private String pais;
 
     @Valid
-    @JsonIgnoreProperties({"id", "venda_id"})
     private List<CupomVendaDTO> cupons = new ArrayList<>();
 
-    @JsonIgnoreProperties("vendaId")
+    @Valid
     private Set<VendaItensDTO> itens = new HashSet<>();
 
     @Valid
-    @JsonIgnoreProperties({"id", "venda_id"})
     private List<PagamentoDTO> pagamentos;
 
     //Construtor com parâmetro da classe Venda para VendaDTO / BeanUtils necessita de setter além de getter no DTO

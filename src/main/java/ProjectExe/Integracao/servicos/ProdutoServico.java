@@ -124,12 +124,12 @@ public class ProdutoServico {
         String ncmFormatado = Formatador.formatarNCM(dto.getNcm());
         entidade.setNcm(ncmFormatado);
         entidade.setReferencia(dto.getReferencia());
-        entidade.setDescricaoCurta(dto.getDescricaoCurta());
-        entidade.setDescricao(dto.getDescricao());
+        entidade.setDescCurta(dto.getDescCurta());
+        entidade.setDescLonga(dto.getDescLonga());
         entidade.setDataLancamento(dto.getDataLancamento());
         entidade.setEstoqueTotal(dto.getEstoqueTotal());
         entidade.setPreco(dto.getPreco());
-        entidade.setPrecoPromocional(dto.getPrecoPromocional());
+        entidade.setPrecoProm(dto.getPrecoProm());
         entidade.setTempoGarantia(dto.getTempoGarantia());
         entidade.setMsgGarantia(dto.getMsgGarantia());
         entidade.setComprimento(dto.getComprimento());
@@ -143,12 +143,12 @@ public class ProdutoServico {
         Marca marca = atualizarOuCadastrarMarca(dto.getMarca());
         entidade.setMarca(marca);
 
-        Set<Categoria> categorias = new HashSet<>(atualizarOuCadastrarCategorias(dto.getCategorias()));
+        List<Categoria> categorias = new ArrayList<>(atualizarOuCadastrarCategorias(dto.getCategorias()));
         entidade.getCategorias().clear();
         entidade.getCategorias().addAll(categorias);
 
         produtoRepositorio.save(entidade);
-        List<ProdutoGrade> grades = new ArrayList<>(atualizarOuInserirGrade(entidade, dto.getGrade()));
+        Set<ProdutoGrade> grades = new HashSet<>(atualizarOuInserirGrade(entidade, dto.getGrade()));
         entidade.getGrade().addAll(grades);
 
         List<ProdutoImagem> imagems = new ArrayList<>(atualizarOuInserirImagens(entidade, dto.getImagens()));
@@ -156,40 +156,39 @@ public class ProdutoServico {
     }
 
     //Verifica se a classe existe para atualizar no produto
-    private Classe atualizarClasse(Classe classeDTO) {
-        return classeRepositorio.findById(classeDTO.getClasseId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classeDTO.getClasseId() + " não existe"));
+    private Classe atualizarClasse(Classe classe) {
+        return classeRepositorio.findById(classe.getClasseId())
+                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classe.getClasseId() + " não existe"));
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private Marca atualizarOuCadastrarMarca(Marca marcaDTO) {
-        return marcaRepositorio.findByNome(marcaDTO.getNome())
+    private Marca atualizarOuCadastrarMarca(Marca marca) {
+        return marcaRepositorio.findByNome(marca.getNome())
                 .orElseGet(() -> {
                     Marca novaMarca = new Marca();
-                    novaMarca.setNome(marcaDTO.getNome());
+                    novaMarca.setNome(marca.getNome());
                     return marcaRepositorio.save(novaMarca);
                 });
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
-    //Não está retornando no JSON ainda as categorias ao incluir, listagem sendo exibida vazia
-    private Set<Categoria> atualizarOuCadastrarCategorias(Set<Categoria> categoriasDTO) {
-        Set<Categoria> categorias = new HashSet<>();
-        for (Categoria categoriaDTO : categoriasDTO) {
+    private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categorias) {
+        Set<Categoria> categoriasProd = new HashSet<>();
+        for (Categoria categoriaDTO : categorias) {
             Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome())
                     .orElseGet(() -> {
                         Categoria novaCategoria = new Categoria();
                         novaCategoria.setNome(categoriaDTO.getNome());
                         return categoriaRepositorio.save(novaCategoria);
                     });
-            categorias.add(categoria);
+            categoriasProd.add(categoria);
         }
-        return categorias;
+        return categoriasProd;
     }
 
     //Atualiza e insere novos tamanhos a grade produtos se necessário
-    private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, List<ProdutoGrade> gradesDTO) {
-        return gradesDTO.stream()
+    private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, Set<ProdutoGrade> grades) {
+        return grades.stream()
                 .map(grade -> {
                     Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
                     return produtoGrade.map(produtoExistente -> {
@@ -198,7 +197,7 @@ public class ProdutoServico {
                         produtoExistente.setEan(grade.getEan());
                         produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                         return produtoGradeRepositorio.save(produtoExistente);
-                    }).orElseGet(() -> {
+                    }).orElseGet(() -> { //atualmente só insere a ProdutoGrade caso existe o tamanho mencinado na ClasseGrade
                         Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getTamanho());
                         return classeGrade.map(classe -> {
                             ProdutoGrade novaGrade = new ProdutoGrade();
@@ -209,7 +208,7 @@ public class ProdutoServico {
                             novaGrade.setEan(grade.getEan());
                             novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                             return produtoGradeRepositorio.save(novaGrade);
-                        }).orElseGet(null); // Retorna null se o tamanho não existir na ClasseGrade
+                        }).orElseGet(() -> null); // Retorna null se o tamanho não existir na ClasseGrade
                     });
                 })
                 .filter(Objects::nonNull) // Filtra grades não nulas
@@ -217,8 +216,8 @@ public class ProdutoServico {
     }
 
     //atualiza e insere novas imagens ao produto
-    public List<ProdutoImagem> atualizarOuInserirImagens(Produto produto, List<ProdutoImagem> novasImagens) {
-        return novasImagens.stream()
+    public List<ProdutoImagem> atualizarOuInserirImagens(Produto produto, List<ProdutoImagem> imagens) {
+        return imagens.stream()
                 .map(imagem -> {
                     Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());
                     if (produtoImagem.isPresent()) {
