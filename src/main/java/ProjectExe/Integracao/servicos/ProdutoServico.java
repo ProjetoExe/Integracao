@@ -137,32 +137,32 @@ public class ProdutoServico {
         entidade.setAltura(dto.getAltura());
         entidade.setPeso(dto.getPeso());
 
-        Classe classe = atualizarClasse(dto.getClasse());
+        Classe classe = carregarClasse(dto.getClasse());
         entidade.setClasse(classe);
 
-        Marca marca = atualizarOuCadastrarMarca(dto.getMarca());
+        Marca marca = carregarMarca(dto.getMarca());
         entidade.setMarca(marca);
 
-        List<Categoria> categorias = new ArrayList<>(atualizarOuCadastrarCategorias(dto.getCategorias()));
+        List<Categoria> categorias = new ArrayList<>(carregarCategoria(dto.getCategorias()));
         entidade.getCategorias().clear();
         entidade.getCategorias().addAll(categorias);
 
         produtoRepositorio.save(entidade);
-        Set<ProdutoGrade> grades = new HashSet<>(atualizarOuInserirGrade(entidade, dto.getGrade()));
+        Set<ProdutoGrade> grades = new HashSet<>(carregarGrade(entidade, dto.getGrade()));
         entidade.getGrade().addAll(grades);
 
-        List<ProdutoImagem> imagems = new ArrayList<>(atualizarOuInserirImagens(entidade, dto.getImagens()));
+        List<ProdutoImagem> imagems = new ArrayList<>(carregarImagens(entidade, dto.getImagens()));
         entidade.getImagens().addAll(imagems);
     }
 
     //Verifica se a classe existe para atualizar no produto
-    private Classe atualizarClasse(Classe classe) {
+    private Classe carregarClasse(Classe classe) {
         return classeRepositorio.findById(classe.getClasseId())
                 .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classe.getClasseId() + " não existe"));
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private Marca atualizarOuCadastrarMarca(Marca marca) {
+    private Marca carregarMarca(Marca marca) {
         return marcaRepositorio.findByNome(marca.getNome())
                 .orElseGet(() -> {
                     Marca novaMarca = new Marca();
@@ -172,7 +172,7 @@ public class ProdutoServico {
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
-    private Set<Categoria> atualizarOuCadastrarCategorias(List<Categoria> categorias) {
+    private Set<Categoria> carregarCategoria(List<Categoria> categorias) {
         Set<Categoria> categoriasProd = new HashSet<>();
         for (Categoria categoriaDTO : categorias) {
             Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome())
@@ -187,7 +187,7 @@ public class ProdutoServico {
     }
 
     //Atualiza e insere novos tamanhos a grade produtos se necessário
-    private List<ProdutoGrade> atualizarOuInserirGrade(Produto produto, Set<ProdutoGrade> grades) {
+    private List<ProdutoGrade> carregarGrade(Produto produto, Set<ProdutoGrade> grades) {
         return grades.stream()
                 .map(grade -> {
                     Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
@@ -197,26 +197,29 @@ public class ProdutoServico {
                         produtoExistente.setEan(grade.getEan());
                         produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
                         return produtoGradeRepositorio.save(produtoExistente);
-                    }).orElseGet(() -> { //atualmente só insere a ProdutoGrade caso existe o tamanho mencinado na ClasseGrade
+                    }).orElseGet(() -> {
                         Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getTamanho());
-                        return classeGrade.map(classe -> {
-                            ProdutoGrade novaGrade = new ProdutoGrade();
-                            novaGrade.setProduto(produto);
-                            novaGrade.setTamanho(grade.getTamanho());
-                            novaGrade.setPreco(grade.getPreco());
-                            novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
-                            novaGrade.setEan(grade.getEan());
-                            novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
-                            return produtoGradeRepositorio.save(novaGrade);
-                        }).orElseGet(() -> null); // Retorna null se o tamanho não existir na ClasseGrade
+                        ClasseGrade classeGradeProd = classeGrade.orElseGet(() -> {
+                            ClasseGrade novaClasseGrade = new ClasseGrade();
+                            novaClasseGrade.setClasse(produto.getClasse());
+                            novaClasseGrade.setTamanho(grade.getTamanho());
+                            return classeGradeRepositorio.save(novaClasseGrade);
+                        });
+                        ProdutoGrade novaGrade = new ProdutoGrade();
+                        novaGrade.setProduto(produto);
+                        novaGrade.setPreco(grade.getPreco());
+                        novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
+                        novaGrade.setEan(grade.getEan());
+                        novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
+                        novaGrade.setTamanho(classeGradeProd.getTamanho());
+                        return produtoGradeRepositorio.save(novaGrade);
                     });
                 })
-                .filter(Objects::nonNull) // Filtra grades não nulas
                 .collect(Collectors.toList());
     }
 
     //atualiza e insere novas imagens ao produto
-    public List<ProdutoImagem> atualizarOuInserirImagens(Produto produto, List<ProdutoImagem> imagens) {
+    public List<ProdutoImagem> carregarImagens(Produto produto, List<ProdutoImagem> imagens) {
         return imagens.stream()
                 .map(imagem -> {
                     Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());

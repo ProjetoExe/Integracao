@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.entidades.pk;
 
 import ProjectExe.Integracao.entidades.Produto;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -22,7 +21,6 @@ public class ProdutoGradePK implements Serializable {
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
-    @JsonProperty("Grade")
-    @JoinColumn(name = "tamanho")
+    @JoinColumn(name = "tamanho_id")
     private String tamanho;
 }

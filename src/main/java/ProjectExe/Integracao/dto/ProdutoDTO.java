@@ -52,7 +52,7 @@ public class ProdutoDTO implements Serializable {
     private char ativo;
 
     @JsonIgnoreProperties("nome")
-    @JsonUnwrapped(suffix = "_classe")
+    @JsonUnwrapped
     private Classe classe;
 
     @JsonIgnoreProperties("marcaId")
