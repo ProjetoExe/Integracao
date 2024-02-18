@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -38,6 +39,17 @@ public class ProdutoControle {
             Pageable pageable) {
         Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodos_PorIdNomeCategoriaAtivo(id, nome, categoriaId, ativo, pageable);
         return ResponseEntity.ok().body(resultado);
+    }
+
+    //exportar produtos para excel
+    @GetMapping(value = "/exportarexcel", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    public ResponseEntity<byte[]> gerarPlanilhaExcel()  {
+        byte[] planilhaBytes = produtoServico.exportarParaExcel();
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=planilha.xlsx")
+                .body(planilhaBytes);
     }
 
     //inserir novo registro

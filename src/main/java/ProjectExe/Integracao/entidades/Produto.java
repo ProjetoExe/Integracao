@@ -26,6 +26,7 @@ public class Produto implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long produtoId;
     private String nome;
+    private Long ean;
     private String ncm;
     private String referencia;
     @Column(columnDefinition = "TEXT")

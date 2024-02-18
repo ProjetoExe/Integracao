@@ -10,7 +10,7 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@JsonPropertyOrder({"produtoId", "nome", "estoqueTotal", "preco", "precoPromocional", "ativo"})
+@JsonPropertyOrder({"produtoId", "nome", "ean", "estoqueTotal", "preco", "precoPromocional", "ativo"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -19,6 +19,7 @@ public class ProdutoResumidoDTO implements Serializable {
 
     private Long produtoId;
     private String nome;
+    private Long ean;
     private Integer estoqueTotal;
     private BigDecimal preco;
     private BigDecimal precoPromocional;
