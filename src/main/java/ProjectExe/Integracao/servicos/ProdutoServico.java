@@ -6,8 +6,14 @@ import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
+import ProjectExe.Integracao.servicos.utilitarios.Arquivos;
 import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
+import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,6 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,6 +47,8 @@ public class ProdutoServico {
     private ProdutoGradeRepositorio produtoGradeRepositorio;
     @Autowired
     private ProdutoImagemRepositorio produtoImagemRepositorio;
+    @Autowired
+    private Arquivos arquivos;
 
     //buscar por ID
     @Transactional(readOnly = true)
@@ -66,6 +76,12 @@ public class ProdutoServico {
             resultado = produtoRepositorio.findByAtivo(ativo, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);
+    }
+
+    //exportar produtos para excel
+    @Transactional(readOnly = true)
+    public byte[] exportarParaExcel(){
+        return arquivos.exportarProdutosParaExcel();
     }
 
     //inserir novo registro
@@ -121,6 +137,7 @@ public class ProdutoServico {
             entidade.setAtivo(dto.getAtivo());
         }
         entidade.setNome(dto.getNome());
+        entidade.setEan(dto.getEan());
         String ncmFormatado = Formatador.formatarNCM(dto.getNcm());
         entidade.setNcm(ncmFormatado);
         entidade.setReferencia(dto.getReferencia());

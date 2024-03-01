@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"produtoId", "nome", "ncm", "referencia", "descCurta", "descLonga", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
+@JsonPropertyOrder({"produtoId", "nome", "ean", "ncm", "referencia", "descCurta", "descLonga", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
                     "qtdVendida", "preco", "precoProm", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "ativo",
                     "marca",  "categorias", "imgUrl", "grade"})
 @Getter
@@ -30,6 +30,7 @@ public class ProdutoDTO implements Serializable {
     private Long produtoId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nome;
+    private Long ean;
     private String ncm;
     private String referencia;
     private String descCurta;
