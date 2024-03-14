@@ -30,7 +30,6 @@ public class Arquivos {
 
     public byte[] exportarProdutosParaExcel() {
         List<Produto> produtos = produtoRepositorio.findAll();
-
         try (Workbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Produtos");
             int rowNum = 0;
@@ -56,7 +55,7 @@ public class Arquivos {
                     row.createCell(2).setCellValue(produto.getReferencia());
                     LocalDate localDate = produto.getDataCadastro().atZone(ZoneId.systemDefault()).toLocalDate();
                     row.createCell(3).setCellValue(localDate.format(data));
-                    row.createCell(4).setCellValue(String.valueOf(produto.getAtivo()));
+                    row.createCell(4).setCellValue(String.valueOf(produto.getOptAtivo()));
                     row.createCell(5).setCellValue("U"); // Defina o tamanho como "U" ou como desejar
                     row.createCell(6).setCellValue(produto.getPreco().doubleValue());
                     row.createCell(7).setCellValue(produto.getPrecoProm().doubleValue());
@@ -70,7 +69,7 @@ public class Arquivos {
                         row.createCell(2).setCellValue(produto.getReferencia());
                         LocalDate localDate = produto.getDataCadastro().atZone(ZoneId.systemDefault()).toLocalDate();
                         row.createCell(3).setCellValue(localDate.format(data));
-                        row.createCell(4).setCellValue(String.valueOf(produto.getAtivo()));
+                        row.createCell(4).setCellValue(String.valueOf(produto.getOptAtivo()));
                         row.createCell(5).setCellValue(produtoGrade.getTamanho());
                         row.createCell(6).setCellValue(produtoGrade.getPreco().doubleValue());
                         row.createCell(7).setCellValue(produtoGrade.getPrecoPromocional().doubleValue());
@@ -79,10 +78,8 @@ public class Arquivos {
                     }
                 }
             }
-
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             workbook.write(outputStream);
-
             return outputStream.toByteArray();
         } catch (IOException e) {
             e.printStackTrace();

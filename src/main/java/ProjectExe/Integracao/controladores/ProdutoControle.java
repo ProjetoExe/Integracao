@@ -2,8 +2,9 @@ package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
+import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import ProjectExe.Integracao.servicos.ProdutoServico;
-import ProjectExe.Integracao.servicos.utilitarios.Mensagem;
+import ProjectExe.Integracao.dto.MensagemDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/produtos")
@@ -31,13 +33,15 @@ public class ProdutoControle {
 
     //busca produtos por id, nome, categoria e ativo (padrão de produtos ativos)
     @GetMapping
-    public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodos_ProdutosPorIdENomeEAtivo(
-            @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestParam(value = "nome", defaultValue = "") String nome,
-            @RequestParam(value = "categoriaId", defaultValue = "-1") Long categoriaId,
-            @RequestParam(value = "ativo", defaultValue = "S") char ativo,
+    public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodosProdutos(
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "nome", required = false) String nome,
+            @RequestParam(value = "ean", required = false) String ean,
+            @RequestParam(value = "ativo", required = false) Integer opt_ativo,
+            @RequestParam(value = "categorias", required = false) List<Long> categorias,
+            @RequestParam(value = "marcas", required = false) List<Long> marcas,
             Pageable pageable) {
-        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodos_PorIdNomeCategoriaAtivo(id, nome, categoriaId, ativo, pageable);
+        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodosProdutos(id, nome, ean, opt_ativo, categorias, marcas, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
@@ -54,18 +58,18 @@ public class ProdutoControle {
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<Mensagem> inserir(@Valid @RequestBody ProdutoDTO obj){
+    public ResponseEntity<MensagemDTO> inserir(@Valid @RequestBody ProdutoDTO obj){
         ProdutoDTO entidade = produtoServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getProdutoId()).toUri();
-        return ResponseEntity.created(uri).body(Mensagem.of("Produto " + entidade.getProdutoId() + " cadastrado com sucesso!"));
+        return ResponseEntity.created(uri).body(MensagemDTO.of("Produto " + entidade.getProdutoId() + " cadastrado com sucesso!"));
     }
 
     //atualizar dados
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Mensagem> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
+    public ResponseEntity<MensagemDTO> atualizar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto){
         ProdutoDTO entidade = produtoServico.atualizar(id, dto);
-        return ResponseEntity.ok().body(Mensagem.of("Produto " + id + " atualizado com sucesso!"));
+        return ResponseEntity.ok().body(MensagemDTO.of("Produto " + id + " atualizado com sucesso!"));
     }
 
     //exclui um registro

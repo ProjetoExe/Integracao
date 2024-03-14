@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
+import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -46,7 +47,7 @@ public class Produto implements Serializable{
     private Double largura;
     private Double altura;
     private Double peso;
-    private char ativo;
+    private Integer optAtivo;
 
     @ManyToOne
     @JoinColumn(name = "classe_id")
@@ -68,4 +69,6 @@ public class Produto implements Serializable{
 
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();
+
+    public OpcaoStatus getOptAtivo() { return OpcaoStatus.status((optAtivo)); }
 }
