@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Produto;
+import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@JsonPropertyOrder({"produtoId", "nome", "ean", "estoqueTotal", "preco", "precoPromocional", "ativo"})
+@JsonPropertyOrder({"produtoId", "optAtivo", "nome", "preco", "estoqueTotal", "qtdVendida",})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,14 +19,17 @@ public class ProdutoResumidoDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long produtoId;
+    private Integer optAtivo;
     private String nome;
-    private Long ean;
-    private Integer estoqueTotal;
     private BigDecimal preco;
-    private BigDecimal precoPromocional;
-    private char ativo;
+    private Integer estoqueTotal;
+    private Integer qtdVendida;
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
-    public ProdutoResumidoDTO(Produto entidade){ BeanUtils.copyProperties(entidade, this);
+    public ProdutoResumidoDTO(Produto entidade){
+        BeanUtils.copyProperties(entidade, this);
+        this.optAtivo = entidade.getOptAtivo().getCodigo();
     }
+
+    public OpcaoStatus getOptAtivo() { return OpcaoStatus.status((optAtivo)); }
 }
