@@ -1,9 +1,8 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.CupomDTO;
-import ProjectExe.Integracao.entidades.Cupom;
 import ProjectExe.Integracao.servicos.CupomServico;
-import ProjectExe.Integracao.servicos.utilitarios.Mensagem;
+import ProjectExe.Integracao.dto.MensagemDTO;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,18 +36,18 @@ public class CupomControle {
 
     //inserir novo registro
     @PostMapping
-    public ResponseEntity<Mensagem> inserir(@Valid @RequestBody CupomDTO obj){
+    public ResponseEntity<MensagemDTO> inserir(@Valid @RequestBody CupomDTO obj){
         CupomDTO entidade = cupomServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("{/id}")
                 .buildAndExpand(entidade.getCupomId()).toUri();
-        return ResponseEntity.created(uri).body(Mensagem.of("Cupom " + entidade.getCupomId() + " cadastrado com sucesso!"));
+        return ResponseEntity.created(uri).body(MensagemDTO.of("Cupom " + entidade.getCupomId() + " cadastrado com sucesso!"));
     }
 
     //atualizar um registro
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Mensagem> atualizar(@PathVariable Long id, @Valid @RequestBody CupomDTO obj){
+    public ResponseEntity<MensagemDTO> atualizar(@PathVariable Long id, @Valid @RequestBody CupomDTO obj){
         CupomDTO entidade = cupomServico.atualizar(id, obj);
-        return ResponseEntity.ok().body(Mensagem.of("Cupom " + id + " atualizado com sucesso!"));
+        return ResponseEntity.ok().body(MensagemDTO.of("Cupom " + id + " atualizado com sucesso!"));
     }
 
     //excluir um registro
