@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.*;
+import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -19,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @JsonPropertyOrder({"produtoId", "nome", "ean", "ncm", "referencia", "descCurta", "descLonga", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
-                    "qtdVendida", "preco", "precoProm", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "ativo",
+                    "qtdVendida", "preco", "precoProm", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "optAtivo",
                     "marca",  "categorias", "imgUrl", "grade"})
 @Getter
 @Setter
@@ -50,7 +51,7 @@ public class ProdutoDTO implements Serializable {
     private Double largura;
     private Double altura;
     private Double peso;
-    private char ativo;
+    private Integer optAtivo;
 
     @JsonIgnoreProperties("nome")
     @JsonUnwrapped
@@ -75,4 +76,6 @@ public class ProdutoDTO implements Serializable {
         BeanUtils.copyProperties(entidade, this);
         this.categorias = new ArrayList<>(entidade.getCategorias()); //conversão de SET para LIST para poder retornar no GET do JSON
     }
+
+    public OpcaoStatus getOptAtivo() { return OpcaoStatus.status((optAtivo)); }
 }

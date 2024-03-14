@@ -3,17 +3,13 @@ package ProjectExe.Integracao.servicos;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
+import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.utilitarios.Arquivos;
 import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,8 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,33 +48,33 @@ public class ProdutoServico {
     @Transactional(readOnly = true)
     public ProdutoDTO buscarPorId(Long produtoId) {
         Optional<Produto> resultado = produtoRepositorio.findById(produtoId);
-        return resultado.map(ProdutoDTO::new)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
+        return resultado.map(ProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
     }
 
     //buscar todos os registros com filtro de id, nome, categoria e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
-    public Page<ProdutoResumidoDTO> buscarTodos_PorIdNomeCategoriaAtivo(Long produtoId, String nome, Long categoriaId, char ativo, Pageable pageable) {
+    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<Long> categorias, List<Long> marcas, Pageable pageable) {
         Page<Produto> resultado = Page.empty();
         if (produtoId != null) {
             Optional<Produto> produto = produtoRepositorio.findById(produtoId);
             if (produto.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(produto.get()), pageable, 1);
             }
-        } else if (!nome.isEmpty()) {
-            resultado = produtoRepositorio.findByNomeContainingAndAtivo(nome, ativo, pageable);
-        } else if (categoriaId != -1) {
-            resultado = produtoRepositorio.findByCategoria(categoriaId, pageable);
         } else {
-            resultado = produtoRepositorio.findByAtivo(ativo, pageable);
+            nome = (nome.isEmpty()) ? null : nome;
+            ean = (ean.isEmpty()) ? null : ean;
+            categorias = (categorias.isEmpty()) ? null : categorias;
+            marcas = (marcas.isEmpty()) ? null : marcas;
+
+            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, categorias, marcas, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);
     }
 
     //exportar produtos para excel
     @Transactional(readOnly = true)
-    public byte[] exportarParaExcel(){
+    public byte[] exportarParaExcel() {
         return arquivos.exportarProdutosParaExcel();
     }
 
@@ -89,7 +83,7 @@ public class ProdutoServico {
     public ProdutoDTO inserir(ProdutoDTO obj) {
         Produto produto = new Produto();
         atualizarDadosProduto(produto, obj);
-        produto.setAtivo('N');
+        produto.setOptAtivo(0);
         return new ProdutoDTO(produtoRepositorio.save(produto));
     }
 
@@ -120,8 +114,7 @@ public class ProdutoServico {
     //remover tamanho do produto
     @Transactional
     public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
-        Produto produto = produtoRepositorio.findById(produtoId)
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + "  encontrado"));
+        Produto produto = produtoRepositorio.findById(produtoId).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + "  encontrado"));
         produto.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
         return new ProdutoDTO(produtoRepositorio.save(produto));
     }
@@ -131,10 +124,10 @@ public class ProdutoServico {
         if (entidade.getProdutoId() == null) {
             entidade.setDataCadastro(Instant.now());
             entidade.setQtdVendida(0);
-            entidade.setAtivo('N');
+            entidade.setOptAtivo(0);
         } else {
             entidade.setDataAtualizacao(Instant.now());
-            entidade.setAtivo(dto.getAtivo());
+            entidade.setOptAtivo(dto.getOptAtivo().getCodigo());
         }
         entidade.setNome(dto.getNome());
         entidade.setEan(dto.getEan());
@@ -174,30 +167,27 @@ public class ProdutoServico {
 
     //Verifica se a classe existe para atualizar no produto
     private Classe carregarClasse(Classe classe) {
-        return classeRepositorio.findById(classe.getClasseId())
-                .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classe.getClasseId() + " não existe"));
+        return classeRepositorio.findById(classe.getClasseId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classe.getClasseId() + " não existe"));
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
     private Marca carregarMarca(Marca marca) {
-        return marcaRepositorio.findByNome(marca.getNome())
-                .orElseGet(() -> {
-                    Marca novaMarca = new Marca();
-                    novaMarca.setNome(marca.getNome());
-                    return marcaRepositorio.save(novaMarca);
-                });
+        return marcaRepositorio.findByNome(marca.getNome()).orElseGet(() -> {
+            Marca novaMarca = new Marca();
+            novaMarca.setNome(marca.getNome());
+            return marcaRepositorio.save(novaMarca);
+        });
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
     private Set<Categoria> carregarCategoria(List<Categoria> categorias) {
         Set<Categoria> categoriasProd = new HashSet<>();
         for (Categoria categoriaDTO : categorias) {
-            Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome())
-                    .orElseGet(() -> {
-                        Categoria novaCategoria = new Categoria();
-                        novaCategoria.setNome(categoriaDTO.getNome());
-                        return categoriaRepositorio.save(novaCategoria);
-                    });
+            Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome()).orElseGet(() -> {
+                Categoria novaCategoria = new Categoria();
+                novaCategoria.setNome(categoriaDTO.getNome());
+                return categoriaRepositorio.save(novaCategoria);
+            });
             categoriasProd.add(categoria);
         }
         return categoriasProd;
@@ -205,53 +195,49 @@ public class ProdutoServico {
 
     //Atualiza e insere novos tamanhos a grade produtos se necessário
     private List<ProdutoGrade> carregarGrade(Produto produto, Set<ProdutoGrade> grades) {
-        return grades.stream()
-                .map(grade -> {
-                    Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
-                    return produtoGrade.map(produtoExistente -> {
-                        produtoExistente.setPreco(grade.getPreco());
-                        produtoExistente.setPrecoPromocional(grade.getPrecoPromocional());
-                        produtoExistente.setEan(grade.getEan());
-                        produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
-                        return produtoGradeRepositorio.save(produtoExistente);
-                    }).orElseGet(() -> {
-                        Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getTamanho());
-                        ClasseGrade classeGradeProd = classeGrade.orElseGet(() -> {
-                            ClasseGrade novaClasseGrade = new ClasseGrade();
-                            novaClasseGrade.setClasse(produto.getClasse());
-                            novaClasseGrade.setTamanho(grade.getTamanho());
-                            return classeGradeRepositorio.save(novaClasseGrade);
-                        });
-                        ProdutoGrade novaGrade = new ProdutoGrade();
-                        novaGrade.setProduto(produto);
-                        novaGrade.setPreco(grade.getPreco());
-                        novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
-                        novaGrade.setEan(grade.getEan());
-                        novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
-                        novaGrade.setTamanho(classeGradeProd.getTamanho());
-                        return produtoGradeRepositorio.save(novaGrade);
-                    });
-                })
-                .collect(Collectors.toList());
+        return grades.stream().map(grade -> {
+            Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
+            return produtoGrade.map(produtoExistente -> {
+                produtoExistente.setPreco(grade.getPreco());
+                produtoExistente.setPrecoPromocional(grade.getPrecoPromocional());
+                produtoExistente.setEan(grade.getEan());
+                produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
+                return produtoGradeRepositorio.save(produtoExistente);
+            }).orElseGet(() -> {
+                Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getTamanho());
+                ClasseGrade classeGradeProd = classeGrade.orElseGet(() -> {
+                    ClasseGrade novaClasseGrade = new ClasseGrade();
+                    novaClasseGrade.setClasse(produto.getClasse());
+                    novaClasseGrade.setTamanho(grade.getTamanho());
+                    return classeGradeRepositorio.save(novaClasseGrade);
+                });
+                ProdutoGrade novaGrade = new ProdutoGrade();
+                novaGrade.setProduto(produto);
+                novaGrade.setPreco(grade.getPreco());
+                novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
+                novaGrade.setEan(grade.getEan());
+                novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
+                novaGrade.setTamanho(classeGradeProd.getTamanho());
+                return produtoGradeRepositorio.save(novaGrade);
+            });
+        }).collect(Collectors.toList());
     }
 
     //atualiza e insere novas imagens ao produto
     public List<ProdutoImagem> carregarImagens(Produto produto, List<ProdutoImagem> imagens) {
-        return imagens.stream()
-                .map(imagem -> {
-                    Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());
-                    if (produtoImagem.isPresent()) {
-                        ProdutoImagem produtoImagemExistente = produtoImagem.get();
-                        produtoImagemExistente.setTitulo(imagem.getTitulo());
-                        return produtoImagemRepositorio.save(produtoImagemExistente);
-                    } else {
-                        ProdutoImagem novaImagem = new ProdutoImagem();
-                        novaImagem.setProduto(produto);
-                        novaImagem.setTitulo(imagem.getTitulo());
-                        novaImagem.setImgUrl(imagem.getImgUrl());
-                        return produtoImagemRepositorio.save(novaImagem);
-                    }
-                })
-                .collect(Collectors.toList());
+        return imagens.stream().map(imagem -> {
+            Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());
+            if (produtoImagem.isPresent()) {
+                ProdutoImagem produtoImagemExistente = produtoImagem.get();
+                produtoImagemExistente.setTitulo(imagem.getTitulo());
+                return produtoImagemRepositorio.save(produtoImagemExistente);
+            } else {
+                ProdutoImagem novaImagem = new ProdutoImagem();
+                novaImagem.setProduto(produto);
+                novaImagem.setTitulo(imagem.getTitulo());
+                novaImagem.setImgUrl(imagem.getImgUrl());
+                return produtoImagemRepositorio.save(novaImagem);
+            }
+        }).collect(Collectors.toList());
     }
 }
