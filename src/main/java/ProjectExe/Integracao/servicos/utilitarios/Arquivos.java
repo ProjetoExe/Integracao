@@ -45,6 +45,8 @@ public class Arquivos {
             headerRow.createCell(7).setCellValue("Preço-Promo");
             headerRow.createCell(8).setCellValue("EAN");
             headerRow.createCell(9).setCellValue("Estoque");
+            headerRow.createCell(10).setCellValue("Marca");
+            headerRow.createCell(11).setCellValue("Categorias");
 
             for (Produto produto : produtos) {
                 List<ProdutoGrade> produtoGrades = produtoGradeRepositorio.buscarPorProdutoId(produto.getProdutoId());
@@ -61,6 +63,8 @@ public class Arquivos {
                     row.createCell(7).setCellValue(produto.getPrecoProm().doubleValue());
                     row.createCell(8).setCellValue(String.valueOf(produto.getEan()));
                     row.createCell(9).setCellValue(produto.getEstoqueTotal());
+                    row.createCell(10).setCellValue(produto.getMarca().getNome());
+                    row.createCell(11).setCellValue(produto.getCategorias().toString());
                 } else {
                     for (ProdutoGrade produtoGrade : produtoGrades) {
                         Row row = sheet.createRow(rowNum++);
@@ -75,6 +79,8 @@ public class Arquivos {
                         row.createCell(7).setCellValue(produtoGrade.getPrecoPromocional().doubleValue());
                         row.createCell(8).setCellValue(String.valueOf(produtoGrade.getEan()));
                         row.createCell(9).setCellValue(produtoGrade.getQuantidadeEstoque());
+                        row.createCell(10).setCellValue(produto.getMarca().getNome());
+                        row.createCell(11).setCellValue(produto.getCategorias().toString());
                     }
                 }
             }
