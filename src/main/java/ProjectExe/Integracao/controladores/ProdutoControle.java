@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -31,17 +32,21 @@ public class ProdutoControle {
         return ResponseEntity.ok().body(resultado);
     }
 
-    //busca produtos por id, nome, categoria e ativo (padrão de produtos ativos)
+    //busca produtos por id, nome, ativo, marca, preço inicial e final
     @GetMapping
     public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodosProdutos(
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "nome", required = false) String nome,
             @RequestParam(value = "ean", required = false) String ean,
             @RequestParam(value = "ativo", required = false) Integer opt_ativo,
-            @RequestParam(value = "categorias", required = false) List<Long> categorias,
-            @RequestParam(value = "marcas", required = false) List<Long> marcas,
+            @RequestParam(value = "marcas", required = false) List<String> marcas,
+            @RequestParam(value = "categorias", required = false) List<String> categorias,
+            @RequestParam(value = "precoIni", defaultValue = "0.00") BigDecimal precoInicial,
+            @RequestParam(value = "precoFim", defaultValue = "1000000.00") BigDecimal precoFinal, //1.000.000
+            @RequestParam(value = "estIni", defaultValue = "0.00") Double estoqueInicial,
+            @RequestParam(value = "estFim", defaultValue = "100000.00") Double estoqueFinal, //100.000
             Pageable pageable) {
-        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodosProdutos(id, nome, ean, opt_ativo, categorias, marcas, pageable);
+        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodosProdutos(id, nome, ean, opt_ativo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

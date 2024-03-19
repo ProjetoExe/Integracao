@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,7 +55,7 @@ public class ProdutoServico {
     //buscar todos os registros com filtro de id, nome, categoria e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
-    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<Long> categorias, List<Long> marcas, Pageable pageable) {
+    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<String> marcas, List<String> categorias, BigDecimal precoInicial, BigDecimal precoFinal, Double estoqueInicial, Double estoqueFinal, Pageable pageable) {
         Page<Produto> resultado = Page.empty();
         if (produtoId != null) {
             Optional<Produto> produto = produtoRepositorio.findById(produtoId);
@@ -64,10 +65,10 @@ public class ProdutoServico {
         } else {
             nome = (nome.isEmpty()) ? null : nome;
             ean = (ean.isEmpty()) ? null : ean;
-            categorias = (categorias.isEmpty()) ? null : categorias;
             marcas = (marcas.isEmpty()) ? null : marcas;
+            categorias = (categorias.isEmpty()) ? null : categorias;
 
-            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, categorias, marcas, pageable);
+            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);
     }
