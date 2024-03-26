@@ -114,10 +114,10 @@ public class ProdutoServico {
 
     //remover tamanho do produto
     @Transactional
-    public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
-        Produto produto = produtoRepositorio.findById(produtoId).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + "  encontrado"));
-        produto.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
-        return new ProdutoDTO(produtoRepositorio.save(produto));
+    public void removerGrade(Long produtoId, String tamanho) {
+        ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produtoId, tamanho).
+                orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Tamanho " + tamanho + " de Produto " + produtoId + " já excluído ou não encontrado!"));
+        produtoGradeRepositorio.delete(produtoGrade);
     }
 
     //Método utilizado no método de inserir e atualizar dados

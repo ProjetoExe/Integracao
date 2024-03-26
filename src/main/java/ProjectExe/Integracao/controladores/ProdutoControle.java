@@ -78,15 +78,15 @@ public class ProdutoControle {
 
     //exclui um registro
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
+    public ResponseEntity<MensagemDTO> deletar(@PathVariable Long id){
         produtoServico.deletar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body(MensagemDTO.of("Produto " + id + " EXCLUÍDO COM SUCESSO!"));
     }
 
     //remover tamanho de um produto pelo parâmetro tamanho
     @DeleteMapping(value = "/{id}/grade/{tamanho}")
-    public ResponseEntity<ProdutoDTO> removerGrade(@PathVariable Long id, @PathVariable String tamanho){
-        ProdutoDTO entidade = produtoServico.removerGrade(id, tamanho);
-        return ResponseEntity.ok().body(entidade);
+    public ResponseEntity<MensagemDTO> removerGrade(@PathVariable Long id, @PathVariable String tamanho){
+        produtoServico.removerGrade(id, tamanho);
+        return ResponseEntity.ok().body(MensagemDTO.of("Tamanho " + tamanho + " de Produto " + id + " EXCLUÍDO COM SUCESSO!"));
     }
 }
