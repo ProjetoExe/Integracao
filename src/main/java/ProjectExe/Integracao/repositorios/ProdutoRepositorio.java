@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.repositorios;
 
 import ProjectExe.Integracao.entidades.Produto;
-import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,7 +1,7 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Produto;
-import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
+import ProjectExe.Integracao.entidades.enums.StatusAtivo;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,5 +31,5 @@ public class ProdutoResumidoDTO implements Serializable {
         this.optAtivo = entidade.getOptAtivo().getCodigo();
     }
 
-    public OpcaoStatus getOptAtivo() { return OpcaoStatus.status((optAtivo)); }
+    public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }
 }

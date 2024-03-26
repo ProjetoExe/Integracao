@@ -1,17 +1,17 @@
 package ProjectExe.Integracao.entidades.enums;
 
-public enum OpcaoStatus {
-    NAO(0),
-    SIM(1);
+public enum StatusAtivo {
+    INATIVO(0),
+    ATIVO(1);
 
     private int codigo;
 
-    private OpcaoStatus(int codigo) { this.codigo = codigo; }
+    private StatusAtivo(int codigo) { this.codigo = codigo; }
 
     public int getCodigo() { return codigo; }
 
-    public static OpcaoStatus status(int codigo){
-        for (OpcaoStatus valor : OpcaoStatus.values()) {
+    public static StatusAtivo status(int codigo){
+        for (StatusAtivo valor : StatusAtivo.values()) {
             if (valor.getCodigo() == codigo){
                 return valor;
             }

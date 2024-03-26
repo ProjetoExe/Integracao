@@ -2,7 +2,6 @@ package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
-import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
 import ProjectExe.Integracao.servicos.ProdutoServico;
 import ProjectExe.Integracao.dto.MensagemDTO;
 import jakarta.validation.Valid;
