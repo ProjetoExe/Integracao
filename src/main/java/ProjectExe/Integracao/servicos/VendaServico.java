@@ -2,6 +2,7 @@ package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.*;
 import ProjectExe.Integracao.entidades.*;
+import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
@@ -140,6 +141,21 @@ public class VendaServico {
         //define data de pagamento da venda pegando último registro de pagamento em relação ao id da venda
         Pagamento pagamento = pagamentoRepositorio.findFirstByVenda_VendaIdOrderByDataDesc(entidade.getVendaId());
         entidade.setDataPag(pagamento.getData());
+
+        if (entidade.getVendaStatus() != VendaStatus.AGUARDANDO_PAGAMENTO){
+            atualizarEstoque(entidade, dto.getItens());
+        }
+    }
+
+    //para atualizar estoque e referências quando a venda for diferente de aguardando pagamento
+    private void atualizarEstoque(Venda entidade, Set<VendaItensDTO> itensDTO) {
+        for (VendaItensDTO itemDTO : itensDTO) {
+            Produto produto = produtoRepositorio.findById(itemDTO.getProdutoId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProdutoId() + " não encontrado"));
+            produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQtdVendida());
+            produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProdutoId(), itemDTO.getVariacaoProd())
+                    .ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQtdVendida()));
+            produto.setEstoqueTotal(produto.getEstoqueTotal() - itemDTO.getQtdVendida());
+        }
     }
 
     //insere cliente na venda a partir dos dados da venda recebidos
@@ -191,14 +207,11 @@ public class VendaServico {
         for (VendaItensDTO itemDTO : itensDTO) {
             Produto produto = produtoRepositorio.findById(itemDTO.getProdutoId())
                     .orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProdutoId() + " não encontrado"));
-            produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQtdVendida());
             VendaItens item = new VendaItens(itemDTO);
             item.setVenda(entidade);
             item.setProduto(produto);
             item.setNomeProd(produto.getNome());
             itens.add(item);
-            Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProdutoId(), itemDTO.getVariacaoProd());
-            produtoGrade.ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQtdVendida()));
         }
         entidade.getItens().addAll(itens);
     }
