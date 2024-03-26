@@ -2,6 +2,7 @@ package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.*;
 import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
+import ProjectExe.Integracao.entidades.enums.StatusAtivo;
 import com.fasterxml.jackson.annotation.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
@@ -17,11 +18,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @JsonPropertyOrder({"produtoId", "nome", "ean", "ncm", "referencia", "descCurta", "descLonga", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
                     "qtdVendida", "preco", "precoProm", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "optAtivo",
-                    "marca",  "categorias", "imgUrl", "grade"})
+                    "optDisponivel", "optLancamento", "optPromocao", "optFreteGratis", "optVariacao", "optProdVirtual", "dataAtivacao", "dataDesativacao",
+                    "marca", "categorias", "imgUrl", "grade"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -43,6 +44,7 @@ public class ProdutoDTO implements Serializable {
     private LocalDate dataLancamento;
     private Integer estoqueTotal;
     private Integer qtdVendida;
+    private BigDecimal precoCusto;
     private BigDecimal preco;
     private BigDecimal precoProm;
     private String tempoGarantia;
@@ -52,6 +54,14 @@ public class ProdutoDTO implements Serializable {
     private Double altura;
     private Double peso;
     private Integer optAtivo;
+    private Integer optDisponivel;
+    private Integer optLancamento;
+    private Integer optPromocao;
+    private Integer optFreteGratis;
+    private Integer optVariacao;
+    private Integer optProdVirtual;
+    private Instant dataAtivacao;
+    private Instant dataDesativacao;
 
     @JsonIgnoreProperties("nome")
     @JsonUnwrapped
@@ -75,7 +85,26 @@ public class ProdutoDTO implements Serializable {
     public ProdutoDTO(Produto entidade) {
         BeanUtils.copyProperties(entidade, this);
         this.categorias = new ArrayList<>(entidade.getCategorias()); //conversão de SET para LIST para poder retornar no GET do JSON
+        this.optAtivo = entidade.getOptAtivo().getCodigo();
+        this.optDisponivel = entidade.getOptDisponivel().getCodigo();
+        this.optLancamento = entidade.getOptLancamento().getCodigo();
+        this.optPromocao = entidade.getOptPromocao().getCodigo();
+        this.optFreteGratis = entidade.getOptFreteGratis().getCodigo();
+        this.optVariacao = entidade.getOptVariacao().getCodigo();
+        this.optProdVirtual = entidade.getOptProdVirtual().getCodigo();
     }
 
-    public OpcaoStatus getOptAtivo() { return OpcaoStatus.status((optAtivo)); }
+    public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }
+
+    public OpcaoStatus getOptDisponivel() { return OpcaoStatus.status((optDisponivel)); }
+
+    public OpcaoStatus getOptLancamento() { return OpcaoStatus.status((optLancamento)); }
+
+    public OpcaoStatus getOptPromocao() { return OpcaoStatus.status((optPromocao)); }
+
+    public OpcaoStatus getOptFreteGratis() { return OpcaoStatus.status((optFreteGratis)); }
+
+    public OpcaoStatus getOptVariacao() { return OpcaoStatus.status((optVariacao)); }
+
+    public OpcaoStatus getOptProdVirtual() { return OpcaoStatus.status((optProdVirtual)); }
 }

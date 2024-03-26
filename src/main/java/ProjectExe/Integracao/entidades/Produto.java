@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.entidades;
 
 import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
+import ProjectExe.Integracao.entidades.enums.StatusAtivo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,6 +40,7 @@ public class Produto implements Serializable{
     private LocalDate dataLancamento;
     private Integer estoqueTotal;
     private Integer qtdVendida;
+    private BigDecimal precoCusto;
     private BigDecimal preco;
     private BigDecimal precoProm;
     private String tempoGarantia;
@@ -48,6 +50,14 @@ public class Produto implements Serializable{
     private Double altura;
     private Double peso;
     private Integer optAtivo;
+    private Integer optDisponivel;
+    private Integer optLancamento;
+    private Integer optPromocao;
+    private Integer optFreteGratis;
+    private Integer optVariacao;
+    private Integer optProdVirtual;
+    private Instant dataAtivacao;
+    private Instant dataDesativacao;
 
     @ManyToOne
     @JoinColumn(name = "classe_id")
@@ -57,7 +67,7 @@ public class Produto implements Serializable{
     @JoinColumn(name = "marca_id")
     private Marca marca;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
     private Set<Categoria> categorias = new HashSet<>();
 
@@ -70,5 +80,17 @@ public class Produto implements Serializable{
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();
 
-    public OpcaoStatus getOptAtivo() { return OpcaoStatus.status((optAtivo)); }
+    public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }
+
+    public OpcaoStatus getOptDisponivel() { return OpcaoStatus.status((optDisponivel)); }
+
+    public OpcaoStatus getOptLancamento() { return OpcaoStatus.status((optLancamento)); }
+
+    public OpcaoStatus getOptPromocao() { return OpcaoStatus.status((optPromocao)); }
+
+    public OpcaoStatus getOptFreteGratis() { return OpcaoStatus.status((optFreteGratis)); }
+
+    public OpcaoStatus getOptVariacao() { return OpcaoStatus.status((optVariacao)); }
+
+    public OpcaoStatus getOptProdVirtual() { return OpcaoStatus.status((optProdVirtual)); }
 }

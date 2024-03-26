@@ -37,6 +37,7 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
+			<version>3.2.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -47,7 +48,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-cache</artifactId>
 		</dependency>
-		<dependency>
+		<dependency> <!-- Ferramenta para configuração do esquema do banco de dados -->
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
 			<version>3.1.8</version>
@@ -55,8 +56,6 @@
 		<dependency> <!-- Ferramenta para otimização de código -->
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.30</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency> <!-- Ferramenta para otimização de código -->
 			<groupId>org.modelmapper</groupId>
@@ -66,7 +65,7 @@
 		<dependency>
 			<groupId>com.microsoft.sqlserver</groupId>
 			<artifactId>mssql-jdbc</artifactId>
-			<version>9.5.0.jre17-preview</version>
+			<version>12.3.0.jre17-preview</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains</groupId>

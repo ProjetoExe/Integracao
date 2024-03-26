@@ -3,13 +3,14 @@ package ProjectExe.Integracao.servicos;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
+import ProjectExe.Integracao.entidades.enums.StatusAtivo;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.utilitarios.Arquivos;
 import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -54,7 +56,7 @@ public class ProdutoServico {
     //buscar todos os registros com filtro de id, nome, categoria e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
-    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<Long> categorias, List<Long> marcas, Pageable pageable) {
+    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<String> marcas, List<String> categorias, BigDecimal precoInicial, BigDecimal precoFinal, Double estoqueInicial, Double estoqueFinal, Pageable pageable) {
         Page<Produto> resultado = Page.empty();
         if (produtoId != null) {
             Optional<Produto> produto = produtoRepositorio.findById(produtoId);
@@ -64,10 +66,10 @@ public class ProdutoServico {
         } else {
             nome = (nome.isEmpty()) ? null : nome;
             ean = (ean.isEmpty()) ? null : ean;
-            categorias = (categorias.isEmpty()) ? null : categorias;
             marcas = (marcas.isEmpty()) ? null : marcas;
+            categorias = (categorias.isEmpty()) ? null : categorias;
 
-            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, categorias, marcas, pageable);
+            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
         }
         return resultado.map(ProdutoResumidoDTO::new);
     }
@@ -83,7 +85,6 @@ public class ProdutoServico {
     public ProdutoDTO inserir(ProdutoDTO obj) {
         Produto produto = new Produto();
         atualizarDadosProduto(produto, obj);
-        produto.setOptAtivo(0);
         return new ProdutoDTO(produtoRepositorio.save(produto));
     }
 
@@ -113,10 +114,10 @@ public class ProdutoServico {
 
     //remover tamanho do produto
     @Transactional
-    public ProdutoDTO removerGrade(Long produtoId, String tamanho) {
-        Produto produto = produtoRepositorio.findById(produtoId).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + "  encontrado"));
-        produto.getGrade().removeIf(produtoGrade -> produtoGrade.getTamanho().equals(tamanho));
-        return new ProdutoDTO(produtoRepositorio.save(produto));
+    public void removerGrade(Long produtoId, String tamanho) {
+        ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produtoId, tamanho).
+                orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Tamanho " + tamanho + " de Produto " + produtoId + " já excluído ou não encontrado!"));
+        produtoGradeRepositorio.delete(produtoGrade);
     }
 
     //Método utilizado no método de inserir e atualizar dados
@@ -125,9 +126,25 @@ public class ProdutoServico {
             entidade.setDataCadastro(Instant.now());
             entidade.setQtdVendida(0);
             entidade.setOptAtivo(0);
+            entidade.setOptDisponivel(0);
+            entidade.setOptLancamento(0);
+            entidade.setOptPromocao(0);
+            entidade.setOptLancamento(0);
+            entidade.setOptFreteGratis(0);
+            entidade.setOptVariacao(0);
+            entidade.setOptProdVirtual(0);
+            produtoRepositorio.save(entidade);
         } else {
             entidade.setDataAtualizacao(Instant.now());
             entidade.setOptAtivo(dto.getOptAtivo().getCodigo());
+            entidade.setOptDisponivel(dto.getOptDisponivel().getCodigo());
+            entidade.setOptLancamento(dto.getOptLancamento().getCodigo());
+            entidade.setOptPromocao(dto.getOptPromocao().getCodigo());
+            entidade.setOptFreteGratis(dto.getOptFreteGratis().getCodigo());
+            entidade.setOptVariacao(dto.getOptVariacao().getCodigo());
+            entidade.setOptProdVirtual(dto.getOptProdVirtual().getCodigo());
+            entidade.setDataAtivacao(entidade.getOptAtivo() == StatusAtivo.INATIVO && dto.getOptAtivo() == StatusAtivo.ATIVO ? dto.getDataAtivacao() : entidade.getDataAtivacao());
+            entidade.setDataDesativacao(entidade.getOptAtivo() == StatusAtivo.ATIVO && dto.getOptAtivo() == StatusAtivo.INATIVO ? dto.getDataDesativacao() : entidade.getDataDesativacao());
         }
         entidade.setNome(dto.getNome());
         entidade.setEan(dto.getEan());
@@ -137,7 +154,7 @@ public class ProdutoServico {
         entidade.setDescCurta(dto.getDescCurta());
         entidade.setDescLonga(dto.getDescLonga());
         entidade.setDataLancamento(dto.getDataLancamento());
-        entidade.setEstoqueTotal(dto.getEstoqueTotal());
+        entidade.setPrecoCusto(dto.getPrecoCusto());
         entidade.setPreco(dto.getPreco());
         entidade.setPrecoProm(dto.getPrecoProm());
         entidade.setTempoGarantia(dto.getTempoGarantia());
@@ -149,20 +166,30 @@ public class ProdutoServico {
 
         Classe classe = carregarClasse(dto.getClasse());
         entidade.setClasse(classe);
-
         Marca marca = carregarMarca(dto.getMarca());
         entidade.setMarca(marca);
+
+        produtoRepositorio.save(entidade);
 
         List<Categoria> categorias = new ArrayList<>(carregarCategoria(dto.getCategorias()));
         entidade.getCategorias().clear();
         entidade.getCategorias().addAll(categorias);
 
-        produtoRepositorio.save(entidade);
         Set<ProdutoGrade> grades = new HashSet<>(carregarGrade(entidade, dto.getGrade()));
         entidade.getGrade().addAll(grades);
 
         List<ProdutoImagem> imagems = new ArrayList<>(carregarImagens(entidade, dto.getImagens()));
         entidade.getImagens().addAll(imagems);
+
+        entidade.setEstoqueTotal(atualizarEstoqueTotal(entidade.getProdutoId()));
+    }
+
+    //Atualizar e atualizar o campo estoqueTotal do produto conforme inserção ou atualização do mesmo
+    private Integer atualizarEstoqueTotal(Long produtoId) {
+        List<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoId(produtoId);
+        return produtoGrade.stream()
+                .mapToInt(ProdutoGrade::getQuantidadeEstoque)
+                .sum();
     }
 
     //Verifica se a classe existe para atualizar no produto
