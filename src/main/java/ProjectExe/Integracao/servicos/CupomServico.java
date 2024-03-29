@@ -8,6 +8,8 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRegistroExistente;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -34,12 +36,14 @@ public class CupomServico {
 
     //buscar todos os registros
     @Transactional(readOnly = true)
+    @Cacheable("cupons")
     public Page<CupomDTO> buscarTodos(Pageable pageable) {
         Page<Cupom> resultado = cupomRepositorio.findAll(pageable);
         return resultado.map(CupomDTO::new);
     }
 
     //inserir novo registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public CupomDTO inserir(CupomDTO dto) {
         Cupom cupom = new Cupom();
@@ -52,6 +56,7 @@ public class CupomServico {
     }
 
     //atualizar um registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public CupomDTO atualizar(Long cupomId, CupomDTO obj) {
         try {
@@ -65,6 +70,7 @@ public class CupomServico {
 
     //excluir registro por ID
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "produtos", allEntries = true)
     public void deletar(Long cupomId) {
         try {
             cupomRepositorio.deleteById(cupomId);

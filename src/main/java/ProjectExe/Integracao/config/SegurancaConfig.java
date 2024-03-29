@@ -54,7 +54,7 @@ public class SegurancaConfig {
                         .requestMatchers(HttpMethod.GET, "/vendas/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/vendas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/vendas/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/vendas/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/vendas/**").hasRole("DEV")
                         //categorias
                         .requestMatchers(HttpMethod.GET, "/categorias/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")

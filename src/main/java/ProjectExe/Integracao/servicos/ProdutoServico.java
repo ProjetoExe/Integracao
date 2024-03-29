@@ -3,20 +3,20 @@ package ProjectExe.Integracao.servicos;
 import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.entidades.enums.StatusAtivo;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.utilitarios.Arquivos;
 import ProjectExe.Integracao.servicos.utilitarios.Formatador;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +56,7 @@ public class ProdutoServico {
     //buscar todos os registros com filtro de id, nome, categoria e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
-    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<String> marcas, List<String> categorias, BigDecimal precoInicial, BigDecimal precoFinal, Double estoqueInicial, Double estoqueFinal, Pageable pageable) {
+    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, Long ean, Integer optAtivo, List<String> marcas, List<String> categorias, BigDecimal precoInicial, BigDecimal precoFinal, Double estoqueInicial, Double estoqueFinal, Pageable pageable) {
         Page<Produto> resultado = Page.empty();
         if (produtoId != null) {
             Optional<Produto> produto = produtoRepositorio.findById(produtoId);
@@ -65,11 +65,10 @@ public class ProdutoServico {
             }
         } else {
             nome = (nome.isEmpty()) ? null : nome;
-            ean = (ean.isEmpty()) ? null : ean;
             marcas = (marcas.isEmpty()) ? null : marcas;
             categorias = (categorias.isEmpty()) ? null : categorias;
 
-            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
+            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, PageRequest.of(0,20));
         }
         return resultado.map(ProdutoResumidoDTO::new);
     }
@@ -81,6 +80,7 @@ public class ProdutoServico {
     }
 
     //inserir novo registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public ProdutoDTO inserir(ProdutoDTO obj) {
         Produto produto = new Produto();
@@ -89,6 +89,7 @@ public class ProdutoServico {
     }
 
     //atualizar registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public ProdutoDTO atualizar(Long produtoId, ProdutoDTO obj) {
         try {
@@ -97,11 +98,14 @@ public class ProdutoServico {
             return new ProdutoDTO(produtoRepositorio.save(produto));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
     //excluir um registro
     //@Transactional retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "produtos", allEntries = true)
     public void deletar(Long produtoId) {
         try {
             produtoRepositorio.deleteById(produtoId);
@@ -126,25 +130,21 @@ public class ProdutoServico {
             entidade.setDataCadastro(Instant.now());
             entidade.setQtdVendida(0);
             entidade.setOptAtivo(0);
-            entidade.setOptDisponivel(0);
             entidade.setOptLancamento(0);
             entidade.setOptPromocao(0);
             entidade.setOptLancamento(0);
             entidade.setOptFreteGratis(0);
-            entidade.setOptVariacao(0);
             entidade.setOptProdVirtual(0);
             produtoRepositorio.save(entidade);
         } else {
             entidade.setDataAtualizacao(Instant.now());
-            entidade.setOptAtivo(dto.getOptAtivo().getCodigo());
-            entidade.setOptDisponivel(dto.getOptDisponivel().getCodigo());
-            entidade.setOptLancamento(dto.getOptLancamento().getCodigo());
-            entidade.setOptPromocao(dto.getOptPromocao().getCodigo());
-            entidade.setOptFreteGratis(dto.getOptFreteGratis().getCodigo());
-            entidade.setOptVariacao(dto.getOptVariacao().getCodigo());
-            entidade.setOptProdVirtual(dto.getOptProdVirtual().getCodigo());
-            entidade.setDataAtivacao(entidade.getOptAtivo() == StatusAtivo.INATIVO && dto.getOptAtivo() == StatusAtivo.ATIVO ? dto.getDataAtivacao() : entidade.getDataAtivacao());
-            entidade.setDataDesativacao(entidade.getOptAtivo() == StatusAtivo.ATIVO && dto.getOptAtivo() == StatusAtivo.INATIVO ? dto.getDataDesativacao() : entidade.getDataDesativacao());
+            entidade.setOptAtivo(dto.getOptAtivo());
+            entidade.setOptLancamento(dto.getOptLancamento());
+            entidade.setOptPromocao(dto.getOptPromocao());
+            entidade.setOptFreteGratis(dto.getOptFreteGratis());
+            entidade.setOptProdVirtual(dto.getOptProdVirtual());
+            entidade.setDataAtivacao(entidade.getOptAtivo() == 0 && dto.getOptAtivo() == 1 ? dto.getDataAtivacao() : entidade.getDataAtivacao());
+            entidade.setDataDesativacao(entidade.getOptAtivo() == 1 && dto.getOptAtivo() == 0 ? dto.getDataDesativacao() : entidade.getDataDesativacao());
         }
         entidade.setNome(dto.getNome());
         entidade.setEan(dto.getEan());
@@ -182,6 +182,8 @@ public class ProdutoServico {
         entidade.getImagens().addAll(imagems);
 
         entidade.setEstoqueTotal(atualizarEstoqueTotal(entidade.getProdutoId()));
+        entidade.setOptDisponivel(entidade.getEstoqueTotal() > 0 ? 1 : 0);
+        entidade.setOptVariacao(dto.getGrade().size() == 1 ? 0 : 1);
     }
 
     //Atualizar e atualizar o campo estoqueTotal do produto conforme inserção ou atualização do mesmo

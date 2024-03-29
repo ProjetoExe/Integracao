@@ -79,18 +79,4 @@ public class Produto implements Serializable{
 
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();
-
-    public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }
-
-    public OpcaoStatus getOptDisponivel() { return OpcaoStatus.status((optDisponivel)); }
-
-    public OpcaoStatus getOptLancamento() { return OpcaoStatus.status((optLancamento)); }
-
-    public OpcaoStatus getOptPromocao() { return OpcaoStatus.status((optPromocao)); }
-
-    public OpcaoStatus getOptFreteGratis() { return OpcaoStatus.status((optFreteGratis)); }
-
-    public OpcaoStatus getOptVariacao() { return OpcaoStatus.status((optVariacao)); }
-
-    public OpcaoStatus getOptProdVirtual() { return OpcaoStatus.status((optProdVirtual)); }
 }

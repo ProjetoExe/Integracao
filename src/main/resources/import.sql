@@ -25,28 +25,45 @@ INSERT INTO marca (nome) VALUES ('Nike');
 INSERT INTO marca (nome) VALUES ('Adidas');
 INSERT INTO marca (nome) VALUES ('Puma');
 
-INSERT INTO classe (nome) VALUES ('LETRA')
-INSERT INTO classe (nome) VALUES ('NUMERO')
-INSERT INTO classe (nome) VALUES ('KILO')
+INSERT INTO classe (nome) VALUES ('TAMANHO')
+INSERT INTO classe (nome) VALUES ('PESO')
+INSERT INTO classe (nome) VALUES ('MEDIDA')
+INSERT INTO classe (nome) VALUES ('QUANTIDADE')
+INSERT INTO classe (nome) VALUES ('VOLTAGEM')
 
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'U')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'PP')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'P')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'M')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'G')
 INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'GG')
-
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '33')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '34')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '35')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '36')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '37')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '38')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '39')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '40')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '41')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '42')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '43')
-INSERT INTO classe_grade (classe_id, tamanho) VALUES (2, '44')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'XG')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, 'XGG')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '23')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '24')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '25')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '26')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '27')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '28')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '29')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '30')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '31')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '33')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '34')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '35')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '36')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '37')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '38')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '39')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '40')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '41')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '42')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '43')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '44')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '45')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (1, '46')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (3, '110')
+INSERT INTO classe_grade (classe_id, tamanho) VALUES (3, '220')
 
 INSERT INTO produto (nome, ean, referencia, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, preco, preco_Prom, opt_ativo, marca_id) VALUES ('Geforce RTX 3060', 7897897897899, 'RTX30', 'Placa de Video', '12GB de RAM 192 Bits 3 Display Port e 1 HDMI', '2023-05-25T18:21:47.741', 0, 2900.00, 2400.00, 1, 1);
 INSERT INTO produto (nome, ean, referencia, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, preco, preco_Prom, opt_ativo, marca_id) VALUES ('Mouse Logitech G403', 7897897897888, 'G400', 'Mouse', 'Sensor profissional', '2023-05-26T19:21:47.741', 0, 280.00, 235.50, 1, 2);
@@ -60,12 +77,17 @@ INSERT INTO produto (nome, ean, referencia, desc_Curta, desc_Longa, data_Cadastr
 INSERT INTO produto (nome, referencia, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, preco, preco_Prom, opt_ativo, marca_id) VALUES ('Camiseta Nike Dry Fit Preta', 'CNK01', 'Camiseta', 'Camiseta esportiva com tecnologia Dry Fit', '2023-05-31T20:21:47.741', 0, 99.99, 99.99, 1, 12);
 INSERT INTO produto (nome, referencia, desc_Curta, desc_Longa, data_Cadastro, qtd_vendida, preco, preco_Prom, opt_ativo, marca_id) VALUES ('Tênis Adidas Ultra Boost', 'TADB01', 'Tênis', 'Tênis esportivo com tecnologia Boost', '2023-06-01T20:21:47.741', 0, 299.99, 299.99, 1, 13);
 
+INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (1, 'U', 7897897890001, 2900.00, 2400.00, 1);
+INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (2, 'U', 7897897890001, 280.00, 235.50, 1);
+INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (3, 'U', 7897897890001, 1100.00, 1000.00, 1);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (4, 'P', 7897897890001, 249.99, 249.99, 1);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (4, 'M', 7897897890002, 249.99, 249.99, 1);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (5, 'PP', 7897897890003, 169.99, 169.99, 1);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (5, 'G', 7897897890004, 169.99, 169.99, 3);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (6, 'P', 7897897890005, 139.99, 119.99, 2);
-INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (6, 'GG', 7897897890006, 139.99, 139.99, 2);
+INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (7, 'GG', 7897897890006, 4000.00, 3700.00, 2);
+INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (8, 'GG', 7897897890006, 350.00, 320.00, 2);
+INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (9, 'GG', 7897897890006, 1000.00, 950.00, 2);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (10, 'P', 7897897890007, 99.99, 99.99, 3);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (10, 'M', 7897897890008, 99.99, 99.99, 3);
 INSERT INTO produto_grade (produto_id, tamanho, ean, preco, preco_Promocional, quantidade_estoque) VALUES (10, 'G', 7897897890009, 109.99, 109.99, 2);

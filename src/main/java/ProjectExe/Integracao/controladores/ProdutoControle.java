@@ -36,8 +36,8 @@ public class ProdutoControle {
     public ResponseEntity<Page<ProdutoResumidoDTO>> buscarTodosProdutos(
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "nome", required = false) String nome,
-            @RequestParam(value = "ean", required = false) String ean,
-            @RequestParam(value = "ativo", required = false) Integer opt_ativo,
+            @RequestParam(value = "ean", required = false) Long ean,
+            @RequestParam(value = "ativo", required = false) Integer optAtivo,
             @RequestParam(value = "marcas", required = false) List<String> marcas,
             @RequestParam(value = "categorias", required = false) List<String> categorias,
             @RequestParam(value = "precoIni", defaultValue = "0.00") BigDecimal precoInicial,
@@ -45,7 +45,7 @@ public class ProdutoControle {
             @RequestParam(value = "estIni", defaultValue = "0.00") Double estoqueInicial,
             @RequestParam(value = "estFim", defaultValue = "100000.00") Double estoqueFinal, //100.000
             Pageable pageable) {
-        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodosProdutos(id, nome, ean, opt_ativo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
+        Page<ProdutoResumidoDTO> resultado = produtoServico.buscarTodosProdutos(id, nome, ean, optAtivo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

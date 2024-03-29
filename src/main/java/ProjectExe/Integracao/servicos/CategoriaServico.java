@@ -2,12 +2,12 @@ package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.CategoriaDTO;
 import ProjectExe.Integracao.entidades.Categoria;
-import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.repositorios.CategoriaRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -45,6 +45,7 @@ public class CategoriaServico {
     }
 
     //inserir novo registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public CategoriaDTO inserir(CategoriaDTO obj) {
         Categoria categoria = new Categoria();
@@ -53,6 +54,7 @@ public class CategoriaServico {
     }
 
     //atualizar um registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public CategoriaDTO atualizar(Long categoriaId, CategoriaDTO obj) {
         try {
@@ -66,6 +68,7 @@ public class CategoriaServico {
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "produtos", allEntries = true)
     public void deletar(Long categoriaId) {
         try {
             categoriaRepositorio.deleteById(categoriaId);

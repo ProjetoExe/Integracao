@@ -85,26 +85,5 @@ public class ProdutoDTO implements Serializable {
     public ProdutoDTO(Produto entidade) {
         BeanUtils.copyProperties(entidade, this);
         this.categorias = new ArrayList<>(entidade.getCategorias()); //conversão de SET para LIST para poder retornar no GET do JSON
-        this.optAtivo = entidade.getOptAtivo().getCodigo();
-        this.optDisponivel = entidade.getOptDisponivel().getCodigo();
-        this.optLancamento = entidade.getOptLancamento().getCodigo();
-        this.optPromocao = entidade.getOptPromocao().getCodigo();
-        this.optFreteGratis = entidade.getOptFreteGratis().getCodigo();
-        this.optVariacao = entidade.getOptVariacao().getCodigo();
-        this.optProdVirtual = entidade.getOptProdVirtual().getCodigo();
     }
-
-    public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }
-
-    public OpcaoStatus getOptDisponivel() { return OpcaoStatus.status((optDisponivel)); }
-
-    public OpcaoStatus getOptLancamento() { return OpcaoStatus.status((optLancamento)); }
-
-    public OpcaoStatus getOptPromocao() { return OpcaoStatus.status((optPromocao)); }
-
-    public OpcaoStatus getOptFreteGratis() { return OpcaoStatus.status((optFreteGratis)); }
-
-    public OpcaoStatus getOptVariacao() { return OpcaoStatus.status((optVariacao)); }
-
-    public OpcaoStatus getOptProdVirtual() { return OpcaoStatus.status((optProdVirtual)); }
 }

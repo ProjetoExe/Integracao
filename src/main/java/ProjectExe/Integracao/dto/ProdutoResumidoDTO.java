@@ -28,7 +28,6 @@ public class ProdutoResumidoDTO implements Serializable {
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
     public ProdutoResumidoDTO(Produto entidade){
         BeanUtils.copyProperties(entidade, this);
-        this.optAtivo = entidade.getOptAtivo().getCodigo();
     }
 
     public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }

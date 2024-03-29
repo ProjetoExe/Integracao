@@ -7,6 +7,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -44,6 +45,7 @@ public class MarcaServico {
     }
 
     //inserir novo registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public MarcaDTO inserir(MarcaDTO obj) {
         Marca marca = new Marca();
@@ -52,6 +54,7 @@ public class MarcaServico {
     }
 
     //atualizar um registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public MarcaDTO atualizar(Long marcaId, MarcaDTO obj) {
         try {
@@ -65,6 +68,7 @@ public class MarcaServico {
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "produtos", allEntries = true)
     public void deletar(Long marcaId) {
         try {
             marcaRepositorio.deleteById(marcaId);
