@@ -21,7 +21,7 @@ public class CupomControle {
     private CupomServico cupomServico;
 
     //buscar por ID
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/codigo/{id}")
     public ResponseEntity<CupomDTO> buscarPorId(@PathVariable Long id){
         CupomDTO resultado = cupomServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
@@ -52,8 +52,8 @@ public class CupomControle {
 
     //excluir um registro
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
+    public ResponseEntity<MensagemDTO> deletar(@PathVariable Long id){
         cupomServico.deletar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(MensagemDTO.of("Cupom " + id + "excluído com sucesso"));
     }
 }

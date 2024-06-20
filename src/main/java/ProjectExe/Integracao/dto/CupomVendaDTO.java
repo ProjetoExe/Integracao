@@ -26,9 +26,11 @@ public class CupomVendaDTO implements Serializable {
     @NotNull(message = "Valor de desconto não pode ser nulo")
     private BigDecimal vlrDesconto;
 
-    private Venda venda;
+    private Long venda;
 
     //Construtor com parâmetro da classe CupomVenda para CupomVendaDTO / BeanUtils necessita de setter além de getter no DTO
-    public CupomVendaDTO(CupomVenda cupomVenda) { BeanUtils.copyProperties(cupomVenda, this);
+    public CupomVendaDTO(CupomVenda cupomVenda) {
+        BeanUtils.copyProperties(cupomVenda, this);
+        this.venda = cupomVenda.getVenda().getVendaId();
     }
 }
