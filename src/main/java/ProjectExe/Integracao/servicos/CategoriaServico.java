@@ -26,35 +26,29 @@ public class CategoriaServico {
     @Autowired
     private CategoriaRepositorio categoriaRepositorio;
 
-    //buscar todos os registros com filtro de id e nome
+    //buscar todos os registros com filtro de nome
     @Transactional(readOnly = true)
     @Cacheable("categorias")
-    public Page<CategoriaDTO> buscarTodos_PorIdNome(Long categoriaId, String nome, Pageable pageable) {
-        Page<Categoria> resultado = Page.empty();
-        if (categoriaId != null) {
-            Optional<Categoria> categoria = categoriaRepositorio.findById(categoriaId);
-            if (categoria.isPresent()) {
-                resultado = new PageImpl<>(Collections.singletonList(categoria.get()), pageable, 1);
-            }
-        } else if (!nome.isEmpty()) {
-            resultado = categoriaRepositorio.findByNomeContaining(nome, pageable);
-        } else {
-            resultado = categoriaRepositorio.findAll(pageable);
-        }
+    public Page<CategoriaDTO> buscarTodos(String nome, Pageable pageable) {
+        Page<Categoria> resultado = categoriaRepositorio.buscarTodos(nome, pageable);
         return resultado.map(CategoriaDTO::new);
     }
 
     //inserir novo registro
-    @CacheEvict(value = "produtos", allEntries = true)
+    @CacheEvict(value = "categorias", allEntries = true)
     @Transactional
     public CategoriaDTO inserir(CategoriaDTO obj) {
-        Categoria categoria = new Categoria();
-        atualizarDados(categoria, obj);
-        return new CategoriaDTO(categoriaRepositorio.save(categoria));
+        try {
+            Categoria categoria = new Categoria();
+            atualizarDados(categoria, obj);
+            return new CategoriaDTO(categoriaRepositorio.save(categoria));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     //atualizar um registro
-    @CacheEvict(value = "produtos", allEntries = true)
+    @CacheEvict(value = "categorias", allEntries = true)
     @Transactional
     public CategoriaDTO atualizar(Long categoriaId, CategoriaDTO obj) {
         try {
@@ -68,7 +62,7 @@ public class CategoriaServico {
 
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    @CacheEvict(value = "produtos", allEntries = true)
+    @CacheEvict(value = "categorias", allEntries = true)
     public void deletar(Long categoriaId) {
         try {
             categoriaRepositorio.deleteById(categoriaId);
@@ -81,6 +75,6 @@ public class CategoriaServico {
 
     //Método para criar ou atualizar dados
     private void atualizarDados(Categoria entidade, CategoriaDTO dto) {
-        entidade.setNome(dto.getNome());
+        entidade.setNomeCat(dto.getNomeCat());
     }
 }

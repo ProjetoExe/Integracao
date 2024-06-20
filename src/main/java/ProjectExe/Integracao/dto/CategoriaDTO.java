@@ -19,7 +19,7 @@ public class CategoriaDTO implements Serializable {
 
     private Long categoriaId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
-    private String nome;
+    private String nomeCat;
 
     public CategoriaDTO(Categoria categoria){ BeanUtils.copyProperties(categoria, this); }
 }
