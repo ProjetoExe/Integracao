@@ -11,13 +11,13 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(of={"classe", "tamanho"})
+@EqualsAndHashCode(of={"classe", "variacao"})
 public class ClasseGrade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @Column(unique = true, length = 10)
-    private String tamanho;
+    private String variacao;
 
     @ManyToOne
     @JoinColumn(name = "classe_id")
