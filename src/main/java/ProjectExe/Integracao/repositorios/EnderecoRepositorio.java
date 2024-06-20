@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface EnderecoRepositorio extends JpaRepository<Endereco, Long> {
 
     Optional<Endereco> findByCepAndNumeroAndCliente_ClienteId(String cep, String numero, Long clienteId);
+
+    Optional<Endereco> findByCliente_ClienteIdAndOptPrincipalTrue(Long clienteId);
 }

@@ -3,6 +3,7 @@ package ProjectExe.Integracao.entidades;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -23,24 +24,26 @@ public class Cliente implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long clienteId;
-    private String nomeCliente;
+    private String nomeCli;
     private Date dataNascimento;
     @Column(unique = true)
-    private String cpf;
+    private String documento;
     @Column(unique = true)
-    private String rg;
     private String telefone;
     private String celular;
     @Column(unique = true)
     private String email;
     private String observacao;
-    private String cnpj;
-    private String razaoSocial;
-    private String inscricaoEstadual;
     private Instant dataRegistro;
     private Instant dataModificacao;
     private Instant dataUltimaCompra;
     private Integer totalPedidos;
+    @Column(nullable = false)
+    private Boolean optAtivo;
+
+    @OneToOne()
+    @JoinColumn(name = "enderecoPrincipalId")
+    private Endereco enderecoPadrao;
 
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Endereco> enderecos = new ArrayList<>();
