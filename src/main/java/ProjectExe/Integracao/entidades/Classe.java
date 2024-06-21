@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
+import ProjectExe.Integracao.dto.ClasseDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -21,9 +22,11 @@ public class Classe implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long classeId;
-    private String nome;
+    private String nomeClasse;
+    @Column(nullable = false)
+    private Boolean OptAtivo;
 
     @JsonIgnore
     @OneToMany(mappedBy = "classe", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ClasseGrade> tamanhos = new HashSet<>();
+    private Set<ClasseGrade> variacoes = new HashSet<>();
 }

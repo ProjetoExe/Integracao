@@ -45,6 +45,15 @@ public class ManipuladorExcecao {
         return ResponseEntity.status(status).body(erroPadrao);
     }
 
+    //exceção personalizada para erros de inserção incorretos - Adicionada para tratar exceção que vem do nível entidade
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErroPadrao> dadosIncorretos(IllegalArgumentException e, HttpServletRequest request){
+        String erro = "Dados de Inserção Incorretos";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erroPadrao);
+    }
+
     //exceção personalizada para erros de inserção de dados - Exceção lançada automaticamente pelo Spring, foi apenas tratada o retorno
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErroPadrao> argumentoDeEntradaInvalido(MethodArgumentNotValidException e, HttpServletRequest request){

@@ -1,17 +1,16 @@
 package ProjectExe.Integracao.servicos;
 
-import ProjectExe.Integracao.dto.ProdutoDTO;
-import ProjectExe.Integracao.dto.ProdutoResumidoDTO;
+import ProjectExe.Integracao.dto.*;
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.entidades.enums.StatusAtivo;
+import ProjectExe.Integracao.entidades.enums.VariacaoProduto;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.utilitarios.Arquivos;
 import ProjectExe.Integracao.servicos.utilitarios.Formatador;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,7 +20,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -46,8 +44,9 @@ public class ProdutoServico {
     @Autowired
     private Arquivos arquivos;
 
-    //buscar por ID
+    //buscar por ID para edição e visualização detalhada
     @Transactional(readOnly = true)
+    @Cacheable("produtos")
     public ProdutoDTO buscarPorId(Long produtoId) {
         Optional<Produto> resultado = produtoRepositorio.findById(produtoId);
         return resultado.map(ProdutoDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado"));
@@ -56,22 +55,18 @@ public class ProdutoServico {
     //buscar todos os registros com filtro de id, nome, categoria e ativo
     @Transactional(readOnly = true)
     @Cacheable("produtos")
-    public Page<ProdutoResumidoDTO> buscarTodosProdutos(Long produtoId, String nome, String ean, Integer optAtivo, List<String> marcas, List<String> categorias, BigDecimal precoInicial, BigDecimal precoFinal, Double estoqueInicial, Double estoqueFinal, Pageable pageable) {
-        Page<Produto> resultado = Page.empty();
+    public Page<ProdutoResumidoDTO> buscarTodos(Long produtoId, String nome, String ref, Long ean, String marca, Integer optAtivo, List<String> categorias, Double precoInicial, Double precoFinal, Integer estoqueInicial, Integer estoqueFinal, Pageable pageable) {
+        Page<ProdutoResumidoDTO> resultado = Page.empty();
         if (produtoId != null) {
-            Optional<Produto> produto = produtoRepositorio.findById(produtoId);
+            Optional<ProdutoResumidoDTO> produto = produtoRepositorio.buscarPorId(produtoId);
             if (produto.isPresent()) {
                 resultado = new PageImpl<>(Collections.singletonList(produto.get()), pageable, 1);
             }
         } else {
-            nome = (nome.isEmpty()) ? null : nome;
-            ean = (ean.isEmpty()) ? null : ean;
-            marcas = (marcas.isEmpty()) ? null : marcas;
-            categorias = (categorias.isEmpty()) ? null : categorias;
-
-            resultado = produtoRepositorio.findByParametros(nome, ean, optAtivo, marcas, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
+            //String categoriasStr = categorias != null ? String.join(",", categorias) : null;
+            resultado = produtoRepositorio.buscarTodos(nome, ref, ean, marca, optAtivo, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
         }
-        return resultado.map(ProdutoResumidoDTO::new);
+        return resultado;
     }
 
     //exportar produtos para excel
@@ -81,14 +76,20 @@ public class ProdutoServico {
     }
 
     //inserir novo registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public ProdutoDTO inserir(ProdutoDTO obj) {
-        Produto produto = new Produto();
-        atualizarDadosProduto(produto, obj);
-        return new ProdutoDTO(produtoRepositorio.save(produto));
+        try {
+            Produto produto = new Produto();
+            atualizarDadosProduto(produto, obj);
+            return new ProdutoDTO(produtoRepositorio.save(produto));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     //atualizar registro
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public ProdutoDTO atualizar(Long produtoId, ProdutoDTO obj) {
         try {
@@ -97,11 +98,14 @@ public class ProdutoServico {
             return new ProdutoDTO(produtoRepositorio.save(produto));
         } catch (EntityNotFoundException e) {
             throw new ExcecaoRecursoNaoEncontrado("Produto " + produtoId + " não encontrado");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
     }
 
     //excluir um registro
     //@Transactional retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "produtos", allEntries = true)
     public void deletar(Long produtoId) {
         try {
             produtoRepositorio.deleteById(produtoId);
@@ -111,11 +115,11 @@ public class ProdutoServico {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
     }
-
+    
     //remover tamanho do produto
     @Transactional
     public void removerGrade(Long produtoId, String tamanho) {
-        ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produtoId, tamanho).
+        ProdutoGrade produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdEVariacao(produtoId, tamanho).
                 orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Tamanho " + tamanho + " de Produto " + produtoId + " já excluído ou não encontrado!"));
         produtoGradeRepositorio.delete(produtoGrade);
     }
@@ -124,38 +128,39 @@ public class ProdutoServico {
     private void atualizarDadosProduto(Produto entidade, ProdutoDTO dto) {
         if (entidade.getProdutoId() == null) {
             entidade.setDataCadastro(Instant.now());
+            entidade.setOptAtivo(dto.getOptAtivo() != null ? dto.getOptAtivo() : Boolean.FALSE);
+            entidade.setOptLancamento(dto.getOptLancamento() != null ? dto.getOptLancamento() : Boolean.FALSE);
+            entidade.setOptPromocao(dto.getOptPromocao() != null ? dto.getOptPromocao() : Boolean.FALSE);
+            entidade.setOptLancamento(dto.getOptLancamento() != null ? dto.getOptLancamento() : Boolean.FALSE);
+            entidade.setOptFreteGratis(dto.getOptFreteGratis() != null ? dto.getOptFreteGratis() : Boolean.FALSE);
+            entidade.setOptProdVirtual(dto.getOptProdVirtual() != null ? dto.getOptProdVirtual() : Boolean.FALSE);
+            entidade.setOptDisponivel(dto.getOptDisponivel() != null ? dto.getOptDisponivel() : Boolean.FALSE);
+            entidade.setDataAtivacao(dto.getOptAtivo() ? Instant.now() : null);
             entidade.setQtdVendida(0);
-            entidade.setOptAtivo(0);
-            entidade.setOptDisponivel(0);
-            entidade.setOptLancamento(0);
-            entidade.setOptPromocao(0);
-            entidade.setOptLancamento(0);
-            entidade.setOptFreteGratis(0);
-            entidade.setOptVariacao(0);
-            entidade.setOptProdVirtual(0);
-            produtoRepositorio.save(entidade);
         } else {
             entidade.setDataAtualizacao(Instant.now());
-            entidade.setOptAtivo(dto.getOptAtivo().getCodigo());
-            entidade.setOptDisponivel(dto.getOptDisponivel().getCodigo());
-            entidade.setOptLancamento(dto.getOptLancamento().getCodigo());
-            entidade.setOptPromocao(dto.getOptPromocao().getCodigo());
-            entidade.setOptFreteGratis(dto.getOptFreteGratis().getCodigo());
-            entidade.setOptVariacao(dto.getOptVariacao().getCodigo());
-            entidade.setOptProdVirtual(dto.getOptProdVirtual().getCodigo());
-            entidade.setDataAtivacao(entidade.getOptAtivo() == StatusAtivo.INATIVO && dto.getOptAtivo() == StatusAtivo.ATIVO ? dto.getDataAtivacao() : entidade.getDataAtivacao());
-            entidade.setDataDesativacao(entidade.getOptAtivo() == StatusAtivo.ATIVO && dto.getOptAtivo() == StatusAtivo.INATIVO ? dto.getDataDesativacao() : entidade.getDataDesativacao());
+            entidade.setDataAtivacao(!entidade.getOptAtivo() && dto.getOptAtivo() ? dto.getDataAtivacao() : entidade.getDataAtivacao());
         }
-        entidade.setNome(dto.getNome());
+        entidade.setOptAtivo(dto.getOptAtivo());
+        entidade.setOptLancamento(dto.getOptLancamento());
+        entidade.setOptPromocao(dto.getOptPromocao());
+        entidade.setOptLancamento(dto.getOptLancamento());
+        entidade.setOptFreteGratis(dto.getOptFreteGratis());
+        entidade.setOptProdVirtual(dto.getOptProdVirtual());
+        entidade.setDataDesativacao(entidade.getOptAtivo() && !dto.getOptAtivo() ? dto.getDataDesativacao() : entidade.getDataDesativacao());
+        entidade.setNomeProd(dto.getNomeProd());
         entidade.setEan(dto.getEan());
         String ncmFormatado = Formatador.formatarNCM(dto.getNcm());
         entidade.setNcm(ncmFormatado);
         entidade.setReferencia(dto.getReferencia());
         entidade.setDescCurta(dto.getDescCurta());
         entidade.setDescLonga(dto.getDescLonga());
+        entidade.setModelo(dto.getModelo());
+        entidade.setItensIncluso(dto.getItensIncluso());
         entidade.setDataLancamento(dto.getDataLancamento());
+        entidade.setQtdEstoque(dto.getQtdEstoque());
         entidade.setPrecoCusto(dto.getPrecoCusto());
-        entidade.setPreco(dto.getPreco());
+        entidade.setPrecoVenda(dto.getPrecoVenda());
         entidade.setPrecoProm(dto.getPrecoProm());
         entidade.setTempoGarantia(dto.getTempoGarantia());
         entidade.setMsgGarantia(dto.getMsgGarantia());
@@ -164,95 +169,114 @@ public class ProdutoServico {
         entidade.setAltura(dto.getAltura());
         entidade.setPeso(dto.getPeso());
 
-        Classe classe = carregarClasse(dto.getClasse());
-        entidade.setClasse(classe);
-        Marca marca = carregarMarca(dto.getMarca());
-        entidade.setMarca(marca);
-
+        carregarClasse(entidade, dto.getClasse());
+        carregarMarca(entidade, dto.getMarca());
+        carregarCategoria(entidade, dto.getCategoria());
         produtoRepositorio.save(entidade);
 
-        List<Categoria> categorias = new ArrayList<>(carregarCategoria(dto.getCategorias()));
-        entidade.getCategorias().clear();
-        entidade.getCategorias().addAll(categorias);
-
-        Set<ProdutoGrade> grades = new HashSet<>(carregarGrade(entidade, dto.getGrade()));
-        entidade.getGrade().addAll(grades);
-
-        List<ProdutoImagem> imagems = new ArrayList<>(carregarImagens(entidade, dto.getImagens()));
-        entidade.getImagens().addAll(imagems);
+        carregarSubCategorias(entidade, dto.getSubCategorias());
+        carregarImagens(entidade, dto.getImagens());
+        carregarGrade(entidade, dto.getGrade());
 
         entidade.setEstoqueTotal(atualizarEstoqueTotal(entidade.getProdutoId()));
+        entidade.setOptDisponivel(entidade.getEstoqueTotal() > 0);
+        produtoRepositorio.save(entidade);
     }
 
     //Atualizar e atualizar o campo estoqueTotal do produto conforme inserção ou atualização do mesmo
     private Integer atualizarEstoqueTotal(Long produtoId) {
         List<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoId(produtoId);
         return produtoGrade.stream()
-                .mapToInt(ProdutoGrade::getQuantidadeEstoque)
+                .mapToInt(ProdutoGrade::getQtdEstoque)
                 .sum();
     }
 
     //Verifica se a classe existe para atualizar no produto
-    private Classe carregarClasse(Classe classe) {
-        return classeRepositorio.findById(classe.getClasseId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classe.getClasseId() + " não existe"));
+    private void carregarClasse(Produto produto, ClasseDTO classeDTO) {
+        Classe classe = classeRepositorio.findById(classeDTO.getClasseId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classeDTO.getClasseId() + " não existe"));
+        produto.setClasse(classe);
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private Marca carregarMarca(Marca marca) {
-        return marcaRepositorio.findByNome(marca.getNome()).orElseGet(() -> {
+    private void carregarMarca(Produto produto, MarcaDTO marcaDTO) {
+        Marca marca = marcaRepositorio.findByNomeMarca(marcaDTO.getNomeMarca()).orElseGet(() -> {
             Marca novaMarca = new Marca();
-            novaMarca.setNome(marca.getNome());
+            novaMarca.setNomeMarca(marcaDTO.getNomeMarca());
             return marcaRepositorio.save(novaMarca);
         });
+        produto.setMarca(marca);
+    }
+
+    private void carregarCategoria(Produto produto, CategoriaDTO categoriaDTO) {
+        Categoria categoria = categoriaRepositorio.findByNomeCat(categoriaDTO.getNomeCat()).orElseGet(() -> {
+            Categoria novaCategoria = new Categoria();
+            novaCategoria.setNomeCat(categoriaDTO.getNomeCat());
+            return categoriaRepositorio.save(novaCategoria);
+        });
+        produto.setCategoria(categoria);
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
-    private Set<Categoria> carregarCategoria(List<Categoria> categorias) {
-        Set<Categoria> categoriasProd = new HashSet<>();
-        for (Categoria categoriaDTO : categorias) {
-            Categoria categoria = categoriaRepositorio.findByNome(categoriaDTO.getNome()).orElseGet(() -> {
+    private void carregarSubCategorias(Produto produto, Set<CategoriaDTO> categoriasDTO) {
+        Set<Categoria> categorias = new HashSet<>();
+        for (CategoriaDTO categoriaDTO : categoriasDTO) {
+            Categoria categoria = categoriaRepositorio.findByNomeCat(categoriaDTO.getNomeCat()).orElseGet(() -> {
                 Categoria novaCategoria = new Categoria();
-                novaCategoria.setNome(categoriaDTO.getNome());
+                novaCategoria.setNomeCat(categoriaDTO.getNomeCat());
                 return categoriaRepositorio.save(novaCategoria);
             });
-            categoriasProd.add(categoria);
+            categorias.add(categoria);
         }
-        return categoriasProd;
+        produto.getSubCategorias().clear();
+        produto.getSubCategorias().addAll(categorias);
     }
 
     //Atualiza e insere novos tamanhos a grade produtos se necessário
-    private List<ProdutoGrade> carregarGrade(Produto produto, Set<ProdutoGrade> grades) {
-        return grades.stream().map(grade -> {
-            Optional<ProdutoGrade> produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), grade.getTamanho());
+    private void carregarGrade(Produto produto, Set<ProdutoGradeDTO> gradesDTO) {
+        Set<ProdutoGrade> grades = gradesDTO.stream().map(grade -> {
+            Optional<ProdutoGrade> produtoGrade;
+            if (produto.getVariacaoProduto() == VariacaoProduto.VARIACAO_DUPLA) {
+                produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdEVariacaoDupla(produto.getProdutoId(), grade.getVariacao(), grade.getVariacaoDupla());
+            } else {
+                produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdEVariacao(produto.getProdutoId(), grade.getVariacao());
+            }
             return produtoGrade.map(produtoExistente -> {
-                produtoExistente.setPreco(grade.getPreco());
-                produtoExistente.setPrecoPromocional(grade.getPrecoPromocional());
+                produtoExistente.setPrecoVenda(grade.getPrecoVenda());
+                produtoExistente.setPrecoProm(grade.getPrecoProm());
                 produtoExistente.setEan(grade.getEan());
-                produtoExistente.setQuantidadeEstoque(grade.getQuantidadeEstoque());
+                produtoExistente.setQtdEstoque(grade.getQtdEstoque());
                 return produtoGradeRepositorio.save(produtoExistente);
             }).orElseGet(() -> {
-                Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getTamanho());
+                Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(grade.getVariacao());
                 ClasseGrade classeGradeProd = classeGrade.orElseGet(() -> {
                     ClasseGrade novaClasseGrade = new ClasseGrade();
                     novaClasseGrade.setClasse(produto.getClasse());
-                    novaClasseGrade.setTamanho(grade.getTamanho());
+                    novaClasseGrade.setVariacao(grade.getVariacao());
                     return classeGradeRepositorio.save(novaClasseGrade);
                 });
-                ProdutoGrade novaGrade = new ProdutoGrade();
-                novaGrade.setProduto(produto);
-                novaGrade.setPreco(grade.getPreco());
-                novaGrade.setPrecoPromocional(grade.getPrecoPromocional());
-                novaGrade.setEan(grade.getEan());
-                novaGrade.setQuantidadeEstoque(grade.getQuantidadeEstoque());
-                novaGrade.setTamanho(classeGradeProd.getTamanho());
+                ProdutoGrade novaGrade = novoProdutoGrade(produto, grade, classeGradeProd);
                 return produtoGradeRepositorio.save(novaGrade);
             });
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toSet());
+        produto.getGrade().addAll(grades);
+    }
+
+    //criar nova grade de produto (novo tamanho ou variação)
+    private static ProdutoGrade novoProdutoGrade(Produto produto, ProdutoGradeDTO grade, ClasseGrade classeGradeProd) {
+        ProdutoGrade novaGrade = new ProdutoGrade();
+        novaGrade.setProduto(produto);
+        novaGrade.setPrecoVenda(grade.getPrecoVenda());
+        novaGrade.setPrecoProm(grade.getPrecoProm());
+        novaGrade.setEan(grade.getEan());
+        novaGrade.setQtdEstoque(grade.getQtdEstoque());
+        novaGrade.setVariacao(classeGradeProd.getVariacao());
+        novaGrade.setVariacaoDupla(produto.getVariacaoProduto() == VariacaoProduto.VARIACAO_DUPLA ? grade.getVariacaoDupla() : null);
+        return novaGrade;
     }
 
     //atualiza e insere novas imagens ao produto
-    public List<ProdutoImagem> carregarImagens(Produto produto, List<ProdutoImagem> imagens) {
-        return imagens.stream().map(imagem -> {
+    public void carregarImagens(Produto produto, List<ProdutoImagemDTO> imagensDTO) {
+        List<ProdutoImagem> imagens = imagensDTO.stream().map(imagem -> {
             Optional<ProdutoImagem> produtoImagem = produtoImagemRepositorio.buscarPorProdutoIdETamanho(produto.getProdutoId(), imagem.getImgUrl());
             if (produtoImagem.isPresent()) {
                 ProdutoImagem produtoImagemExistente = produtoImagem.get();
@@ -265,6 +289,7 @@ public class ProdutoServico {
                 novaImagem.setImgUrl(imagem.getImgUrl());
                 return produtoImagemRepositorio.save(novaImagem);
             }
-        }).collect(Collectors.toList());
+        }).toList();
+        produto.getImagens().addAll(imagens);
     }
 }

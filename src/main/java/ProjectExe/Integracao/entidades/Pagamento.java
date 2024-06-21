@@ -1,11 +1,9 @@
 package ProjectExe.Integracao.entidades;
 
 import ProjectExe.Integracao.dto.PagamentoDTO;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.parameters.P;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -26,6 +24,7 @@ public class Pagamento implements Serializable {
     private Long id;
     private Instant data;
     private String tipo;
+    @Column(precision = 10, scale = 2)
     private BigDecimal valor;
     private Integer qtdParcelas;
 

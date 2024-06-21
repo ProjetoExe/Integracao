@@ -20,13 +20,12 @@ public class CategoriaControle {
     @Autowired
     private CategoriaServico categoriaServico;
 
-    //buscar todos os registros com filtro de id e nome
+    //buscar todos os registros com filtro de nome
     @GetMapping
     public ResponseEntity<Page<CategoriaDTO>> buscarTodos(
-            @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestParam(value = "nome", defaultValue = "") String nome,
+            @RequestParam(value = "nome", required = false) String nome,
             Pageable pageable) {
-        Page<CategoriaDTO> resultado = categoriaServico.buscarTodos_PorIdNome(id, nome, pageable);
+        Page<CategoriaDTO> resultado = categoriaServico.buscarTodos(nome, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
@@ -48,8 +47,8 @@ public class CategoriaControle {
 
     //exclui um registro
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
+    public ResponseEntity<MensagemDTO> deletar(@PathVariable Long id){
         categoriaServico.deletar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(MensagemDTO.of("Categoria " + id + "excluída com sucesso"));
     }
 }

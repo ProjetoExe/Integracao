@@ -8,6 +8,6 @@ import java.util.Optional;
 
 public interface ClasseGradeRepositorio extends JpaRepository<ClasseGrade, String> {
 
-    @Query(value = "SELECT cg FROM ClasseGrade cg WHERE cg.classe.id = :classeId AND cg.tamanho = :tamanho")
-    Optional<ClasseGrade> buscarPorClasseETamanho(Long classeId, String tamanho);
+    @Query(value = "SELECT cg FROM ClasseGrade cg WHERE cg.variacao = :variacao")
+    Optional<ClasseGrade> buscarPorClasseETamanho(String variacao);
 }

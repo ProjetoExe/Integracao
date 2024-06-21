@@ -8,6 +8,8 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRegistroExistente;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -34,24 +36,30 @@ public class CupomServico {
 
     //buscar todos os registros
     @Transactional(readOnly = true)
+    @Cacheable("cupons")
     public Page<CupomDTO> buscarTodos(Pageable pageable) {
         Page<Cupom> resultado = cupomRepositorio.findAll(pageable);
         return resultado.map(CupomDTO::new);
     }
 
     //inserir novo registro
+    @CacheEvict(value = "cupons", allEntries = true)
     @Transactional
     public CupomDTO inserir(CupomDTO dto) {
-        Cupom cupom = new Cupom();
-        if (this.cupomRepositorio.findByCodigo(dto.getCodigo()) !=null){
-            throw new ExcecaoRegistroExistente("Código de Cupom informado já existe");
+        try {
+            Cupom cupom = new Cupom();
+            if (this.cupomRepositorio.findByCodigo(dto.getCodigo()) != null) {
+                throw new ExcecaoRegistroExistente("Código de Cupom informado já existe");
+            }
+            atualizarDados(cupom, dto);
+            return new CupomDTO(cupomRepositorio.save(cupom));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
         }
-        atualizarDados(cupom, dto);
-        return new CupomDTO(cupomRepositorio.save(cupom));
-
     }
 
     //atualizar um registro
+    @CacheEvict(value = "cupons", allEntries = true)
     @Transactional
     public CupomDTO atualizar(Long cupomId, CupomDTO obj) {
         try {
@@ -65,6 +73,7 @@ public class CupomServico {
 
     //excluir registro por ID
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "cupons", allEntries = true)
     public void deletar(Long cupomId) {
         try {
             cupomRepositorio.deleteById(cupomId);
@@ -80,16 +89,16 @@ public class CupomServico {
         if (entidade.getCupomId() == null) {
             entidade.setDataCriacao(Instant.now());
             entidade.setQtdUso(0);
-            entidade.setVlrTotalUso(new BigDecimal("0.00"));
+            entidade.setVlrTotalUso(BigDecimal.valueOf(0));
         } else {
             entidade.setDataAlteracao(Instant.now());
         }
         entidade.setCodigo(dto.getCodigo());
-        entidade.setDescricao(dto.getDescricao());
+        entidade.setNomeCupom(dto.getNomeCupom());
         entidade.setDataInicio(dto.getDataInicio());
         entidade.setDataFim(dto.getDataFim());
         entidade.setVlrCupom(dto.getVlrCupom());
-        entidade.setOptTipo(entidade.getOptTipo());
+        entidade.setPorPorcentagem(entidade.getPorPorcentagem());
         entidade.setVlrMinProd(dto.getVlrMinProd());
         entidade.setVlrMaxProd(dto.getVlrMaxProd());
         entidade.setLimiteQtdUso(dto.getLimiteQtdUso());

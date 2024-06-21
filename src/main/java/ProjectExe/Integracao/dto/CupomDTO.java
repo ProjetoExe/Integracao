@@ -24,15 +24,15 @@ public class CupomDTO implements Serializable {
 
     @NotBlank(message = "Código de utilização do Cupom não pode ser nulo ou vazio")
     private String codigo;
-    private String descricao;
+    private String nomeCupom;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCriacao;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAlteracao;
     private LocalDate dataInicio;
     private LocalDate dataFim;
-    private char optTipo;
-    private char optCumulativo;
+    private Boolean porPorcentagem;
+    private Boolean optCumulativo;
     private BigDecimal vlrCupom;
     private BigDecimal vlrMinProd;
     private BigDecimal vlrMaxProd;

@@ -41,46 +41,55 @@ public class Arquivos {
             headerRow.createCell(3).setCellValue("Data-Cadastro");
             headerRow.createCell(4).setCellValue("Ativo");
             headerRow.createCell(5).setCellValue("Tamanho");
-            headerRow.createCell(6).setCellValue("Preço");
-            headerRow.createCell(7).setCellValue("Preço-Promo");
-            headerRow.createCell(8).setCellValue("EAN");
-            headerRow.createCell(9).setCellValue("Estoque");
-            headerRow.createCell(10).setCellValue("Marca");
-            headerRow.createCell(11).setCellValue("Categorias");
+            headerRow.createCell(6).setCellValue("Preço-Custo");
+            headerRow.createCell(7).setCellValue("Preço-Venda");
+            headerRow.createCell(8).setCellValue("Preço-Promo");
+            headerRow.createCell(9).setCellValue("EAN");
+            headerRow.createCell(10).setCellValue("Estoque");
+            headerRow.createCell(11).setCellValue("Marca");
+            headerRow.createCell(12).setCellValue("Modelo");
+            headerRow.createCell(13).setCellValue("Categoria");
+            headerRow.createCell(14).setCellValue("SubCategorias");
 
             for (Produto produto : produtos) {
                 List<ProdutoGrade> produtoGrades = produtoGradeRepositorio.buscarPorProdutoId(produto.getProdutoId());
                 if (produtoGrades.isEmpty()) {
                     Row row = sheet.createRow(rowNum++);
                     row.createCell(0).setCellValue(produto.getProdutoId());
-                    row.createCell(1).setCellValue(produto.getNome());
-                    row.createCell(2).setCellValue(produto.getReferencia());
+                    row.createCell(1).setCellValue(produto.getNomeProd());
+                    row.createCell(2).setCellValue(produto.getReferencia() != null ? produto.getReferencia() : "");
                     LocalDate localDate = produto.getDataCadastro().atZone(ZoneId.systemDefault()).toLocalDate();
-                    row.createCell(3).setCellValue(localDate.format(data));
-                    row.createCell(4).setCellValue(String.valueOf(produto.getOptAtivo()));
-                    row.createCell(5).setCellValue("U"); // Defina o tamanho como "U" ou como desejar
-                    row.createCell(6).setCellValue(produto.getPreco().doubleValue());
-                    row.createCell(7).setCellValue(produto.getPrecoProm().doubleValue());
-                    row.createCell(8).setCellValue(String.valueOf(produto.getEan()));
-                    row.createCell(9).setCellValue(produto.getEstoqueTotal());
-                    row.createCell(10).setCellValue(produto.getMarca().getNome());
-                    row.createCell(11).setCellValue(produto.getCategorias().toString());
+                    row.createCell(3).setCellValue(localDate != null ? localDate.format(data) : "");
+                    row.createCell(4).setCellValue(produto.getOptAtivo());
+                    row.createCell(6).setCellValue(produto.getPrecoCusto() != null ? produto.getPrecoCusto().doubleValue() : 0);
+                    row.createCell(7).setCellValue(produto.getPrecoVenda() != null ? produto.getPrecoVenda().doubleValue() : 0);
+                    row.createCell(8).setCellValue(produto.getPrecoProm() != null ? produto.getPrecoProm().doubleValue() : 0);
+                    row.createCell(9).setCellValue(produto.getEan() != null ? String.valueOf(produto.getEan()) : "");
+                    row.createCell(10).setCellValue(produto.getQtdEstoque());
+                    row.createCell(11).setCellValue(produto.getMarca().getNomeMarca());
+                    row.createCell(12).setCellValue(produto.getModelo() != null ? produto.getModelo() : "");
+                    row.createCell(13).setCellValue(produto.getCategoria().getNomeCat());
+                    row.createCell(14).setCellValue(produto.getSubCategorias().toString());
                 } else {
                     for (ProdutoGrade produtoGrade : produtoGrades) {
                         Row row = sheet.createRow(rowNum++);
                         row.createCell(0).setCellValue(produto.getProdutoId());
-                        row.createCell(1).setCellValue(produto.getNome());
-                        row.createCell(2).setCellValue(produto.getReferencia());
+                        row.createCell(1).setCellValue(produto.getNomeProd());
+                        row.createCell(2).setCellValue(produto.getReferencia() != null ? produto.getReferencia() : "");
                         LocalDate localDate = produto.getDataCadastro().atZone(ZoneId.systemDefault()).toLocalDate();
-                        row.createCell(3).setCellValue(localDate.format(data));
-                        row.createCell(4).setCellValue(String.valueOf(produto.getOptAtivo()));
-                        row.createCell(5).setCellValue(produtoGrade.getTamanho());
-                        row.createCell(6).setCellValue(produtoGrade.getPreco().doubleValue());
-                        row.createCell(7).setCellValue(produtoGrade.getPrecoPromocional().doubleValue());
-                        row.createCell(8).setCellValue(String.valueOf(produtoGrade.getEan()));
-                        row.createCell(9).setCellValue(produtoGrade.getQuantidadeEstoque());
-                        row.createCell(10).setCellValue(produto.getMarca().getNome());
-                        row.createCell(11).setCellValue(produto.getCategorias().toString());
+                        row.createCell(3).setCellValue(localDate != null ? localDate.format(data) : "");
+                        row.createCell(4).setCellValue(produto.getOptAtivo());
+                        row.createCell(5).setCellValue(produtoGrade.getVariacao());
+                        row.createCell(5).setCellValue(produtoGrade.getVariacaoDupla());
+                        row.createCell(6).setCellValue(produtoGrade.getPrecoCusto() != null ? produtoGrade.getPrecoCusto().doubleValue() : 0);
+                        row.createCell(7).setCellValue(produtoGrade.getPrecoVenda() != null ? produtoGrade.getPrecoVenda().doubleValue() : 0);
+                        row.createCell(8).setCellValue(produtoGrade.getPrecoProm() != null ? produtoGrade.getPrecoProm().doubleValue() : 0);
+                        row.createCell(9).setCellValue(produtoGrade.getEan() != null ? String.valueOf(produtoGrade.getEan()) : "");
+                        row.createCell(10).setCellValue(produtoGrade.getQtdEstoque());
+                        row.createCell(11).setCellValue(produto.getMarca().getNomeMarca());
+                        row.createCell(12).setCellValue(produto.getModelo() != null ? produto.getModelo() : "");
+                        row.createCell(13).setCellValue(produto.getCategoria().getNomeCat());
+                        row.createCell(14).setCellValue(produto.getSubCategorias().toString());
                     }
                 }
             }

@@ -21,12 +21,16 @@ public class Categoria implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long categoriaId;
-    private String nome;
+    private String nomeCat;
 
     @JsonIgnore
-    @ManyToMany(mappedBy = "categorias")
-    private Set<Produto> produtos = new HashSet<>();
+    @OneToMany(mappedBy = "categoria")
+    private Set<Produto> produtosCategoriaPrincipal = new HashSet<>();
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "subCategorias")
+    private Set<Produto> produtosSubCategorias = new HashSet<>();
 
     @Override
-    public String toString() { return nome; }
+    public String toString() { return nomeCat; }
 }

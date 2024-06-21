@@ -43,6 +43,7 @@ public class LojaDTO implements Serializable {
     private String cidade;
     @Pattern(regexp = "[A-Z]{2}", message = "O campo de estado deve conter duas letras maiúsculas.")
     private String estado;
+    @Pattern(regexp = "[A-Z]{2}", message = "O campo de país deve conter duas letras maiúsculas.")
     private String pais;
 
     //Construtor com parâmetro da classe Loja para LojaDTO / BeanUtils necessita de setter além de getter no DTO

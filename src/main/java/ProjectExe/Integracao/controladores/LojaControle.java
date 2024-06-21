@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.controladores;
 
 import ProjectExe.Integracao.dto.LojaDTO;
+import ProjectExe.Integracao.dto.MensagemDTO;
 import ProjectExe.Integracao.servicos.LojaServico;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class LojaControle {
     private LojaServico lojaServico;
 
     //buscar apenas a Loja conectada pois o cliente só terá acesso as informações de sua loja
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/codigo/{id}")
     public ResponseEntity<LojaDTO> buscarPorId(@PathVariable Long id){
         LojaDTO resultado = lojaServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
@@ -42,8 +43,8 @@ public class LojaControle {
 
     //excluir registro
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
+    public ResponseEntity<MensagemDTO> deletar(@PathVariable Long id){
         lojaServico.deletar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(MensagemDTO.of("Loja " + id + "excluída com sucesso"));
     }
 }

@@ -1,6 +1,7 @@
 package ProjectExe.Integracao.entidades.pk;
 
 import ProjectExe.Integracao.entidades.Produto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -13,7 +14,7 @@ import java.io.Serializable;
 @Embeddable
 @Getter
 @Setter
-@EqualsAndHashCode(of={"produto", "tamanho"})
+@EqualsAndHashCode(of= {"produto", "variacao"})
 public class ProdutoGradePK implements Serializable {
     private static final long SerialVersionUID = 1L;
 
@@ -21,6 +22,5 @@ public class ProdutoGradePK implements Serializable {
     @JoinColumn(name = "produto_id")
     private Produto produto;
 
-    @JoinColumn(name = "tamanho_id")
-    private String tamanho;
+    private String variacao;
 }

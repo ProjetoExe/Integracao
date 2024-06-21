@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.io.Serializable;
 
@@ -18,6 +19,8 @@ public class ProdutoImagem implements Serializable {
 
     @EmbeddedId
     private ProdutoImagemPK id = new ProdutoImagemPK();
+
+    @Setter
     @Getter
     private String titulo;
 
@@ -35,6 +38,4 @@ public class ProdutoImagem implements Serializable {
     public String getImgUrl() { return id.getImgUrl(); }
 
     public void setImgUrl(String imgUrl) { id.setImgUrl(imgUrl); }
-
-    public void setTitulo(String titulo) { this.titulo = titulo; }
 }

@@ -20,13 +20,12 @@ public class MarcaControle {
     @Autowired
     private MarcaServico marcaServico;
 
-    //buscar todos os registros com filtro de id e nome
+    //buscar todos os registros com filtro de nome
     @GetMapping
-    public ResponseEntity<Page<MarcaDTO>> buscarTodos_PorIdNome(
-            @RequestParam(value = "id", defaultValue = "") Long id,
-            @RequestParam(value = "nome", defaultValue = "") String nome,
+    public ResponseEntity<Page<MarcaDTO>> buscarTodos(
+            @RequestParam(value = "nome", required = false) String nome,
             Pageable pageable){
-        Page<MarcaDTO> resultado = marcaServico.buscarTodos_PorIdNome(id, nome, pageable);
+        Page<MarcaDTO> resultado = marcaServico.buscarTodos(nome, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
@@ -48,8 +47,8 @@ public class MarcaControle {
 
     //excluir um registro
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
+    public ResponseEntity<MensagemDTO> deletar(@PathVariable Long id){
         marcaServico.deletar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(MensagemDTO.of("Marca " + id + " excluída com sucesso"));
     }
 }

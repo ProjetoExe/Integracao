@@ -3,6 +3,7 @@ package ProjectExe.Integracao.entidades;
 import ProjectExe.Integracao.entidades.pk.ProdutoGradePK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -13,34 +14,58 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.Instant;
 
 @Entity
 @Table(name = "produto_grade")
 @NoArgsConstructor
 @Setter //Não adicionado o @Getter pelo conflito com o @JsonIgnore do 'getProduto'
 @EqualsAndHashCode(of="id")
-@JsonPropertyOrder({"tamanho", "codigoDeBarra", "precoVista", "precoPrazo", "quantidadeEstoque"})
+@JsonPropertyOrder({"variacao", "variacaoDupla", "referencia", "ean", "margemCusto", "precoCusto", "precoVenda", "precoProm", "qtdEstoque", "qtdMinima"})
 public class ProdutoGrade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @EmbeddedId
     private ProdutoGradePK id = new ProdutoGradePK();
+
+    @Getter
+    private String variacaoDupla; // para produtos com variação dupla, caso não seja, será null
     @Getter
     private Long ean;
     @Getter
-    private BigDecimal preco;
+    private String referencia;
     @Getter
-    private BigDecimal precoPromocional;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal margemCusto;
     @Getter
-    private Integer quantidadeEstoque;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoCusto;
+    @Getter
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoVenda;
+    @Getter
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoProm;
+    @Getter
+    private Integer qtdEstoque;
+    @Getter
+    private Integer qtdMinima;
+    @Getter
+    private Instant dataInicioProm;
+    @Getter
+    private Instant dataFimProm;
 
-    public ProdutoGrade(Produto produto, String tamanho, Long ean, BigDecimal preco, BigDecimal precoPromocional, Integer quantidadeEstoque) {
+    public ProdutoGrade(Produto produto, String variacao, String variacaoDupla, Long ean, BigDecimal margemCusto, BigDecimal precoCusto, BigDecimal precoVenda, BigDecimal precoProm, BigDecimal precoPromocional, Integer qtdEstoque, Integer qtdMinima) {
         id.setProduto(produto);
-        id.setTamanho(tamanho);
+        id.setVariacao(variacao);
+        this.variacaoDupla = variacaoDupla;
         this.ean = ean;
-        this.preco = preco;
-        this.precoPromocional = precoPromocional;
-        this.quantidadeEstoque = quantidadeEstoque;
+        this.margemCusto = margemCusto;
+        this.precoCusto = precoCusto;
+        this.precoVenda = precoVenda;
+        this.precoProm = precoPromocional;
+        this.qtdEstoque = qtdEstoque;
+        this.qtdMinima = qtdMinima;
     }
 
     @JsonIgnore
@@ -48,11 +73,11 @@ public class ProdutoGrade implements Serializable {
 
     public void setProduto(Produto produto) { id.setProduto(produto); }
 
-    public String getTamanho() { return id.getTamanho(); }
+    public String getVariacao() { return id.getVariacao(); }
 
-    public void setTamanho(String tamanho) { id.setTamanho(tamanho); }
+    public void setVariacao(String tamanho) { id.setVariacao(tamanho); }
 
     public void atualizarEstoque(ProdutoGrade produtoGrade, Integer qtdVendida) {
-        produtoGrade.quantidadeEstoque -= qtdVendida;
+        produtoGrade.qtdEstoque -= qtdVendida;
     }
 }

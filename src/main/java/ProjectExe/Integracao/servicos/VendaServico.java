@@ -8,6 +8,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -74,6 +75,7 @@ public class VendaServico {
     }
 
     //inserir um registro de venda
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public VendaInsereAtualizaDTO inserir(VendaInsereAtualizaDTO obj) {
         Venda entidade = new Venda();
@@ -82,6 +84,7 @@ public class VendaServico {
     }
 
     //atualizar um registro - *no caso apenas o status da venda*
+    @CacheEvict(value = "produtos", allEntries = true)
     @Transactional
     public VendaInsereAtualizaDTO atualizar(Long vendaId, VendaInsereAtualizaDTO obj) {
         try {
@@ -95,6 +98,7 @@ public class VendaServico {
 
     //excluir um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
+    @CacheEvict(value = "produtos", allEntries = true)
     public void deletar(Long vendaId) {
         try {
             vendaRepositorio.deleteById(vendaId);
