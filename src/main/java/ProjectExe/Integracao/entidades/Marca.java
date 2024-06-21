@@ -21,7 +21,7 @@ public class Marca implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long marcaId;
-    private String nome;
+    private String nomeMarca;
 
     @JsonIgnore
     @OneToMany(mappedBy = "marca")

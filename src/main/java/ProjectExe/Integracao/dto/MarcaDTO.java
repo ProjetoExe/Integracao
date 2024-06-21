@@ -17,7 +17,7 @@ public class MarcaDTO implements Serializable {
 
     private Long marcaId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
-    private String nome;
+    private String nomeMarca;
 
     //Construtor com parâmetro da classe Marca para MarcaDTO / BeanUtils necessita de setter além de getter no DTO
     public MarcaDTO(Marca entidade){ BeanUtils.copyProperties(entidade, this); }
