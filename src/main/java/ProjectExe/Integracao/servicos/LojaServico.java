@@ -7,6 +7,7 @@ import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ public class LojaServico {
 
     //buscar apenas a Loja conectada pois o cliente só terá acesso as informações de sua loja
     @Transactional(readOnly = true)
+    @Cacheable("lojas")
     public LojaDTO buscarPorId(Long lojaId) {
         Optional<Loja> resultado = lojaRepositorio.findById(lojaId);
         return resultado.map(LojaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Loja " + lojaId + " não encontrada"));
