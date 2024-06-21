@@ -1,10 +1,9 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
-import ProjectExe.Integracao.entidades.enums.StatusAtivo;
+import ProjectExe.Integracao.entidades.enums.VariacaoProduto;
 import com.fasterxml.jackson.annotation.*;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,11 +17,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@JsonPropertyOrder({"produtoId", "nome", "ean", "ncm", "referencia", "descCurta", "descLonga", "dataCadastro", "dataAtualizacao", "dataLancamento", "estoqueTotal",
-                    "qtdVendida", "preco", "precoProm", "tempoGarantia", "msgGarantia", "comprimento", "largura", "altura", "peso", "classe", "optAtivo",
-                    "optDisponivel", "optLancamento", "optPromocao", "optFreteGratis", "optVariacao", "optProdVirtual", "dataAtivacao", "dataDesativacao",
-                    "marca", "categorias", "imgUrl", "grade"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,59 +27,84 @@ public class ProdutoDTO implements Serializable {
 
     private Long produtoId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
-    private String nome;
+    private String nomeProd;
     private Long ean;
     private String ncm;
     private String referencia;
     private String descCurta;
     private String descLonga;
+    private String modelo;
+    private String itensIncluso;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataCadastro;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT")
     private Instant dataAtualizacao;
     private LocalDate dataLancamento;
+    private Integer qtdEstoque;
     private Integer estoqueTotal;
+    private Integer estoqueMin;
+    private Integer prazoDisponibilidade;
     private Integer qtdVendida;
+    private BigDecimal margemCusto;
     private BigDecimal precoCusto;
-    private BigDecimal preco;
+    private BigDecimal precoVenda;
     private BigDecimal precoProm;
+    private Instant dataInicioProm;
+    private Instant dataFimProm;
     private String tempoGarantia;
     private String msgGarantia;
-    private Double comprimento;
-    private Double largura;
-    private Double altura;
-    private Double peso;
-    private Integer optAtivo;
-    private Integer optDisponivel;
-    private Integer optLancamento;
-    private Integer optPromocao;
-    private Integer optFreteGratis;
-    private Integer optVariacao;
-    private Integer optProdVirtual;
+    private BigDecimal comprimento;
+    private BigDecimal largura;
+    private BigDecimal altura;
+    private BigDecimal peso;
+    private Boolean optAtivo;
+    private Boolean optLancamento;
+    private Boolean optPromocao;
+    private Boolean optFreteGratis;
+    private Boolean optProdVirtual;
+    private Boolean optDisponivel;
     private Instant dataAtivacao;
     private Instant dataDesativacao;
+    private Integer optVariacao;
 
-    @JsonIgnoreProperties("nome")
+    private Long promocaoId;
+
+    @JsonIgnoreProperties({"nomeClasse", "variacoes"})
     @JsonUnwrapped
-    private Classe classe;
+    private ClasseDTO classe;
 
     @JsonIgnoreProperties("marcaId")
-    @JsonUnwrapped(suffix = "_marca")
-    private Marca marca;
+    @JsonUnwrapped
+    private MarcaDTO marca;
 
     @JsonIgnoreProperties("categoriaId")
-    private List<Categoria> categorias = new ArrayList<>();
+    @JsonUnwrapped(suffix = "Principal")
+    private CategoriaDTO categoria;
 
-    private Set<ProdutoGrade> grade = new HashSet<>();
+    @JsonIgnoreProperties("categoriaId")
+    private Set<CategoriaDTO> subCategorias = new HashSet<>();
 
-    private List<ProdutoImagem> imagens = new ArrayList<>();
+    private Set<ProdutoGradeDTO> grade = new HashSet<>();
 
-    @JsonIgnore
-    private Set<VendaItens> itens = new HashSet<>();
+    @JsonIgnoreProperties("produtoId")
+    private List<ProdutoImagemDTO> imagens = new ArrayList<>();
 
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
-    public ProdutoDTO(Produto entidade) {
-        BeanUtils.copyProperties(entidade, this);
-        this.categorias = new ArrayList<>(entidade.getCategorias()); //conversão de SET para LIST para poder retornar no GET do JSON
+    public ProdutoDTO(Produto produto) {
+        BeanUtils.copyProperties(produto, this);
+        this.classe = new ClasseDTO(produto.getClasse());
+        this.marca = new MarcaDTO(produto.getMarca());
+        this.categoria = new CategoriaDTO(produto.getCategoria());
+        this.subCategorias = produto.getSubCategorias().stream()
+                .map(CategoriaDTO::new)
+                .collect(Collectors.toSet());
+        this.grade = produto.getGrade().stream()
+                .map(ProdutoGradeDTO::new)
+                .collect(Collectors.toSet());
+        this.imagens = produto.getImagens().stream()
+                .map(ProdutoImagemDTO::new)
+                .collect(Collectors.toList());
     }
+
+    public VariacaoProduto getOptVariacao() { return VariacaoProduto.codigoStatus(optVariacao); }
 }

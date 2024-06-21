@@ -1,7 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
-import ProjectExe.Integracao.entidades.enums.OpcaoStatus;
-import ProjectExe.Integracao.entidades.enums.StatusAtivo;
+import ProjectExe.Integracao.entidades.enums.VariacaoProduto;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,13 +20,14 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(of="produtoId")
-public class Produto implements Serializable{
+public class Produto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long produtoId;
-    private String nome;
+    @Column(nullable = false)
+    private String nomeProd;
     private Long ean;
     private String ncm;
     private String referencia;
@@ -35,29 +35,54 @@ public class Produto implements Serializable{
     private String descCurta;
     @Column(columnDefinition = "TEXT")
     private String descLonga;
+    private String modelo;
+    private String itensIncluso;
     private Instant dataCadastro;
     private Instant dataAtualizacao;
     private LocalDate dataLancamento;
+    private Integer qtdEstoque; // para produtos únicos
     private Integer estoqueTotal;
+    private Integer estoqueMin;
+    private Integer prazoDisponibilidade;
     private Integer qtdVendida;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal margemCusto;
+    @Column(precision = 10, scale = 2)
     private BigDecimal precoCusto;
-    private BigDecimal preco;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoVenda;
+    @Column(precision = 10, scale = 2)
     private BigDecimal precoProm;
+    private Instant dataInicioProm; //habilitado somente se precoProm for preenchido manualmente ou produto estiver incluído em promoção- não pode ser salvo nulo
+    private Instant dataFimProm; //habilitado somente se precoProm for preenchido manualmente ou produto estiver incluído em promoção - não pode ser salvo nulo
     private String tempoGarantia;
     private String msgGarantia;
-    private Double comprimento;
-    private Double largura;
-    private Double altura;
-    private Double peso;
-    private Integer optAtivo;
-    private Integer optDisponivel;
-    private Integer optLancamento;
-    private Integer optPromocao;
-    private Integer optFreteGratis;
-    private Integer optVariacao;
-    private Integer optProdVirtual;
+    @Column(precision = 6, scale = 2)
+    private BigDecimal comprimento;
+    @Column(precision = 6, scale = 2)
+    private BigDecimal largura;
+    @Column(precision = 6, scale = 2)
+    private BigDecimal altura;
+    @Column(precision = 8, scale = 3)
+    private BigDecimal peso;
+    @Column(nullable = false)
+    private Boolean optAtivo;
+    @Column(nullable = false)
+    private Boolean optLancamento;
+    @Column(nullable = false)
+    private Boolean optPromocao;
+    @Column(nullable = false)
+    private Boolean optFreteGratis;
+    @Column(nullable = false)
+    private Boolean optProdVirtual;
+    @Column(nullable = false)
+    private Boolean optDisponivel;
     private Instant dataAtivacao;
     private Instant dataDesativacao;
+    @Column(nullable = false)
+    private Integer optVariacao;
+
+    private Long promocaoId;
 
     @ManyToOne
     @JoinColumn(name = "classe_id")
@@ -67,9 +92,13 @@ public class Produto implements Serializable{
     @JoinColumn(name = "marca_id")
     private Marca marca;
 
+    @ManyToOne
+    @JoinColumn(name = "categoria_principal_id")
+    private Categoria categoria;
+
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @JoinTable(name = "produto_categoria", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
-    private Set<Categoria> categorias = new HashSet<>();
+    @JoinTable(name = "produto_subCategorias", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    private Set<Categoria> subCategorias = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ProdutoGrade> grade = new HashSet<>();
@@ -79,4 +108,21 @@ public class Produto implements Serializable{
 
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();
+
+    public VariacaoProduto getVariacaoProduto() { return VariacaoProduto.codigoStatus(optVariacao); }
+
+    public void setVariacaoProduto(VariacaoProduto variacaoProduto) {
+        if (variacaoProduto != null) {
+            this.optVariacao = variacaoProduto.getCodigo();
+        }
+    }
+
+    //detecta automaticamente as categorias duplicada ao inserir ou atualizar o produto
+    @PrePersist
+    @PreUpdate
+    private void validarSubCategorias() {
+        if (categoria != null && subCategorias.contains(categoria)) {
+            throw new IllegalArgumentException("A subcategoria não pode ser a mesma que a categoria principal.");
+        }
+    }
 }

@@ -9,8 +9,11 @@ import java.util.Optional;
 
 public interface ProdutoGradeRepositorio extends JpaRepository<ProdutoGrade, Long> {
 
-    @Query(value = "SELECT pg FROM ProdutoGrade pg WHERE pg.id.produto.id = :produtoId AND pg.id.tamanho = :tamanho")
-    Optional<ProdutoGrade> buscarPorProdutoIdETamanho(Long produtoId, String tamanho);
+    @Query(value = "SELECT pg FROM ProdutoGrade pg WHERE pg.id.produto.id = :produtoId AND pg.id.variacao = :variacao")
+    Optional<ProdutoGrade> buscarPorProdutoIdEVariacao(Long produtoId, String variacao);
+
+    @Query(value = "SELECT pg FROM ProdutoGrade pg WHERE pg.id.produto.id = :produtoId AND pg.id.variacao = :variacao AND pg.variacaoDupla = :variacaoDupla")
+    Optional<ProdutoGrade> buscarPorProdutoIdEVariacaoDupla(Long produtoId, String variacao, String variacaoDupla);
 
     @Query(value = "SELECT pg FROM ProdutoGrade pg WHERE pg.id.produto.id = :produtoId")
     List<ProdutoGrade> buscarPorProdutoId(Long produtoId);

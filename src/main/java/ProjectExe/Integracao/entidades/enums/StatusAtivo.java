@@ -1,16 +1,16 @@
 package ProjectExe.Integracao.entidades.enums;
 
 public enum StatusAtivo {
-    INATIVO(0),
-    ATIVO(1);
+    INATIVO(false),
+    ATIVO(true);
 
-    private int codigo;
+    private boolean codigo;
 
-    private StatusAtivo(int codigo) { this.codigo = codigo; }
+    private StatusAtivo(boolean codigo) { this.codigo = codigo; }
 
-    public int getCodigo() { return codigo; }
+    public boolean getCodigo() { return codigo; }
 
-    public static StatusAtivo status(int codigo){
+    public static StatusAtivo status(boolean codigo){
         for (StatusAtivo valor : StatusAtivo.values()) {
             if (valor.getCodigo() == codigo){
                 return valor;
