@@ -55,6 +55,11 @@ public class SegurancaConfig {
                         .requestMatchers(HttpMethod.POST, "/vendas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/vendas/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/vendas/**").hasRole("DEV")
+                        //classes
+                        .requestMatchers(HttpMethod.GET, "/classes/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/classes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/classes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/classes/**").hasRole("ADMIN")
                         //categorias
                         .requestMatchers(HttpMethod.GET, "/categorias/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/categorias/**").hasRole("ADMIN")
@@ -70,6 +75,11 @@ public class SegurancaConfig {
                         .requestMatchers(HttpMethod.POST, "/cupons/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/cupons/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/cupons/**").hasRole("ADMIN")
+                        //promoções
+                        .requestMatchers(HttpMethod.GET, "/promocoes/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/promocoes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/promocoes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/promocoes/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(segurancaFiltro, UsernamePasswordAuthenticationFilter.class)
