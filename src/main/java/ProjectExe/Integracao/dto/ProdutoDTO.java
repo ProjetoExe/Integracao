@@ -63,27 +63,21 @@ public class ProdutoDTO implements Serializable {
     private Boolean optFreteGratis;
     private Boolean optProdVirtual;
     private Boolean optDisponivel;
+    private Integer optVariacao;
     private Instant dataAtivacao;
     private Instant dataDesativacao;
-    private Integer optVariacao;
 
     private Long promocaoId;
 
-    @JsonIgnoreProperties({"nomeClasse", "variacoes"})
-    @JsonUnwrapped
-    private ClasseDTO classe;
+    private String nomeClasse;
 
-    @JsonIgnoreProperties("marcaId")
-    @JsonUnwrapped
-    private MarcaDTO marca;
+    private String nomeMarca;
 
-    @JsonIgnoreProperties("categoriaId")
-    @JsonUnwrapped(suffix = "Principal")
-    private CategoriaDTO categoria;
+    private String nomeCategoriaPrincipal;
 
-    @JsonIgnoreProperties("categoriaId")
-    private Set<CategoriaDTO> subCategorias = new HashSet<>();
+    private Set<String> subCategorias = new HashSet<>();
 
+    @JsonIgnoreProperties("produtoId")
     private Set<ProdutoGradeDTO> grade = new HashSet<>();
 
     @JsonIgnoreProperties("produtoId")
@@ -92,11 +86,11 @@ public class ProdutoDTO implements Serializable {
     //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
     public ProdutoDTO(Produto produto) {
         BeanUtils.copyProperties(produto, this);
-        this.classe = new ClasseDTO(produto.getClasse());
-        this.marca = new MarcaDTO(produto.getMarca());
-        this.categoria = new CategoriaDTO(produto.getCategoria());
+        this.nomeClasse = produto.getClasse().getNomeClasse();
+        this.nomeMarca = produto.getMarca().getNomeMarca();
+        this.nomeCategoriaPrincipal = produto.getCategoria().getNomeCat();
         this.subCategorias = produto.getSubCategorias().stream()
-                .map(CategoriaDTO::new)
+                .map(Categoria::getNomeCat)
                 .collect(Collectors.toSet());
         this.grade = produto.getGrade().stream()
                 .map(ProdutoGradeDTO::new)
@@ -107,4 +101,10 @@ public class ProdutoDTO implements Serializable {
     }
 
     public VariacaoProduto getOptVariacao() { return VariacaoProduto.codigoStatus(optVariacao); }
+
+    public void setOptVariacao(VariacaoProduto variacaoProduto) {
+        if (variacaoProduto != null) {
+            this.optVariacao = variacaoProduto.getCodigo();
+        }
+    }
 }

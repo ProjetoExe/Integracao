@@ -24,7 +24,7 @@ public class ProdutoControle {
     private ProdutoServico produtoServico;
 
     //buscar por ID
-    @GetMapping(value = "/codigo/{id}")
+    @GetMapping(value = "/{id}/detalhes")
     public ResponseEntity<ProdutoDTO> buscarPorId(@PathVariable Long id){
         ProdutoDTO resultado = produtoServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
