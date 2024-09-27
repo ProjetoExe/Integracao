@@ -9,6 +9,6 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long> {
     //Busca automaticamente os usuários por login
     UserDetails findByLogin(String login);
 
-    @Query(value = "SELECT u FROM Usuario u WHERE u.login = :login")
-    Usuario buscarPorLogin(String login);
+    @Query(value = "SELECT u FROM Usuario u WHERE u.email = :email")
+    Usuario buscarPorEmail(String email);
 }
