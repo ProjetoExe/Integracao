@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
@@ -49,6 +50,15 @@ public class ManipuladorExcecao {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErroPadrao> dadosIncorretos(IllegalArgumentException e, HttpServletRequest request){
         String erro = "Dados de Inserção Incorretos";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
+        return ResponseEntity.status(status).body(erroPadrao);
+    }
+
+    //execeção personalizada para erros de exportação de arquivo
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ErroPadrao> erroExportarArquivo(IOException e, HttpServletRequest request){
+        String erro = "Erro ao Exportar Arquivo";
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ErroPadrao erroPadrao = new ErroPadrao(Instant.now(), status.value(), erro, e.getMessage(), request.getRequestURI());
         return ResponseEntity.status(status).body(erroPadrao);
