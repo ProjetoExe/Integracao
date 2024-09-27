@@ -19,9 +19,9 @@ public class ClienteControle {
     @Autowired
     private ClienteServico clienteServico;
 
-    @GetMapping(value = "/codigo/{id}")
-    public ResponseEntity<ClienteDTO> buscarPorId(@PathVariable Long id){
-        ClienteDTO resultado = clienteServico.buscarPorId(id);
+    @GetMapping(value = "/codigo/{clienteId}")
+    public ResponseEntity<ClienteDTO> buscarPorId(@PathVariable Long clienteId){
+        ClienteDTO resultado = clienteServico.buscarPorId(clienteId);
         return ResponseEntity.ok().body(resultado);
     }
 
@@ -30,10 +30,11 @@ public class ClienteControle {
     public ResponseEntity<Page<ClienteResumidoDTO>> buscarTodos(
             @RequestParam(value = "id", required = false) Long clienteId,
             @RequestParam(value = "nome", required = false) String nomeCli,
-            @RequestParam(value = "nome", required = false) String email,
-            @RequestParam(value = "nome", required = false) String documento,
+            @RequestParam(value = "email", required = false) String email,
+            @RequestParam(value = "cpf", required = false) String cpf,
+            @RequestParam(value = "cnpj", required = false) String cnpj,
             Pageable pageable) {
-        Page<ClienteResumidoDTO> resultado = clienteServico.buscarTodos(clienteId, nomeCli, email, documento, pageable);
+        Page<ClienteResumidoDTO> resultado = clienteServico.buscarTodos(clienteId, nomeCli, email, cpf, cnpj, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 

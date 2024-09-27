@@ -18,9 +18,10 @@ public interface ClienteRepositorio extends JpaRepository<Cliente, Long> {
             "FROM Cliente c " +
             "WHERE (c.nomeCli LIKE CONCAT('%', :nomeCli, '%') OR :nomeCli IS NULL) " +
             "AND (c.email = :email OR :email IS NULL) " +
-            "AND (c.documento = :documento OR :documento IS NULL) " +
+            "AND (c.cpf = :cpf OR :cpf IS NULL) " +
+            "AND (c.cnpj = :cnpj OR :cnpj IS NULL) " +
             "ORDER BY c.clienteId DESC")
-    Page<ClienteResumidoDTO> buscarTodos(String nomeCli, String email, String documento, Pageable pageable);
+    Page<ClienteResumidoDTO> buscarTodos(String nomeCli, String email, String cpf, String cnpj, Pageable pageable);
 
-    Optional<Cliente> findByDocumento(String Documento);
+    Optional<Cliente> findByCpfOrCnpj(String cpf, String cnpj);
 }

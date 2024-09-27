@@ -2,6 +2,7 @@ package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Cliente;
 import ProjectExe.Integracao.entidades.Endereco;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
@@ -27,10 +28,10 @@ public class ClienteDTO implements Serializable {
     private Long clienteId;
     @NotBlank(message = "Nome não pode ser nulo ou vazio")
     private String nomeCli;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date dataNascimento;
-    @NotBlank(message = "Documento não pode ser nulo ou vazio")
-    @Length(min = 11, max = 14, message = "Documento Inválido")
-    private String documento;
+    private String cpf;
+    private String cnpj;
     private String telefone;
     private String celular;
     private String email;
@@ -47,7 +48,7 @@ public class ClienteDTO implements Serializable {
     @JsonIgnoreProperties("enderecoId")
     private List<EnderecoDTO> enderecos = new ArrayList<>();
 
-    //Construtor com parâmetro da Cliente Venda para ClienteDTO / BeanUtils necessita de setter além de getter no DTO
+    //Construtor com parâmetro da Cliente para ClienteDTO / BeanUtils necessita de setter além de getter no DTO
     public ClienteDTO(Cliente cliente) {
         BeanUtils.copyProperties(cliente, this);
         this.enderecoPadrao = new EnderecoDTO(cliente.getEnderecoPadrao());
