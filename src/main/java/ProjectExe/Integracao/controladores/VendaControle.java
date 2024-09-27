@@ -23,7 +23,7 @@ public class VendaControle {
     private VendaServico vendaServico;
 
     //busca vendas por ID detalhadamente
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}/detalhes")
     public ResponseEntity<VendaDTO> buscarPorId(@PathVariable Long id){
         VendaDTO resultado = vendaServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);
@@ -31,19 +31,19 @@ public class VendaControle {
 
     //buscar todos os registros com filtro de id, data e cliente
     @GetMapping
-    public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos_VendasPorData(
+    public ResponseEntity<Page<VendaResumidaDTO>> buscarTodos(
             @RequestParam(value = "id", defaultValue = "") Long id,
             @RequestParam(value = "minData", defaultValue = "") String minData,
             @RequestParam(value = "maxData", defaultValue = "") String maxData,
             Pageable pageable) {
-        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos_VendasPorIdEClienteEData(id, minData, maxData, pageable);
+        Page<VendaResumidaDTO> resultado = vendaServico.buscarTodos(id, minData, maxData, pageable);
         return ResponseEntity.ok().body(resultado);
     }
 
     //inserir novo registro
     @PostMapping
     public ResponseEntity<MensagemDTO> inserir(@Valid @RequestBody VendaInsereAtualizaDTO obj){
-        VendaInsereAtualizaDTO entidade = vendaServico.inserir(obj);
+        VendaDTO entidade = vendaServico.inserir(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
                 .buildAndExpand(entidade.getVendaId()).toUri();
         return ResponseEntity.created(uri).body(MensagemDTO.of("Venda " + entidade.getVendaId() + " inserida com sucesso!"));
@@ -53,13 +53,13 @@ public class VendaControle {
     @PutMapping(value = "/{id}")
     public ResponseEntity<MensagemDTO> atualizar(@PathVariable Long id, @Valid @RequestBody VendaInsereAtualizaDTO dto){
         VendaInsereAtualizaDTO entidade = vendaServico.atualizar(id, dto);
-        return ResponseEntity.ok().body(MensagemDTO.of("Venda " + id + "atualizada com sucesso!"));
+        return ResponseEntity.ok().body(MensagemDTO.of("Venda " + id + " atualizada com sucesso!"));
     }
 
     //excluir um registro
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id){
+    public ResponseEntity<MensagemDTO> deletar(@PathVariable Long id){
         vendaServico.deletar(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(MensagemDTO.of("Venda + " + id + "excluída com sucesso"));
     }
 }

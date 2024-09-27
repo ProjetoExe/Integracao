@@ -4,7 +4,7 @@ import ProjectExe.Integracao.dto.ProdutoDTO;
 import ProjectExe.Integracao.dto.PromocaoDTO;
 import ProjectExe.Integracao.dto.PromocaoResumidaDTO;
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.entidades.enums.ProdutosPromocao;
+import ProjectExe.Integracao.entidades.enums.TipoProdutoAlteracao;
 import ProjectExe.Integracao.repositorios.ProdutoGradeRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
 import ProjectExe.Integracao.repositorios.PromocaoRepositorio;
@@ -54,16 +54,8 @@ public class PromocaoServico {
         Instant dataFinal = maxData.isBlank() ? LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC) :
                 LocalDate.parse(maxData, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC);
 
-        Page<Promocao> resultado = Page.empty();
-        if (promocaoId != null) {
-            Optional<Promocao> promocao = promocaoRepositorio.findById(promocaoId);
-            if (promocao.isPresent()) {
-                resultado = new PageImpl<>(Collections.singletonList(promocao.get()), pageable, 1);
-            }
-        } else {
-            resultado = promocaoRepositorio.buscarTodos(dataInicial, dataFinal, pageable);
-        }
-        return resultado.map(PromocaoResumidaDTO::new);
+        Page<PromocaoResumidaDTO> resultado = Page.empty();
+        return resultado = promocaoRepositorio.buscarTodos(promocaoId, dataInicial, dataFinal, pageable);
     }
 
     //inserir uma promoção
@@ -111,11 +103,11 @@ public class PromocaoServico {
         promocaoRepositorio.save(entidade);
 
         List<ProdutoDTO> produtos = new ArrayList<>();
-        if (entidade.getTipoProdProm() == ProdutosPromocao.TODOS) {
+        if (entidade.getTipoProdProm() == TipoProdutoAlteracao.TODOS) {
             produtos = produtoRepositorio.buscarTodosProdutos();
             carregarProdutos(entidade, produtos);
             aplicarPromocaoProdutos(entidade, produtos);
-        } else if (entidade.getTipoProdProm() == ProdutosPromocao.POR_CATEGORIAS) {
+        } else if (entidade.getTipoProdProm() == TipoProdutoAlteracao.POR_CATEGORIAS) {
             produtos = produtoRepositorio.buscarPorCategoria(dto.getLista());
             carregarProdutos(entidade, produtos);
             aplicarPromocaoProdutos(entidade, produtos);
@@ -151,17 +143,22 @@ public class PromocaoServico {
             produto.setDataInicioProm(entidade.getDataInicioProm());
             produto.setDataFimProm(entidade.getDataFimProm());
             produto.setOptPromocao(true);
-            if (entidade.getApliVariacoes()){
-                List<ProdutoGrade> variacoes = produtoGradeRepositorio.buscarPorProdutoId(produto.getProdutoId());
-                if (!variacoes.isEmpty()){
-                    for (ProdutoGrade produtoGrade : variacoes){
-                        produtoGrade.setPrecoProm(vlrPromocional);
-                        produtoGrade.setDataInicioProm(entidade.getDataInicioProm());
-                        produtoGrade.setDataFimProm(entidade.getDataFimProm());
-                    }
+            atualizarVariacoes(produto, vlrPromocional, entidade);
+            produtoRepositorio.save(produto);
+        }
+    }
+
+    //aplica alteração também nas variações
+    private void atualizarVariacoes(Produto produto, BigDecimal novoVlr, Promocao dto) {
+        if (dto.getApliVariacoes()) {
+            List<ProdutoGrade> variacoes = produtoGradeRepositorio.buscarPorProdutoId(produto.getProdutoId());
+            if (!variacoes.isEmpty()) {
+                for (ProdutoGrade produtoGrade : variacoes) {
+                    produtoGrade.setPrecoProm(novoVlr);
+                    produtoGrade.setDataInicioProm(produto.getDataInicioProm());
+                    produtoGrade.setDataFimProm(produto.getDataFimProm());
                 }
             }
-            produtoRepositorio.save(produto);
         }
     }
 

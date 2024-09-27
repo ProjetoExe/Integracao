@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.config;
 
+import ProjectExe.Integracao.repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,12 +23,19 @@ public class SegurancaConfig {
     @Autowired
     SegurancaFiltro segurancaFiltro;
 
-    //Filtros de segurança as URLs  --Necessário futuramente tratar sessão STATEFUL para usuários USER, ADMIN e DEV *
+    @Autowired
+    UsuarioRepositorio usuarioRepositorio;
+
+    //Filtros de segurança as URLs --STATEFUL (sessão) para usuários USER, ADMIN e DEV, STATELESS para usuários PROD
     @Bean
     SecurityFilterChain cadeiaFiltrosSeguranca(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .invalidSessionUrl("/auth/login") // Redireciona para a página de login após expiração da sessão
+                        .maximumSessions(1)
+                        .expiredUrl("/auth/login")) //Redireciona para o login após a sessão expirar
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registro").permitAll()

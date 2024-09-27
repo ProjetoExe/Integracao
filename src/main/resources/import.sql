@@ -106,5 +106,5 @@ INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (1, 'http:://www.site.com.br/teste2.jpg', 'Imagem do Produto 1 - Geforce RTX 3060 v2')
 INSERT INTO produto_imagem (produto_id, img_Url, titulo) VALUES (2, 'http:://www.site.com.br/teste3.jpg', 'Imagem do Produto 2 - Mouse Logitech')
 
-INSERT INTO cliente (nome_cli, documento, data_nascimento, celular, total_pedidos, opt_ativo) VALUES ('Gustavo', '48336604820', '2001-10-04', '16 99723 4150', 0, 1)
+INSERT INTO cliente (nome_cli, cpf, data_nascimento, celular, total_pedidos, opt_ativo) VALUES ('Gustavo', '48336604820', '2001-10-04', '16 99723 4150', 0, 1)
 INSERT INTO endereco (cep, endereco, numero, complemento, bairro, cidade, estado, pais, cliente_id, opt_principal) VALUES ('14800111', 'Rua Teste', '100', 'Teste', 'Bairro Teste', 'Arapica', 'SP', 'BR', 1, 1)

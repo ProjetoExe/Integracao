@@ -46,7 +46,7 @@ public class ClienteServico {
     //Buscar todos com base em id, nome, email ou cpf
     @Cacheable(value = "clientes")
     @Transactional(readOnly = true)
-    public Page<ClienteResumidoDTO> buscarTodos(Long clienteId, String nomeCli, String email, String documento, Pageable pageable) {
+    public Page<ClienteResumidoDTO> buscarTodos(Long clienteId, String nomeCli, String email, String cpf, String cnpj, Pageable pageable) {
         Page<ClienteResumidoDTO> resultado = Page.empty();
         if (clienteId != null) {
             Optional<ClienteResumidoDTO> cliente = clienteRepositorio.buscarPorId(clienteId);
@@ -54,7 +54,7 @@ public class ClienteServico {
                 resultado = new PageImpl<>(Collections.singletonList(cliente.get()), pageable, 1);
             }
         } else {
-            resultado = clienteRepositorio.buscarTodos(nomeCli, email, documento, pageable);
+            resultado = clienteRepositorio.buscarTodos(nomeCli, email, cpf, cnpj, pageable);
         }
         return resultado;
     }
@@ -107,7 +107,16 @@ public class ClienteServico {
         }
         entidade.setNomeCli(dto.getNomeCli());
         entidade.setDataNascimento(dto.getDataNascimento());
-        entidade.setDocumento(dto.getDocumento());
+        if (dto.getCpf() == null  && dto.getCnpj() == null) {
+            throw new IllegalArgumentException("CPF ou CNPJ deve ser preenchido");
+        }
+        if (dto.getCpf() != null) {
+            entidade.setCpf(dto.getCpf());
+            entidade.setCnpj(null);
+        } else {
+            entidade.setCnpj(dto.getCnpj());
+            entidade.setCpf(null);
+        }
         entidade.setTelefone(dto.getTelefone());
         entidade.setCelular(dto.getCelular());
         entidade.setEmail(dto.getEmail());
@@ -124,6 +133,7 @@ public class ClienteServico {
             Optional<Endereco> endereco;
             endereco = enderecoRepositorio.findByCepAndNumeroAndCliente_ClienteId(enderecoDTO.getCep(), enderecoDTO.getNumero(), cliente.getClienteId());
             return endereco.map(enderecoExistente -> {
+                enderecoExistente.setTipoEndereco(enderecoDTO.getTipoEndereco());
                 enderecoExistente.setCep(enderecoDTO.getCep());
                 enderecoExistente.setEndereco(enderecoDTO.getEndereco());
                 enderecoExistente.setNumero(enderecoDTO.getNumero());
@@ -136,6 +146,7 @@ public class ClienteServico {
             }).orElseGet(() -> {
                 Endereco enderecoNovo = new Endereco();
                 enderecoNovo.setDataRegistro(Instant.now());
+                enderecoNovo.setTipoEndereco(enderecoDTO.getTipoEndereco());
                 enderecoNovo.setCep(enderecoDTO.getCep());
                 enderecoNovo.setEndereco(enderecoDTO.getEndereco());
                 enderecoNovo.setNumero(enderecoDTO.getNumero());

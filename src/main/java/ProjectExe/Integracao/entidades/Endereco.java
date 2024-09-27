@@ -1,14 +1,11 @@
 package ProjectExe.Integracao.entidades;
 
-import ProjectExe.Integracao.dto.EnderecoDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "Endereco")
@@ -24,6 +21,7 @@ public class Endereco implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long enderecoId;
 
+    private String tipoEndereco;
     @Column(nullable = false)
     private String cep;
     private String endereco;

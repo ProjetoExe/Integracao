@@ -6,6 +6,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface ClasseRepositorio extends JpaRepository<Classe, Long> {
 
     @Query("SELECT c " +
@@ -14,4 +16,6 @@ public interface ClasseRepositorio extends JpaRepository<Classe, Long> {
             "WHERE (c.nomeClasse = :nomeClasse OR :nomeClasse IS NULL) " +
             "AND (v.variacao = :variacao OR :variacao IS NULL)")
     Page<Classe> buscarTodos(String nomeClasse, String variacao, Pageable pageable);
+
+    Optional<Classe> findByNomeClasse(String nomeClasse);
 }

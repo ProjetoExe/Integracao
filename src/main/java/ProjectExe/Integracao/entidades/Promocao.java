@@ -1,6 +1,6 @@
 package ProjectExe.Integracao.entidades;
 
-import ProjectExe.Integracao.entidades.enums.ProdutosPromocao;
+import ProjectExe.Integracao.entidades.enums.TipoProdutoAlteracao;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
@@ -49,9 +49,9 @@ public class Promocao implements Serializable {
     @OneToMany(mappedBy = "id.promocao", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<PromocaoItens> promocaoItens = new HashSet<>();
 
-    public ProdutosPromocao getTipoProdProm() { return ProdutosPromocao.codigoStatus(tipoProdProm); }
+    public TipoProdutoAlteracao getTipoProdProm() { return TipoProdutoAlteracao.codigoStatus(tipoProdProm); }
 
-    public void setTipoProdProm(ProdutosPromocao promocaoTipo) {
+    public void setTipoProdProm(TipoProdutoAlteracao promocaoTipo) {
         if (promocaoTipo != null) {
             this.tipoProdProm = promocaoTipo.getCodigo();
         }

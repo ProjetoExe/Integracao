@@ -19,12 +19,13 @@ public class VendaItensDTO implements Serializable {
     private String nomeProd;
     private String variacaoProd;
     private Integer qtdVendida;
-    private BigDecimal preco;
+    private BigDecimal vlrProd;
     private BigDecimal vlrDesc;
     private BigDecimal vlrTotal;
 
     //Construtor com parâmetro da classe VendaItens para VendaItensResumidoDTO / BeanUtils necessita de setter além de getter no DTO
-    public VendaItensDTO(VendaItens entidade) { BeanUtils.copyProperties(entidade, this);
+    public VendaItensDTO(VendaItens entidade) {
+        BeanUtils.copyProperties(entidade, this);
         produtoId = entidade.getProduto().getProdutoId();
     }
 }

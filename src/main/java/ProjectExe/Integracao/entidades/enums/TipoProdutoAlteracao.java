@@ -1,6 +1,6 @@
 package ProjectExe.Integracao.entidades.enums;
 
-public enum ProdutosPromocao {
+public enum TipoProdutoAlteracao {
 
     TODOS(1),
     POR_CATEGORIAS(2),
@@ -8,17 +8,17 @@ public enum ProdutosPromocao {
 
     private int codigo;
 
-    private ProdutosPromocao(int codigo) { this.codigo = codigo; }
+    private TipoProdutoAlteracao(int codigo) { this.codigo = codigo; }
 
     public int getCodigo() { return codigo; }
 
     //Método para buscar a promocao pelo código (tipo)
-    public static ProdutosPromocao codigoStatus(int codigo) {
-        for(ProdutosPromocao valor : ProdutosPromocao.values()) {
+    public static TipoProdutoAlteracao codigoStatus(int codigo) {
+        for(TipoProdutoAlteracao valor : TipoProdutoAlteracao.values()) {
             if(valor.getCodigo() == codigo) {
                 return valor;
             }
         }
-        throw new IllegalArgumentException("Tipo de Promoção não existe");
+        throw new IllegalArgumentException("Tipo de Produto não existe");
     }
 }

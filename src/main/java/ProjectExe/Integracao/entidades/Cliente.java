@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.br.CNPJ;
+import org.hibernate.validator.constraints.br.CPF;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -27,7 +29,11 @@ public class Cliente implements Serializable {
     private String nomeCli;
     private Date dataNascimento;
     @Column(unique = true)
-    private String documento;
+    @CPF(message = "CPF Inválido!")
+    private String cpf;
+    @Column(unique = true)
+    @CNPJ(message = "CNPJ Inválido!")
+    private String cnpj;
     @Column(unique = true)
     private String telefone;
     private String celular;

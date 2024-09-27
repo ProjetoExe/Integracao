@@ -4,6 +4,7 @@ import ProjectExe.Integracao.dto.VendaItensDTO;
 import ProjectExe.Integracao.entidades.pk.VendaItemPK;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -32,27 +33,30 @@ public class VendaItens implements Serializable {
     @Getter
     private Integer qtdVendida;
     @Getter
-    private BigDecimal preco;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal vlrProd;
     @Getter
+    @Column(precision = 10, scale = 2)
     private BigDecimal vlrDesc;
     @Getter
+    @Column(precision = 10, scale = 2)
     private BigDecimal vlrTotal;
 
-    public VendaItens(Venda venda, Produto produto, String nomeProduto, String tamanho, Integer quantidade, BigDecimal preco, BigDecimal desconto, BigDecimal subTotal, BigDecimal total) {
+    public VendaItens(Venda venda, Produto produto, String nomeProd, String variacaoProd, Integer qtdVendida, BigDecimal vlrProd, BigDecimal vlrDesc, BigDecimal total) {
         id.setVenda(venda);
         id.setProduto(produto);
-        this.nomeProd = nomeProduto;
-        this.variacaoProd = tamanho;
-        this.qtdVendida = quantidade;
-        this.preco = preco;
-        this.vlrDesc = desconto;
+        this.nomeProd = nomeProd;
+        this.variacaoProd = variacaoProd;
+        this.qtdVendida = qtdVendida;
+        this.vlrProd = vlrProd;
+        this.vlrDesc = vlrDesc;
         this.vlrTotal = total;
     }
 
     public VendaItens(VendaItensDTO itemDTO) {
         this.setVariacaoProd(itemDTO.getVariacaoProd());
         this.setQtdVendida(itemDTO.getQtdVendida());
-        this.setPreco(itemDTO.getPreco());
+        this.setVlrProd(itemDTO.getVlrProd());
         this.setVlrDesc(itemDTO.getVlrDesc());
         this.setVlrTotal(itemDTO.getVlrTotal());
     }

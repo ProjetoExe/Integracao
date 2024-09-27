@@ -15,7 +15,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,16 +56,11 @@ public class ProdutoServico {
     @Cacheable("produtos")
     public Page<ProdutoResumidoDTO> buscarTodos(Long produtoId, String nome, String ref, Long ean, String marca, Integer optAtivo, List<String> categorias, Double precoInicial, Double precoFinal, Integer estoqueInicial, Integer estoqueFinal, Pageable pageable) {
         Page<ProdutoResumidoDTO> resultado = Page.empty();
-        if (produtoId != null) {
-            Optional<ProdutoResumidoDTO> produto = produtoRepositorio.buscarPorId(produtoId);
-            if (produto.isPresent()) {
-                resultado = new PageImpl<>(Collections.singletonList(produto.get()), pageable, 1);
-            }
-        } else {
-            //String categoriasStr = categorias != null ? String.join(",", categorias) : null;
-            resultado = produtoRepositorio.buscarTodos(nome, ref, ean, marca, optAtivo, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
-        }
-        return resultado;
+
+        //Integer multiplasCategorias = categorias != null && categorias.size() > 1 ? 1 : 0;
+        if (categorias != null && categorias.isEmpty()) { categorias = null; }
+
+        return resultado = produtoRepositorio.buscarTodos(produtoId, nome, ref, ean, marca, optAtivo, categorias, precoInicial, precoFinal, estoqueInicial, estoqueFinal, pageable);
     }
 
     //exportar produtos para excel
@@ -142,6 +136,7 @@ public class ProdutoServico {
             entidade.setDataAtivacao(!entidade.getOptAtivo() && dto.getOptAtivo() ? dto.getDataAtivacao() : entidade.getDataAtivacao());
         }
         entidade.setOptAtivo(dto.getOptAtivo());
+        entidade.setOptVariacao(dto.getOptVariacao());
         entidade.setOptLancamento(dto.getOptLancamento());
         entidade.setOptPromocao(dto.getOptPromocao());
         entidade.setOptLancamento(dto.getOptLancamento());
@@ -169,9 +164,9 @@ public class ProdutoServico {
         entidade.setAltura(dto.getAltura());
         entidade.setPeso(dto.getPeso());
 
-        carregarClasse(entidade, dto.getClasse());
-        carregarMarca(entidade, dto.getMarca());
-        carregarCategoria(entidade, dto.getCategoria());
+        carregarClasse(entidade, dto.getNomeClasse());
+        carregarMarca(entidade, dto.getNomeMarca());
+        carregarCategoria(entidade, dto.getNomeCategoriaPrincipal());
         produtoRepositorio.save(entidade);
 
         carregarSubCategorias(entidade, dto.getSubCategorias());
@@ -192,37 +187,37 @@ public class ProdutoServico {
     }
 
     //Verifica se a classe existe para atualizar no produto
-    private void carregarClasse(Produto produto, ClasseDTO classeDTO) {
-        Classe classe = classeRepositorio.findById(classeDTO.getClasseId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + classeDTO.getClasseId() + " não existe"));
+    private void carregarClasse(Produto produto, String nomeClasse) {
+        Classe classe = classeRepositorio.findByNomeClasse(nomeClasse).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Classe " + nomeClasse + " não existe"));
         produto.setClasse(classe);
     }
 
     //Verifica, atualiza e cadastra a Marca, se necessário
-    private void carregarMarca(Produto produto, MarcaDTO marcaDTO) {
-        Marca marca = marcaRepositorio.findByNomeMarca(marcaDTO.getNomeMarca()).orElseGet(() -> {
+    private void carregarMarca(Produto produto, String nomeMarca) {
+        Marca marca = marcaRepositorio.findByNomeMarca(nomeMarca).orElseGet(() -> {
             Marca novaMarca = new Marca();
-            novaMarca.setNomeMarca(marcaDTO.getNomeMarca());
+            novaMarca.setNomeMarca(nomeMarca);
             return marcaRepositorio.save(novaMarca);
         });
         produto.setMarca(marca);
     }
 
-    private void carregarCategoria(Produto produto, CategoriaDTO categoriaDTO) {
-        Categoria categoria = categoriaRepositorio.findByNomeCat(categoriaDTO.getNomeCat()).orElseGet(() -> {
+    private void carregarCategoria(Produto produto, String nomeCategoria) {
+        Categoria categoria = categoriaRepositorio.findByNomeCat(nomeCategoria).orElseGet(() -> {
             Categoria novaCategoria = new Categoria();
-            novaCategoria.setNomeCat(categoriaDTO.getNomeCat());
+            novaCategoria.setNomeCat(nomeCategoria);
             return categoriaRepositorio.save(novaCategoria);
         });
         produto.setCategoria(categoria);
     }
 
     //Verifica, atualiza e cadastra as Categorias, se necessário
-    private void carregarSubCategorias(Produto produto, Set<CategoriaDTO> categoriasDTO) {
+    private void carregarSubCategorias(Produto produto, Set<String> subCategoriasDTO) {
         Set<Categoria> categorias = new HashSet<>();
-        for (CategoriaDTO categoriaDTO : categoriasDTO) {
-            Categoria categoria = categoriaRepositorio.findByNomeCat(categoriaDTO.getNomeCat()).orElseGet(() -> {
+        for (String nomeCategoria : subCategoriasDTO) {
+            Categoria categoria = categoriaRepositorio.findByNomeCat(nomeCategoria).orElseGet(() -> {
                 Categoria novaCategoria = new Categoria();
-                novaCategoria.setNomeCat(categoriaDTO.getNomeCat());
+                novaCategoria.setNomeCat(nomeCategoria);
                 return categoriaRepositorio.save(novaCategoria);
             });
             categorias.add(categoria);
@@ -235,7 +230,7 @@ public class ProdutoServico {
     private void carregarGrade(Produto produto, Set<ProdutoGradeDTO> gradesDTO) {
         Set<ProdutoGrade> grades = gradesDTO.stream().map(grade -> {
             Optional<ProdutoGrade> produtoGrade;
-            if (produto.getVariacaoProduto() == VariacaoProduto.VARIACAO_DUPLA) {
+            if (produto.getOptVariacao() == VariacaoProduto.VARIACAO_DUPLA) {
                 produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdEVariacaoDupla(produto.getProdutoId(), grade.getVariacao(), grade.getVariacaoDupla());
             } else {
                 produtoGrade = produtoGradeRepositorio.buscarPorProdutoIdEVariacao(produto.getProdutoId(), grade.getVariacao());
@@ -247,7 +242,7 @@ public class ProdutoServico {
                 produtoExistente.setQtdEstoque(grade.getQtdEstoque());
                 return produtoGradeRepositorio.save(produtoExistente);
             }).orElseGet(() -> {
-                Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(grade.getVariacao());
+                Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(produto.getClasse().getClasseId(), grade.getVariacao());
                 ClasseGrade classeGradeProd = classeGrade.orElseGet(() -> {
                     ClasseGrade novaClasseGrade = new ClasseGrade();
                     novaClasseGrade.setClasse(produto.getClasse());
@@ -270,7 +265,7 @@ public class ProdutoServico {
         novaGrade.setEan(grade.getEan());
         novaGrade.setQtdEstoque(grade.getQtdEstoque());
         novaGrade.setVariacao(classeGradeProd.getVariacao());
-        novaGrade.setVariacaoDupla(produto.getVariacaoProduto() == VariacaoProduto.VARIACAO_DUPLA ? grade.getVariacaoDupla() : null);
+        novaGrade.setVariacaoDupla(produto.getOptVariacao() == VariacaoProduto.VARIACAO_DUPLA ? grade.getVariacaoDupla() : null);
         return novaGrade;
     }
 

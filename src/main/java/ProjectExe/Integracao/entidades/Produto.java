@@ -3,6 +3,8 @@ package ProjectExe.Integracao.entidades;
 import ProjectExe.Integracao.entidades.enums.VariacaoProduto;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -40,7 +42,7 @@ public class Produto implements Serializable {
     private Instant dataCadastro;
     private Instant dataAtualizacao;
     private LocalDate dataLancamento;
-    private Integer qtdEstoque; // para produtos únicos
+    private Integer qtdEstoque; // somente para produtos únicos
     private Integer estoqueTotal;
     private Integer estoqueMin;
     private Integer prazoDisponibilidade;
@@ -77,10 +79,10 @@ public class Produto implements Serializable {
     private Boolean optProdVirtual;
     @Column(nullable = false)
     private Boolean optDisponivel;
-    private Instant dataAtivacao;
-    private Instant dataDesativacao;
     @Column(nullable = false)
     private Integer optVariacao;
+    private Instant dataAtivacao;
+    private Instant dataDesativacao;
 
     private Long promocaoId;
 
@@ -98,20 +100,23 @@ public class Produto implements Serializable {
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "produto_subCategorias", joinColumns = @JoinColumn(name = "produto_id"), inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+    @Fetch(FetchMode.SUBSELECT)
     private Set<Categoria> subCategorias = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private Set<ProdutoGrade> grade = new HashSet<>();
 
     @OneToMany(mappedBy = "id.produto", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Fetch(FetchMode.SUBSELECT)
     private List<ProdutoImagem> imagens = new ArrayList<>();
 
     @OneToMany(mappedBy = "id.produto")
     private Set<VendaItens> itens = new HashSet<>();
 
-    public VariacaoProduto getVariacaoProduto() { return VariacaoProduto.codigoStatus(optVariacao); }
+    public VariacaoProduto getOptVariacao() { return VariacaoProduto.codigoStatus(optVariacao); }
 
-    public void setVariacaoProduto(VariacaoProduto variacaoProduto) {
+    public void setOptVariacao(VariacaoProduto variacaoProduto) {
         if (variacaoProduto != null) {
             this.optVariacao = variacaoProduto.getCodigo();
         }

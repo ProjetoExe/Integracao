@@ -2,7 +2,6 @@ package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.*;
 import ProjectExe.Integracao.entidades.*;
-import ProjectExe.Integracao.entidades.enums.VendaStatus;
 import ProjectExe.Integracao.repositorios.*;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoRecursoNaoEncontrado;
@@ -36,18 +35,17 @@ public class VendaServico {
     @Autowired
     private ProdutoRepositorio produtoRepositorio;
     @Autowired
-    private VendaItensRepositorio vendaItensRepositorio;
-    @Autowired
     private PagamentoRepositorio pagamentoRepositorio;
     @Autowired
     private ProdutoGradeRepositorio produtoGradeRepositorio;
     @Autowired
     private CupomRepositorio cupomRepositorio;
     @Autowired
-    private CupomVendaRepositorio cupomVendaRepositorio;
+    private ClienteServico clienteServico;
 
-    //busca vendas por ID detalhadamente
+    //busca vendas por ID detalhadamente (somente no botão editar)
     @Transactional(readOnly = true)
+    @Cacheable("vendas")
     public VendaDTO buscarPorId(Long vendaId) {
         Optional<Venda> resultado = vendaRepositorio.findById(vendaId);
         return resultado.map(VendaDTO::new).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Venda " + vendaId + " não encontrada"));
@@ -56,7 +54,7 @@ public class VendaServico {
     //buscar todos os registros com filtro de id, data e cliente
     @Transactional(readOnly = true)
     @Cacheable("vendas")
-    public Page<VendaResumidaDTO> buscarTodos_VendasPorIdEClienteEData(Long vendaId, String minData, String maxData, Pageable pageable) {
+    public Page<VendaResumidaDTO> buscarTodos(Long vendaId, String minData, String maxData, Pageable pageable) {
         Instant dataInicial = minData.isBlank() ? LocalDate.now().minusDays(180).atStartOfDay().toInstant(ZoneOffset.UTC) :
                 LocalDate.parse(minData, DateTimeFormatter.ofPattern("dd-MM-yyyy")).atStartOfDay().toInstant(ZoneOffset.UTC);
         Instant dataFinal = maxData.isBlank() ? LocalDate.now().atStartOfDay().plusDays(1).toInstant(ZoneOffset.UTC) :
@@ -69,22 +67,26 @@ public class VendaServico {
                 resultado = new PageImpl<>(Collections.singletonList(venda.get()), pageable, 1);
             }
         } else {
-            resultado = vendaRepositorio.buscarVendasPorData(dataInicial, dataFinal, pageable);
+            resultado = vendaRepositorio.buscarTodos(dataInicial, dataFinal, pageable);
         }
         return resultado.map(VendaResumidaDTO::new);
     }
 
     //inserir um registro de venda
-    @CacheEvict(value = "produtos", allEntries = true)
+    @CacheEvict(value = "vendas", allEntries = true)
     @Transactional
-    public VendaInsereAtualizaDTO inserir(VendaInsereAtualizaDTO obj) {
-        Venda entidade = new Venda();
-        atualizarDados(entidade, obj);
-        return new VendaInsereAtualizaDTO(vendaRepositorio.save(entidade));
+    public VendaDTO inserir(VendaInsereAtualizaDTO obj) {
+        try {
+            Venda venda = new Venda();
+            atualizarDados(venda, obj);
+            return new VendaDTO(vendaRepositorio.save(venda));
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
     }
 
     //atualizar um registro - *no caso apenas o status da venda*
-    @CacheEvict(value = "produtos", allEntries = true)
+    @CacheEvict(value = "vendas", allEntries = true)
     @Transactional
     public VendaInsereAtualizaDTO atualizar(Long vendaId, VendaInsereAtualizaDTO obj) {
         try {
@@ -98,7 +100,7 @@ public class VendaServico {
 
     //excluir um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
-    @CacheEvict(value = "produtos", allEntries = true)
+    @CacheEvict(value = "vendas", allEntries = true)
     public void deletar(Long vendaId) {
         try {
             vendaRepositorio.deleteById(vendaId);
@@ -112,11 +114,11 @@ public class VendaServico {
     //inserir ou atualizar (no caso apenas o status da venda) dados das Vendas
     private void atualizarDados(Venda entidade, VendaInsereAtualizaDTO dto) {
         if (entidade.getVendaId() == null){
-            entidade.setDataVenda(dto.getDataVenda());
-            entidade.setLocalVenda(dto.getLocalVenda());
-        }else {
-            entidade.setDataAtualizacao(Instant.now());
+            entidade.setDataRegistro(Instant.now());
+        } else {
+            entidade.setDataModificacao(Instant.now());
         }
+        entidade.setLocalVenda(dto.getLocalVenda());
         entidade.setVendaStatus(dto.getVendaStatus());
         entidade.setVlrTaxa(dto.getVlrTaxa());
         entidade.setVlrFrete(dto.getVlrFrete());
@@ -132,23 +134,21 @@ public class VendaServico {
         entidade.setNumNotaFiscal(dto.getNumNotaFiscal());
         entidade.setChaveNotaFiscal(dto.getChaveNotaFiscal());
         entidade.setXmlNotaFiscal(dto.getXmlNotaFiscal());
-
-        carregarCliente(entidade, dto);
-        carregarEndereco(entidade, dto);
+        entidade.setObservacao(dto.getObservacao());
 
         vendaRepositorio.save(entidade);
+        carregarCliente(entidade, dto.getCliente());
+        carregarEnderecoEntrega(entidade, dto.getEnderecoEntrega());
 
         carregarCuponsVenda(entidade, dto.getCupons());
         carregarItensVenda(entidade, dto.getItens());
         carregarPagamentosVenda(entidade, dto.getPagamentos());
 
-        //define data de pagamento da venda pegando último registro de pagamento em relação ao id da venda
+        //define data de pagamento da venda pegando o último registro de pagamento em relação ao id da venda
         Pagamento pagamento = pagamentoRepositorio.findFirstByVenda_VendaIdOrderByDataDesc(entidade.getVendaId());
         entidade.setDataPag(pagamento.getData());
 
-        if (entidade.getVendaStatus() != VendaStatus.AGUARDANDO_PAGAMENTO){
-            atualizarEstoque(entidade, dto.getItens());
-        }
+        atualizarEstoque(entidade, dto.getItens());
     }
 
     //para atualizar estoque e referências quando a venda for diferente de aguardando pagamento
@@ -156,53 +156,32 @@ public class VendaServico {
         for (VendaItensDTO itemDTO : itensDTO) {
             Produto produto = produtoRepositorio.findById(itemDTO.getProdutoId()).orElseThrow(() -> new ExcecaoRecursoNaoEncontrado("Produto " + itemDTO.getProdutoId() + " não encontrado"));
             produto.setQtdVendida(produto.getQtdVendida() + itemDTO.getQtdVendida());
-            produtoGradeRepositorio.buscarPorProdutoIdETamanho(itemDTO.getProdutoId(), itemDTO.getVariacaoProd())
+            produtoGradeRepositorio.buscarPorProdutoIdEVariacao(itemDTO.getProdutoId(), itemDTO.getVariacaoProd())
                     .ifPresent(grade -> grade.atualizarEstoque(grade, itemDTO.getQtdVendida()));
             produto.setEstoqueTotal(produto.getEstoqueTotal() - itemDTO.getQtdVendida());
         }
     }
 
-    //insere cliente na venda a partir dos dados da venda recebidos
-    private void carregarCliente(Venda entidade, VendaInsereAtualizaDTO dto){
-        Optional<Cliente> clienteExistente = clienteRepositorio.findByCpf(dto.getCpf());
+    //insere cliente na venda, cadastra novo cliente caso não tenha ainda
+    private void carregarCliente(Venda entidade, ClienteDTO dto){
+        Optional<Cliente> clienteExistente = clienteRepositorio.findByCpfOrCnpj(dto.getCpf(), dto.getCnpj());
         Cliente cliente = clienteExistente.orElseGet(() -> {
             Cliente clienteNovo = new Cliente();
-            clienteNovo.setNomeCliente(dto.getNomeCliente());
-            clienteNovo.setDataNascimento(dto.getDataNascimento());
-            clienteNovo.setCpf(dto.getCpf());
-            clienteNovo.setRg(dto.getRg());
-            clienteNovo.setTelefone(dto.getTelefone());
-            clienteNovo.setCelular(dto.getCelular());
-            clienteNovo.setEmail(dto.getEmail());
-            clienteNovo.setObservacao(dto.getObservacao());
-            clienteNovo.setCnpj(dto.getCnpj());
-            clienteNovo.setRazaoSocial(dto.getRazaoSocial());
-            clienteNovo.setInscricaoEstadual(dto.getInscricaoEstadual());
-            clienteNovo.setTotalPedidos(0);
+            clienteServico.atualizarDados(clienteNovo, dto);
             return clienteNovo;
         });
+        if (clienteExistente.isPresent()) {
+            clienteServico.atualizarDados(cliente, dto);
+        }
         cliente.setTotalPedidos(cliente.getTotalPedidos() + 1);
-        cliente.setDataUltimaCompra(entidade.getDataVenda());
+        cliente.setDataUltimaCompra(entidade.getDataRegistro());
         entidade.setCliente(cliente);
     }
 
-    //insere endereço na venda a partir dos dados da venda recebidos
-    private void carregarEndereco(Venda entidade, VendaInsereAtualizaDTO dto) {
-        Optional<Endereco> enderecoExistente = enderecoRepositorio.findByCepAndNumeroAndCliente_ClienteId(dto.getCep(), dto.getNumero(), entidade.getCliente().getClienteId());
-        Endereco endereco = enderecoExistente.orElseGet(() -> {
-           Endereco enderecoNovo = new Endereco();
-           enderecoNovo.setCep(dto.getCep());
-           enderecoNovo.setEndereco(dto.getEndereco());
-           enderecoNovo.setNumero(dto.getNumero());
-           enderecoNovo.setComplemento(dto.getComplemento());
-           enderecoNovo.setBairro(dto.getBairro());
-           enderecoNovo.setCidade(dto.getCidade());
-           enderecoNovo.setEstado(dto.getEstado());
-           enderecoNovo.setPais(dto.getPais());
-           enderecoNovo.setCliente(entidade.getCliente());
-           return enderecoNovo;
-        });
-        entidade.setEndereco(endereco);
+    //insere endereço de entrega na venda
+    private void carregarEnderecoEntrega(Venda entidade, EnderecoDTO enderecoDTO) {
+        Optional<Endereco> enderecoExistente = enderecoRepositorio.findByCepAndNumeroAndCliente_ClienteId(enderecoDTO.getCep(), enderecoDTO.getNumero(), entidade.getCliente().getClienteId());
+        enderecoExistente.ifPresent(entidade::setEnderecoEntrega);
     }
 
     //inserir ou atualizar itens da venda (atualmente só inserir)
@@ -214,7 +193,7 @@ public class VendaServico {
             VendaItens item = new VendaItens(itemDTO);
             item.setVenda(entidade);
             item.setProduto(produto);
-            item.setNomeProd(produto.getNome());
+            item.setNomeProd(produto.getNomeProd());
             itens.add(item);
         }
         entidade.getItens().addAll(itens);

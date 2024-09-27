@@ -15,7 +15,7 @@ import org.springframework.beans.BeanUtils;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@JsonPropertyOrder({"produtoId", "imagem", "nomeProd", "referencia", "categoria", "precoVenda", "estoqueTotal", "qtdVendida", "optAtivo"})
+@JsonPropertyOrder({"produtoId", "imgUrl", "nomeProd", "referencia", "categoria", "precoVenda", "estoqueTotal", "qtdVendida", "optAtivo"})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,16 +30,18 @@ public class ProdutoResumidoDTO implements Serializable {
     private Integer qtdVendida;
     private Boolean optAtivo;
     private String categoria;
+    private String imgUrl;
 
-    @JsonIgnoreProperties("titulo")
-    @JsonUnwrapped
-    private ProdutoImagem imagem;
-
-    //Construtor com parâmetro da classe Produto para ProdutoDTO / BeanUtils necessita de setter além de getter no DTO
-    public ProdutoResumidoDTO(Produto entidade){
-        BeanUtils.copyProperties(entidade, this);
-        categoria = entidade.getCategoria().getNomeCat();
-        imagem = (!entidade.getImagens().isEmpty() ? entidade.getImagens().get(0) : null); //pega a primeira imagem da lista
+    public ProdutoResumidoDTO(Long produtoId, String imgUrl, String nomeProd, String referencia, BigDecimal precoVenda, Integer estoqueTotal, Integer qtdVendida, Boolean optAtivo, String categoria) {
+        this.produtoId = produtoId;
+        this.imgUrl = imgUrl;
+        this.nomeProd = nomeProd;
+        this.referencia = referencia;
+        this.precoVenda = precoVenda;
+        this.estoqueTotal = estoqueTotal;
+        this.qtdVendida = qtdVendida;
+        this.optAtivo = optAtivo;
+        this.categoria = categoria;
     }
 
     public StatusAtivo getOptAtivo() { return StatusAtivo.status((optAtivo)); }

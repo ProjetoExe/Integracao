@@ -20,7 +20,7 @@ public class PromocaoControle {
     private PromocaoServico promocaoServico;
 
     //busca promoções por ID detalhadamente (somente no botão editar)
-    @GetMapping(value = "/codigo/{id}")
+    @GetMapping(value = "/{id}/detalhes")
     public ResponseEntity<PromocaoDTO> buscarPorId(@PathVariable Long id){
         PromocaoDTO resultado = promocaoServico.buscarPorId(id);
         return ResponseEntity.ok().body(resultado);

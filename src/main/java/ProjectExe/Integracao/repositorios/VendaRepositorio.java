@@ -10,6 +10,6 @@ import java.time.Instant;
 
 public interface VendaRepositorio extends JpaRepository<Venda, Long> {
 
-    @Query("SELECT v FROM Venda v WHERE v.dataVenda BETWEEN :min AND :max ORDER BY v.dataVenda DESC")
-    Page<Venda> buscarVendasPorData(Instant min, Instant max, Pageable pageable);
+    @Query("SELECT v FROM Venda v WHERE v.dataRegistro BETWEEN :min AND :max ORDER BY v.dataRegistro DESC")
+    Page<Venda> buscarTodos(Instant min, Instant max, Pageable pageable);
 }

@@ -4,6 +4,7 @@ import ProjectExe.Integracao.entidades.Produto;
 import ProjectExe.Integracao.entidades.ProdutoGrade;
 import ProjectExe.Integracao.repositorios.ProdutoGradeRepositorio;
 import ProjectExe.Integracao.repositorios.ProdutoRepositorio;
+import ProjectExe.Integracao.servicos.excecao.ExcecaoExportarArquivo;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -97,8 +98,7 @@ public class Arquivos {
             workbook.write(outputStream);
             return outputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+            throw new ExcecaoExportarArquivo(e.getMessage());
         }
     }
 }
