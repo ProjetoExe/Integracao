@@ -16,8 +16,10 @@ public class ClasseGrade implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(unique = true, length = 10)
+    @Column(unique = true)
     private String variacao;
+
+    private String imgUrl;
 
     @ManyToOne
     @JoinColumn(name = "classe_id")

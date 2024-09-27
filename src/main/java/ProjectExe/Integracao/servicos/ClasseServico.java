@@ -1,8 +1,10 @@
 package ProjectExe.Integracao.servicos;
 
 import ProjectExe.Integracao.dto.ClasseDTO;
+import ProjectExe.Integracao.dto.ClasseGradeDTO;
 import ProjectExe.Integracao.dto.ClasseResumidoDTO;
 import ProjectExe.Integracao.entidades.Classe;
+import ProjectExe.Integracao.entidades.ClasseGrade;
 import ProjectExe.Integracao.repositorios.ClasseGradeRepositorio;
 import ProjectExe.Integracao.repositorios.ClasseRepositorio;
 import ProjectExe.Integracao.servicos.excecao.ExcecaoBancoDeDados;
@@ -19,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ClasseServico {
@@ -72,22 +76,39 @@ public class ClasseServico {
     //deletar um registro
     //@Transactional //retirado pois conflita com a exceção DataIntegrityViolantionException, impedindo-a de lançar a exceção personalizada
     @CacheEvict(value = "classes", allEntries = true)
-    public void deletar(Long marcaId) {
+    public void deletar(Long classeId) {
         try {
-            classeRepositorio.deleteById(marcaId);
+            classeRepositorio.deleteById(classeId);
         } catch (EmptyResultDataAccessException e) {
-            throw new ExcecaoRecursoNaoEncontrado("Classe " + marcaId + " não encontrada");
+            throw new ExcecaoRecursoNaoEncontrado("Classe " + classeId + " não encontrada");
         } catch (DataIntegrityViolationException e) {
             throw new ExcecaoBancoDeDados(e.getMessage());
         }
     }
-
-
+    
     //Método para inserir ou atualizar dados
     private void atualizarDados(Classe entidade, ClasseDTO dto) {
-        if (entidade.getClasseId() == null) {
-            entidade.setOptAtivo(dto.getOptAtivo() != null ? dto.getOptAtivo() : Boolean.TRUE);
-        }
         entidade.setNomeClasse(dto.getNomeClasse());
+        entidade.setOptAtivo(dto.getOptAtivo());
+        carregarGrade(entidade, dto.getVariacoes());
+    }
+
+    //carrega e atualiza as grades da classe
+    private void carregarGrade(Classe classe, Set<ClasseGradeDTO> variacoes) {
+        Set<ClasseGrade> grades = variacoes.stream().map(grade -> {
+            Optional<ClasseGrade> classeGrade = classeGradeRepositorio.buscarPorClasseETamanho(classe.getClasseId(), grade.getVariacao());
+            return classeGrade.map(classeGradeExistente -> {
+                classeGradeExistente.setVariacao(grade.getVariacao());
+                classeGradeExistente.setImgUrl(grade.getImgUrl());
+                return classeGradeRepositorio.save(classeGradeExistente);
+            }).orElseGet(() -> {
+               ClasseGrade novaClasseGrade = new ClasseGrade();
+               novaClasseGrade.setClasse(classe);
+               novaClasseGrade.setVariacao(grade.getVariacao());
+               novaClasseGrade.setImgUrl(grade.getImgUrl());
+               return classeGradeRepositorio.save(novaClasseGrade);
+            });
+        }).collect(Collectors.toSet());
+        classe.getVariacoes().addAll(grades);
     }
 }

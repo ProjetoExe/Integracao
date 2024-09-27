@@ -14,11 +14,13 @@ public class ClasseGradeDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String variacao;
+    private String imgUrl;
     private Long classe;
 
     //Construtor com parâmetro da classe ClasseGrade para ClasseGradeDTO
     public ClasseGradeDTO(ClasseGrade classeGrade) {
         this.variacao = classeGrade.getVariacao();
+        this.imgUrl = classeGrade.getImgUrl();
         this.classe = classeGrade.getClasse().getClasseId();
     }
 }
