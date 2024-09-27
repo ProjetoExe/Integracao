@@ -1,7 +1,7 @@
 package ProjectExe.Integracao.dto;
 
 import ProjectExe.Integracao.entidades.Promocao;
-import ProjectExe.Integracao.entidades.enums.ProdutosPromocao;
+import ProjectExe.Integracao.entidades.enums.TipoProdutoAlteracao;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -48,9 +48,9 @@ public class PromocaoDTO implements Serializable {
                 .collect(Collectors.toSet());
     }
 
-    public ProdutosPromocao getTipoProdProm() { return ProdutosPromocao.codigoStatus(tipoProdProm); }
+    public TipoProdutoAlteracao getTipoProdProm() { return TipoProdutoAlteracao.codigoStatus(tipoProdProm); }
 
-    public void setTipoProdProm(ProdutosPromocao promocaoTipo) {
+    public void setTipoProdProm(TipoProdutoAlteracao promocaoTipo) {
         if (promocaoTipo != null) {
             this.tipoProdProm = promocaoTipo.getCodigo();
         }

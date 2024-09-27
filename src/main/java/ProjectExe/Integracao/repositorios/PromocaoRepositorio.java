@@ -1,5 +1,6 @@
 package ProjectExe.Integracao.repositorios;
 
+import ProjectExe.Integracao.dto.PromocaoResumidaDTO;
 import ProjectExe.Integracao.entidades.Promocao;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +13,8 @@ public interface PromocaoRepositorio extends JpaRepository<Promocao, Long> {
 
     @Query("SELECT p " +
             "FROM Promocao p " +
-            "WHERE p.dataCadastro BETWEEN :min AND :max OR p.dataInicioProm BETWEEN :min AND :max OR p.dataFimProm BETWEEN :min AND :max " +
+            "WHERE (p.promocaoId = :promocaoId OR :promocaoId IS NULL) " +
+            "AND (p.dataCadastro BETWEEN :min AND :max OR p.dataInicioProm BETWEEN :min AND :max OR p.dataFimProm BETWEEN :min AND :max) " +
             "ORDER BY p.dataCadastro DESC")
-    Page<Promocao> buscarTodos(Instant min, Instant max, Pageable pageable);
+    Page<PromocaoResumidaDTO> buscarTodos(Long promocaoId, Instant min, Instant max, Pageable pageable);
 }
