@@ -24,6 +24,8 @@ public class EnderecoDTO implements Serializable {
 
     private Long enderecoId;
 
+    @NotBlank(message = "Tipo de Endereço não pode ser vazio")
+    private String tipoEndereco;
     @NotBlank(message = "CEP não pode ser vazio")
     @Size(min = 8, max = 8, message = "CEP deve ter 8 caracteres")
     private String cep;

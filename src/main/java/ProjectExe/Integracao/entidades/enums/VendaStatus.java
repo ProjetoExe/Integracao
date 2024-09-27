@@ -3,7 +3,7 @@ package ProjectExe.Integracao.entidades.enums;
 public enum VendaStatus {
 
     AGUARDANDO_PAGAMENTO(1),
-    PAGO(2),
+    A_ENVIAR(2),
     EMBALANDO(3),
     ENVIADO(4),
     ENTREGUE(5),
