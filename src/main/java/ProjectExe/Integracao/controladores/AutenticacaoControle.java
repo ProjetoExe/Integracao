@@ -24,7 +24,14 @@ public class AutenticacaoControle {
     //Login com usuário com o método de autenticação
     @PostMapping("/login")
     public ResponseEntity<MensagemDTO> login(@RequestBody @Valid AutenticacaoDTO dto, HttpServletRequest request, HttpServletResponse response) {
-        String resultado = autenticacaoServico.login(dto, request, response);
+        String resultadologin = autenticacaoServico.login(dto, request, response);
+        return ResponseEntity.ok(MensagemDTO.of(resultadologin));
+    }
+
+    //Logoff para desconectar o usuário
+    @PostMapping("/logoff")
+    public ResponseEntity<MensagemDTO> logoff(HttpServletRequest request) {
+        String resultado = autenticacaoServico.logoff(request);
         return ResponseEntity.ok(MensagemDTO.of(resultado));
     }
 
