@@ -11,6 +11,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,11 +47,24 @@ public class AutenticacaoServico {
         Usuario usuario = (Usuario) autenticacao.getPrincipal();
         logLoginServico.salvarLogLogin(usuario.getLogin(), usuario.getLoja().getLojaId(), usuario.getPermissao().getPermissao(), request.getRemoteAddr());
 
+        //gerar token caso seja acesso e autenticação Stateles
         if (usuario.getPermissao() == UsuarioPermissao.PROD) {
             return tokenServico.gerarToken(usuario);
         } else {
             configurarSessao(request, autenticacao);
             return "Autenticado com Sucesso!";
+        }
+    }
+
+    //Logoff para desconectar o usuário
+    public String logoff(HttpServletRequest request) {
+        Authentication autenticacao = SecurityContextHolder.getContext().getAuthentication();
+        if (autenticacao != null) {
+            Usuario usuario = (Usuario) autenticacao.getPrincipal();
+            request.getSession().invalidate();
+            return "Usuário " + usuario.getLogin() + " desconectado!";
+        } else {
+            return "Falha ao obter informações do usuário!";
         }
     }
 
